@@ -202,21 +202,41 @@ const InventoryView = ({ inventory, refreshData, user }) => {
 
     return (
         <div style={{animation: 'fadeIn 0.5s ease-out'}}>
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
-                <h1>Data Inventory</h1>
-                <div style={{display: 'flex', gap: '16px', alignItems: 'center'}}>
-                    <select 
-                        className="input-field" 
-                        style={{marginBottom: 0, minWidth: '200px', height: '100%'}}
-                        value={selectedCategory} 
-                        onChange={e => setSelectedCategory(e.target.value)}
-                    >
-                        {categories.map(cat => (
-                            <option key={cat} value={cat}>{cat}</option>
-                        ))}
-                    </select>
-                    <button className="btn" onClick={() => setShowModal(true)}>+ Tambah Barang</button>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', flexWrap: 'wrap', gap: '16px'}}>
+                <h1 style={{margin: 0}}>Data Inventory</h1>
+                
+                {/* Modern Category Chips */}
+                <div style={{display: 'flex', gap: '8px', overflowX: 'auto', flex: 1, padding: '4px 0'}}>
+                    {categories.map(cat => (
+                        <button 
+                            key={cat} 
+                            onClick={() => setSelectedCategory(cat)}
+                            style={{
+                                padding: '8px 16px', 
+                                borderRadius: '20px', 
+                                border: `1px solid ${selectedCategory === cat ? 'var(--primary-color)' : 'var(--border-color)'}`,
+                                background: selectedCategory === cat ? 'var(--primary-color)' : 'transparent',
+                                color: selectedCategory === cat ? 'white' : 'var(--text-primary)',
+                                cursor: 'pointer',
+                                fontWeight: '500',
+                                transition: 'all 0.2s',
+                                whiteSpace: 'nowrap',
+                                boxShadow: selectedCategory === cat ? '0 4px 10px rgba(234, 88, 12, 0.3)' : 'none'
+                            }}
+                        >
+                            {cat}
+                        </button>
+                    ))}
                 </div>
+
+                <button 
+                    className="btn" 
+                    style={{width: '45px', height: '45px', borderRadius: '50%', padding: 0, fontSize: '1.8rem', display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0}} 
+                    onClick={() => setShowModal(true)} 
+                    title="Tambah Barang"
+                >
+                    +
+                </button>
             </div>
             
             <div className="glass-panel table-container">
@@ -237,8 +257,12 @@ const InventoryView = ({ inventory, refreshData, user }) => {
                             const isLow = item.stock <= rop;
                             return (
                                 <tr key={item.id}>
-                                    <td style={{fontWeight: '600', color: 'var(--primary-color)'}}>{item.sku}</td>
-                                    <td style={{color: 'var(--text-primary)'}}>{item.name}</td>
+                                    <td style={{padding: '8px 16px'}}>
+                                        <div style={{background: 'white', padding: '4px 8px', borderRadius: '4px', display: 'inline-block'}}>
+                                            <Barcode value={item.sku} height={30} width={1.5} fontSize={12} displayValue={true} background="transparent" margin={0} />
+                                        </div>
+                                    </td>
+                                    <td style={{color: 'var(--text-primary)', fontWeight: '500'}}>{item.name}</td>
                                     <td><span style={{background: 'var(--border-color)', padding: '4px 10px', borderRadius: '4px', fontSize: '0.8rem', color: 'var(--text-primary)'}}>{item.category}</span></td>
                                     <td style={{color: 'var(--text-primary)'}}>{item.branch_name}</td>
                                     <td style={{fontWeight: 'bold', fontSize: '1.1rem', color: 'var(--text-primary)'}}>{item.stock}</td>
