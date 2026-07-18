@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Barcode from 'react-barcode';
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 
 const Dashboard = ({ user, setUser }) => {
@@ -170,6 +171,7 @@ const DSSView = ({ dss, user }) => (
 
 const InventoryView = ({ inventory, refreshData, user }) => {
     const [showModal, setShowModal] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState('Semua');
     const [newItem, setNewItem] = useState({
         sku: '',
         name: '',
@@ -178,6 +180,12 @@ const InventoryView = ({ inventory, refreshData, user }) => {
         stock: '',
         branch_id: user.role === 'MANAGER' ? user.branch_id : 1
     });
+
+    const categories = ['Semua', ...new Set(inventory.map(item => item.category))];
+    
+    const filteredInventory = selectedCategory === 'Semua' 
+        ? inventory 
+        : inventory.filter(item => item.category === selectedCategory);
 
     const handleAddItem = async (e) => {
         e.preventDefault();
@@ -196,7 +204,19 @@ const InventoryView = ({ inventory, refreshData, user }) => {
         <div style={{animation: 'fadeIn 0.5s ease-out'}}>
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
                 <h1>Data Inventory</h1>
-                <button className="btn" onClick={() => setShowModal(true)}>+ Tambah Barang</button>
+                <div style={{display: 'flex', gap: '16px', alignItems: 'center'}}>
+                    <select 
+                        className="input-field" 
+                        style={{marginBottom: 0, minWidth: '200px', height: '100%'}}
+                        value={selectedCategory} 
+                        onChange={e => setSelectedCategory(e.target.value)}
+                    >
+                        {categories.map(cat => (
+                            <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                    </select>
+                    <button className="btn" onClick={() => setShowModal(true)}>+ Tambah Barang</button>
+                </div>
             </div>
             
             <div className="glass-panel table-container">
@@ -212,7 +232,7 @@ const InventoryView = ({ inventory, refreshData, user }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {inventory.map(item => {
+                        {filteredInventory.map(item => {
                             const rop = (5 * item.lead_time_days) + item.safety_stock;
                             const isLow = item.stock <= rop;
                             return (
@@ -243,6 +263,11 @@ const InventoryView = ({ inventory, refreshData, user }) => {
                             <div className="form-group">
                                 <label>SKU (Kode Barang)</label>
                                 <input type="text" className="input-field" value={newItem.sku} onChange={e => setNewItem({...newItem, sku: e.target.value})} required />
+                                {newItem.sku && (
+                                    <div style={{marginTop: '12px', display: 'flex', justifyContent: 'center', background: 'white', padding: '12px', borderRadius: '8px'}}>
+                                        <Barcode value={newItem.sku} height={50} displayValue={true} background="transparent" />
+                                    </div>
+                                )}
                             </div>
                             <div className="form-group">
                                 <label>Nama Barang</label>
