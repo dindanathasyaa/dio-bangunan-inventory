@@ -182,6 +182,7 @@ const DSSView = ({ dss, user, theme, toggleTheme }) => (
 
 const InventoryView = ({ inventory, refreshData, user }) => {
     const [showModal, setShowModal] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('Semua');
     const [newItem, setNewItem] = useState({
         sku: '',
@@ -213,41 +214,70 @@ const InventoryView = ({ inventory, refreshData, user }) => {
 
     return (
         <div style={{animation: 'fadeIn 0.5s ease-out'}}>
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', flexWrap: 'wrap', gap: '16px'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px'}}>
                 <h1 style={{margin: 0}}>Data Inventory</h1>
                 
-                {/* Modern Category Chips */}
-                <div style={{display: 'flex', gap: '8px', overflowX: 'auto', flex: 1, padding: '4px 0'}}>
-                    {categories.map(cat => (
+                <div style={{display: 'flex', gap: '16px', alignItems: 'center'}}>
+                    {/* Custom Interactive Dropdown */}
+                    <div style={{position: 'relative'}}>
                         <button 
-                            key={cat} 
-                            onClick={() => setSelectedCategory(cat)}
-                            style={{
-                                padding: '8px 16px', 
-                                borderRadius: '20px', 
-                                border: `1px solid ${selectedCategory === cat ? 'var(--primary-color)' : 'var(--border-color)'}`,
-                                background: selectedCategory === cat ? 'var(--primary-color)' : 'transparent',
-                                color: selectedCategory === cat ? 'white' : 'var(--text-primary)',
-                                cursor: 'pointer',
-                                fontWeight: '500',
-                                transition: 'all 0.2s',
-                                whiteSpace: 'nowrap',
-                                boxShadow: selectedCategory === cat ? '0 4px 10px rgba(234, 88, 12, 0.3)' : 'none'
-                            }}
+                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                            className="input-field"
+                            style={{marginBottom: 0, minWidth: '220px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', background: 'var(--item-bg)', border: '1px solid var(--primary-color)', color: 'var(--text-primary)'}}
                         >
-                            {cat}
+                            <span style={{fontWeight: '600'}}>{selectedCategory}</span>
+                            <span style={{fontSize: '0.8rem', transition: 'transform 0.3s', transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)'}}>▼</span>
                         </button>
-                    ))}
-                </div>
+                        {isDropdownOpen && (
+                            <div style={{
+                                position: 'absolute', 
+                                top: '100%', 
+                                left: 0, 
+                                right: 0, 
+                                marginTop: '8px', 
+                                background: 'var(--item-bg)', 
+                                borderRadius: '12px', 
+                                boxShadow: '0 10px 25px rgba(0,0,0,0.1)', 
+                                zIndex: 50,
+                                border: '1px solid var(--border-color)',
+                                overflow: 'hidden',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                animation: 'fadeIn 0.2s ease-out'
+                            }}>
+                                {categories.map(cat => (
+                                    <button
+                                        key={cat}
+                                        onClick={() => { setSelectedCategory(cat); setIsDropdownOpen(false); }}
+                                        style={{
+                                            padding: '12px 16px',
+                                            background: selectedCategory === cat ? 'var(--primary-color)' : 'transparent',
+                                            color: selectedCategory === cat ? 'white' : 'var(--text-primary)',
+                                            border: 'none',
+                                            textAlign: 'left',
+                                            cursor: 'pointer',
+                                            transition: 'background 0.2s',
+                                            fontWeight: selectedCategory === cat ? 'bold' : 'normal'
+                                        }}
+                                        onMouseEnter={(e) => { if(selectedCategory !== cat) e.target.style.background = 'rgba(234, 88, 12, 0.1)' }}
+                                        onMouseLeave={(e) => { if(selectedCategory !== cat) e.target.style.background = 'transparent' }}
+                                    >
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
 
-                <button 
-                    className="btn" 
-                    style={{width: '45px', height: '45px', borderRadius: '50%', padding: 0, fontSize: '1.8rem', display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0}} 
-                    onClick={() => setShowModal(true)} 
-                    title="Tambah Barang"
-                >
-                    +
-                </button>
+                    <button 
+                        className="btn" 
+                        style={{width: '45px', height: '45px', borderRadius: '50%', padding: 0, fontSize: '1.8rem', display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0, boxShadow: '0 4px 10px rgba(234, 88, 12, 0.3)'}} 
+                        onClick={() => setShowModal(true)} 
+                        title="Tambah Barang"
+                    >
+                        +
+                    </button>
+                </div>
             </div>
             
             <div className="glass-panel table-container">
