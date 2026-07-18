@@ -87,12 +87,9 @@ const Dashboard = ({ user, setUser }) => {
                 <button className="sidebar-toggle" onClick={toggleSidebar}>
                     ☰
                 </button>
-                <button className="theme-toggle" onClick={toggleTheme}>
-                    {theme === 'dark' ? '☀️' : '🌙'}
-                </button>
                 
                 <Routes>
-                    <Route path="/" element={<DSSView dss={dss} user={user} />} />
+                    <Route path="/" element={<DSSView dss={dss} user={user} theme={theme} toggleTheme={toggleTheme} />} />
                     <Route path="/inventory" element={<InventoryView inventory={inventory} refreshData={fetchData} user={user} />} />
                 </Routes>
             </main>
@@ -100,8 +97,22 @@ const Dashboard = ({ user, setUser }) => {
     );
 };
 
-const DSSView = ({ dss, user }) => (
+const DSSView = ({ dss, user, theme, toggleTheme }) => (
     <div style={{animation: 'fadeIn 0.5s ease-out'}}>
+        {/* Theme Toggle (Dashboard Only) */}
+        <div style={{ position: 'absolute', top: '24px', right: '32px', zIndex: 10, display: 'flex', background: 'var(--item-bg)', borderRadius: '30px', padding: '4px', boxShadow: 'var(--glass-shadow)', border: '1px solid var(--border-color)' }}>
+            <button 
+                onClick={() => { if(theme !== 'light') toggleTheme() }} 
+                style={{ background: theme === 'light' ? 'var(--primary-color)' : 'transparent', color: theme === 'light' ? 'white' : 'var(--text-primary)', border: 'none', padding: '8px 16px', borderRadius: '24px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600', transition: 'all 0.3s' }}>
+                ☀️ Light
+            </button>
+            <button 
+                onClick={() => { if(theme !== 'dark') toggleTheme() }} 
+                style={{ background: theme === 'dark' ? 'var(--primary-color)' : 'transparent', color: theme === 'dark' ? 'white' : 'var(--text-primary)', border: 'none', padding: '8px 16px', borderRadius: '24px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600', transition: 'all 0.3s' }}>
+                🌙 Dark
+            </button>
+        </div>
+
         <div className="dashboard-grid">
             <div className="glass-panel" style={{borderTop: '4px solid var(--primary-color)'}}>
                 <div className="metric-card">
