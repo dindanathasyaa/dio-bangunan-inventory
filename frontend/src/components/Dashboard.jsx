@@ -59,7 +59,27 @@ const Dashboard = ({ user, setUser }) => {
     return (
         <div className="app-container">
             <aside className={`sidebar ${!isSidebarOpen ? 'collapsed' : ''}`} style={{position: 'relative'}}>
-                <div className="logo-container" style={{paddingBottom: '0', display: 'flex', justifyContent: 'center'}}>
+                {isSidebarOpen && (
+                    <button 
+                        className="sidebar-toggle" 
+                        onClick={toggleSidebar}
+                        style={{
+                            position: 'absolute',
+                            top: '16px',
+                            right: '16px',
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: '8px',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            zIndex: 10
+                        }}
+                    >
+                        ❮
+                    </button>
+                )}
+                <div className="logo-container" style={{paddingBottom: '0', display: 'flex', justifyContent: 'center', marginTop: '32px'}}>
                     <img src="/logo-transparent.png" alt="Dio Bangunan Logo" className="logo-img" style={{width: '100%'}} />
                 </div>
                 
@@ -84,23 +104,24 @@ const Dashboard = ({ user, setUser }) => {
                 </div>
             </aside>
             
-            {/* Sidebar Toggle Button - Positioned in app-container so it is never clipped */}
-            <button 
-                className="sidebar-toggle" 
-                onClick={toggleSidebar}
-                style={{
-                    position: 'absolute',
-                    top: '40px',
-                    left: isSidebarOpen ? '244px' : '0px',
-                    borderRadius: isSidebarOpen ? '50%' : '0 50% 50% 0',
-                    transition: 'left 0.3s ease',
-                    zIndex: 100
-                }}
-            >
-                {isSidebarOpen ? '❮' : '❯'}
-            </button>
-            
             <main className="main-content">
+                {!isSidebarOpen && (
+                    <button 
+                        className="sidebar-toggle" 
+                        onClick={toggleSidebar}
+                        style={{
+                            position: 'absolute',
+                            top: '24px',
+                            left: '24px',
+                            width: '40px',
+                            height: '40px',
+                            borderRadius: '8px',
+                            zIndex: 100
+                        }}
+                    >
+                        ☰
+                    </button>
+                )}
                 <Routes>
                     <Route path="/" element={<DSSView dss={dss} user={user} theme={theme} toggleTheme={toggleTheme} />} />
                     <Route path="/inventory" element={<InventoryView inventory={inventory} refreshData={fetchData} user={user} />} />
