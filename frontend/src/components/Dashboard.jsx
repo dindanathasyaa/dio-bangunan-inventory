@@ -59,8 +59,8 @@ const Dashboard = ({ user, setUser }) => {
     return (
         <div className="app-container">
             <aside className={`sidebar ${!isSidebarOpen ? 'collapsed' : ''}`}>
-                <div className="logo-container" style={{paddingBottom: '20px'}}>
-                    <img src="/logo-v2.jpeg" alt="Dio Bangunan Logo" className="logo-img" style={{maxWidth: '220px'}} />
+                <div className="logo-container" style={{paddingBottom: '20px', display: 'flex', justifyContent: 'center'}}>
+                    <img src="/logo-v2.jpeg" alt="Dio Bangunan Logo" className="logo-img" style={{width: '240px', mixBlendMode: 'multiply', filter: 'contrast(1.1)'}} />
                 </div>
                 
                 <nav style={{display: 'flex', flexDirection: 'column', marginTop: '32px'}}>
