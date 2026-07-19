@@ -134,26 +134,26 @@ p {
 /* Sidebar Toggle Button */
 .sidebar-toggle {
   position: absolute;
-  top: 24px;
-  left: 24px;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
+  top: 40px;
+  right: -16px;
+  background: var(--primary-color);
+  border: 2px solid var(--border-color);
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.2rem;
-  z-index: 20;
-  box-shadow: var(--glass-shadow);
-  transition: all 0.3s ease;
+  font-size: 1rem;
+  z-index: 50;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 .sidebar-toggle:hover {
-  border-color: var(--primary-color);
-  color: var(--primary-color);
+  transform: scale(1.1);
+  background: var(--primary-hover);
 }
 
 .logo-container {
@@ -380,11 +380,12 @@ p {
 
 .login-form {
   width: 100%;
-  max-width: 420px;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
   text-align: center;
+  padding: 40px 32px;
 }
 
 .input-field {

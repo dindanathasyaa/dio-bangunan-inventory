@@ -58,12 +58,15 @@ const Dashboard = ({ user, setUser }) => {
 
     return (
         <div className="app-container">
-            <aside className={`sidebar ${!isSidebarOpen ? 'collapsed' : ''}`}>
-                <div className="logo-container" style={{paddingBottom: '20px', display: 'flex', justifyContent: 'center'}}>
-                    <img src="/logo-v2.jpeg" alt="Dio Bangunan Logo" className="logo-img" style={{width: '240px', mixBlendMode: 'multiply', filter: 'contrast(1.1)'}} />
+            <aside className={`sidebar ${!isSidebarOpen ? 'collapsed' : ''}`} style={{position: 'relative'}}>
+                <button className="sidebar-toggle" onClick={toggleSidebar}>
+                    {isSidebarOpen ? '❮' : '❯'}
+                </button>
+                <div className="logo-container" style={{paddingBottom: '0', display: 'flex', justifyContent: 'center'}}>
+                    <img src="/logo-transparent.png" alt="Dio Bangunan Logo" className="logo-img" style={{width: '280px'}} />
                 </div>
                 
-                <nav style={{display: 'flex', flexDirection: 'column', marginTop: '32px'}}>
+                <nav style={{display: 'flex', flexDirection: 'column', marginTop: '10px'}}>
                     <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
                         Dashboard
                     </Link>
@@ -84,10 +87,6 @@ const Dashboard = ({ user, setUser }) => {
                 </div>
             </aside>
             <main className="main-content">
-                <button className="sidebar-toggle" onClick={toggleSidebar}>
-                    ☰
-                </button>
-                
                 <Routes>
                     <Route path="/" element={<DSSView dss={dss} user={user} theme={theme} toggleTheme={toggleTheme} />} />
                     <Route path="/inventory" element={<InventoryView inventory={inventory} refreshData={fetchData} user={user} />} />
@@ -103,13 +102,13 @@ const DSSView = ({ dss, user, theme, toggleTheme }) => (
         <div style={{ position: 'absolute', top: '24px', right: '32px', zIndex: 10, display: 'flex', background: 'var(--item-bg)', borderRadius: '30px', padding: '4px', boxShadow: 'var(--glass-shadow)', border: '1px solid var(--border-color)' }}>
             <button 
                 onClick={() => { if(theme !== 'light') toggleTheme() }} 
-                style={{ background: theme === 'light' ? 'var(--primary-color)' : 'transparent', color: theme === 'light' ? 'white' : 'var(--text-primary)', border: 'none', padding: '8px 16px', borderRadius: '24px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600', transition: 'all 0.3s' }}>
-                ☀️ Light
+                style={{ background: theme === 'light' ? 'var(--primary-color)' : 'transparent', border: 'none', padding: '8px 16px', borderRadius: '24px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', fontSize: '1.2rem' }}>
+                ☀️
             </button>
             <button 
                 onClick={() => { if(theme !== 'dark') toggleTheme() }} 
-                style={{ background: theme === 'dark' ? 'var(--primary-color)' : 'transparent', color: theme === 'dark' ? 'white' : 'var(--text-primary)', border: 'none', padding: '8px 16px', borderRadius: '24px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600', transition: 'all 0.3s' }}>
-                🌙 Dark
+                style={{ background: theme === 'dark' ? 'var(--primary-color)' : 'transparent', border: 'none', padding: '8px 16px', borderRadius: '24px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', fontSize: '1.2rem' }}>
+                🌙
             </button>
         </div>
 
