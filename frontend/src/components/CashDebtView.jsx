@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const CashDebtView = ({ user }) => {
-    const [view, setView] = useState('CashFlow'); // CashFlow, Receivables, Payables
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [view, setView] = useState(location.state?.view || 'CashFlow'); // CashFlow, Receivables, Payables
     const [transactions, setTransactions] = useState([]);
     const [receivables, setReceivables] = useState([]);
     const [payables, setPayables] = useState([]);
@@ -63,11 +66,14 @@ const CashDebtView = ({ user }) => {
     }
 
     return (
-        <div style={{animation: 'fadeIn 0.5s ease-out'}}>
-            <div style={{display: 'flex', gap: '16px', marginBottom: '24px'}}>
-                {user.role === 'OWNER' && <button className={`btn ${view === 'CashFlow' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setView('CashFlow')}>Arus Kas & Profit</button>}
-                <button className={`btn ${view === 'Receivables' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setView('Receivables')}>Piutang (Hutang Pembeli)</button>
-                {user.role === 'OWNER' && <button className={`btn ${view === 'Payables' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setView('Payables')}>Hutang Toko (Ke Supplier)</button>}
+        <div style={{animation: 'fadeIn 0.5s ease-out', padding: '0 24px'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
+                <div style={{display: 'flex', gap: '16px'}}>
+                    {user.role === 'OWNER' && <button className={`btn ${view === 'CashFlow' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setView('CashFlow')}>Arus Kas & Profit</button>}
+                    <button className={`btn ${view === 'Receivables' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setView('Receivables')}>Piutang (Hutang Pembeli)</button>
+                    {user.role === 'OWNER' && <button className={`btn ${view === 'Payables' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setView('Payables')}>Hutang Toko (Ke Supplier)</button>}
+                </div>
+                <button className="btn btn-outline" onClick={() => navigate('/')}>Kembali ke Dashboard</button>
             </div>
 
             {view === 'CashFlow' && (

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const OrderDeliveryView = ({ user }) => {
-    const [view, setView] = useState('NewOrder'); // NewOrder, OrderList, DeliveryBoard
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [view, setView] = useState(location.state?.view || 'NewOrder'); // NewOrder, OrderList, DeliveryBoard
     
     // Delivery / Order state
     const [deliveries, setDeliveries] = useState([]);
@@ -118,10 +121,13 @@ const OrderDeliveryView = ({ user }) => {
     const filtered = products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.sku.includes(search));
 
     return (
-        <div style={{animation: 'fadeIn 0.5s ease-out', display: 'flex', flexDirection: 'column', height: '100%', gap: '24px'}}>
-            <div style={{display: 'flex', gap: '16px', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px'}}>
-                <button className={`btn ${view === 'NewOrder' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setView('NewOrder')}>Buat Orderan Baru</button>
-                <button className={`btn ${view === 'DeliveryBoard' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setView('DeliveryBoard')}>Papan Jadwal Pengantaran</button>
+        <div style={{animation: 'fadeIn 0.5s ease-out', display: 'flex', flexDirection: 'column', height: '100%', gap: '24px', padding: '0 24px'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px'}}>
+                <div style={{display: 'flex', gap: '16px'}}>
+                    <button className={`btn ${view === 'NewOrder' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setView('NewOrder')}>Buat Orderan Baru</button>
+                    <button className={`btn ${view === 'DeliveryBoard' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setView('DeliveryBoard')}>Papan Jadwal Pengantaran</button>
+                </div>
+                <button className="btn btn-outline" onClick={() => navigate('/')}>Kembali ke Dashboard</button>
             </div>
 
             {view === 'NewOrder' && (

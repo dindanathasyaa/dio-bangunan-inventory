@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const StockAlertView = ({ type }) => {
+    const navigate = useNavigate();
     const [alerts, setAlerts] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -26,9 +28,10 @@ const StockAlertView = ({ type }) => {
     };
 
     return (
-        <div style={{animation: 'fadeIn 0.5s ease-out'}}>
+        <div style={{animation: 'fadeIn 0.5s ease-out', padding: '0 24px'}}>
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
                 <h1 style={{margin: 0}}>{type === 'min' ? 'Peringatan Stok Minimum (Habis)' : 'Peringatan Stok Maksimum (Overstock)'}</h1>
+                <button className="btn btn-outline" onClick={() => navigate('/')}>Kembali ke Dashboard</button>
             </div>
 
             <div className="glass-panel table-container">

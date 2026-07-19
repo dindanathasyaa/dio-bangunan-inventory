@@ -184,7 +184,7 @@ const ControlCenter = ({ user }) => {
                 </div>
 
                 {/* Row 2: Deliveries & Debt */}
-                <div className="glass-panel" style={{borderTop: '4px solid #f59e0b', cursor: 'pointer', transition: 'transform 0.2s'}} onClick={() => navigate('/orders')} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
+                <div className="glass-panel" style={{borderTop: '4px solid #f59e0b', cursor: 'pointer', transition: 'transform 0.2s'}} onClick={() => navigate('/orders', { state: { view: 'DeliveryBoard' } })} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                         <div>
                             <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Jadwal Pengantaran</div>
@@ -197,7 +197,7 @@ const ControlCenter = ({ user }) => {
 
                 {user.role === 'OWNER' && (
                     <>
-                        <div className="glass-panel" style={{borderTop: '4px solid #10b981', cursor: 'pointer', transition: 'transform 0.2s'}} onClick={() => navigate('/cash')} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
+                        <div className="glass-panel" style={{borderTop: '4px solid #10b981', cursor: 'pointer', transition: 'transform 0.2s'}} onClick={() => navigate('/cash', { state: { view: 'Receivables' } })} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
                             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                                 <div>
                                     <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Piutang (Pembeli Ngutang)</div>
@@ -208,7 +208,7 @@ const ControlCenter = ({ user }) => {
                             <div style={{color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '12px'}}>Uang tertahan di pelanggan.</div>
                         </div>
 
-                        <div className="glass-panel" style={{borderTop: '4px solid #ef4444', cursor: 'pointer', transition: 'transform 0.2s'}} onClick={() => navigate('/cash')} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
+                        <div className="glass-panel" style={{borderTop: '4px solid #ef4444', cursor: 'pointer', transition: 'transform 0.2s'}} onClick={() => navigate('/cash', { state: { view: 'Payables' } })} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
                             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                                 <div>
                                     <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Hutang Toko (Ke Supplier)</div>
@@ -219,7 +219,7 @@ const ControlCenter = ({ user }) => {
                             <div style={{color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '12px'}}>Uang yang harus dibayar.</div>
                         </div>
 
-                        <div className="glass-panel" style={{borderTop: '4px solid var(--primary-color)', cursor: 'pointer', transition: 'transform 0.2s', gridColumn: '1 / -1', background: 'linear-gradient(to right, rgba(234, 88, 12, 0.1), transparent)'}} onClick={() => navigate('/cash')}>
+                        <div className="glass-panel" style={{borderTop: '4px solid var(--primary-color)', cursor: 'pointer', transition: 'transform 0.2s', gridColumn: '1 / -1', background: 'linear-gradient(to right, rgba(234, 88, 12, 0.1), transparent)'}} onClick={() => navigate('/cash', { state: { view: 'CashFlow' } })}>
                             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                                 <div>
                                     <div style={{color: 'var(--text-secondary)', fontSize: '1rem', marginBottom: '8px'}}>Saldo Kas Tunai Saat Ini</div>
@@ -279,6 +279,20 @@ const InventoryView = ({ inventory, refreshData, user }) => {
         }
     };
 
+    const downloadBarcode = (sku) => {
+        const svg = document.querySelector(`#barcode-${sku} svg`) || document.getElementById(`barcode-${sku}`);
+        if (!svg) return alert("Barcode belum siap");
+        const svgData = new XMLSerializer().serializeToString(svg);
+        const blob = new Blob([svgData], {type: "image/svg+xml;charset=utf-8"});
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `barcode-${sku}.svg`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
         <div style={{animation: 'fadeIn 0.5s ease-out'}}>
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
@@ -305,7 +319,7 @@ const InventoryView = ({ inventory, refreshData, user }) => {
                 <table className="data-table">
                     <thead>
                         <tr>
-                            <th>SKU</th>
+                            <th>Kode</th>
                             <th>Nama Barang</th>
                             <th>Kategori</th>
                             <th>Cabang</th>
@@ -318,10 +332,11 @@ const InventoryView = ({ inventory, refreshData, user }) => {
                             const isLow = item.stock <= item.min_stock;
                             return (
                                 <tr key={item.id}>
-                                    <td style={{padding: '8px 16px'}}>
-                                        <div style={{background: 'white', padding: '4px 8px', borderRadius: '4px', display: 'inline-block'}}>
+                                    <td style={{padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px'}}>
+                                        <div id={`barcode-${item.sku}`} style={{background: 'white', padding: '4px 8px', borderRadius: '4px', display: 'inline-block'}}>
                                             <Barcode value={item.sku} height={30} width={1.5} fontSize={12} displayValue={true} background="transparent" margin={0} />
                                         </div>
+                                        <button className="btn btn-outline" style={{padding: '4px 8px', fontSize: '0.8rem'}} onClick={() => downloadBarcode(item.sku)} title="Unduh Barcode">⬇️</button>
                                     </td>
                                     <td style={{color: 'var(--text-primary)', fontWeight: '500'}}>{item.name}</td>
                                     <td><span style={{background: 'var(--border-color)', padding: '4px 10px', borderRadius: '4px', fontSize: '0.8rem'}}>{item.category}</span></td>

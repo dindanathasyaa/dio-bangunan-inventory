@@ -230,6 +230,22 @@ module.exports = function(app, pool) {
     });
 
     // --- DEBT (Hutang Piutang) ---
+    app.post('/api/payables/new', async (req, res) => {
+        const { branch_id, supplier_name, total_debt } = req.body;
+        const connection = await pool.getConnection();
+        try {
+            await connection.query(
+                `INSERT INTO payables (purchase_id, supplier_name, total_debt, status) VALUES (0, ?, ?, 'Belum Lunas')`,
+                [supplier_name, total_debt]
+            );
+            res.status(201).json({ message: 'Hutang berhasil dicatat' });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        } finally {
+            connection.release();
+        }
+    });
+
     app.get('/api/receivables', async (req, res) => {
         try {
             const [rows] = await pool.query('SELECT * FROM receivables ORDER BY created_at DESC');
