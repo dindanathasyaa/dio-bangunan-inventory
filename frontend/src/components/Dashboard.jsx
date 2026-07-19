@@ -13,6 +13,8 @@ const Dashboard = ({ user, setUser }) => {
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
     // Sidebar state
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    // Settings modal state
+    const [showSettingsModal, setShowSettingsModal] = useState(false);
 
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
@@ -94,8 +96,8 @@ const Dashboard = ({ user, setUser }) => {
                 
                 <div style={{marginTop: 'auto'}}>
                     <div style={{display: 'flex', justifyContent: 'center', marginBottom: '16px'}}>
-                        <button className="role-badge" style={{width: '100%', border: 'none', cursor: 'pointer', gap: '8px'}}>
-                            ⚙️ Settings
+                        <button className="role-badge" onClick={() => setShowSettingsModal(true)} style={{width: '100%', border: 'none', cursor: 'pointer', gap: '8px'}}>
+                            Setting
                         </button>
                     </div>
                     <button className="btn btn-danger" style={{width: '100%'}} onClick={handleLogout}>
@@ -127,6 +129,36 @@ const Dashboard = ({ user, setUser }) => {
                     <Route path="/inventory" element={<InventoryView inventory={inventory} refreshData={fetchData} user={user} />} />
                 </Routes>
             </main>
+
+            {/* Settings Modal */}
+            {showSettingsModal && (
+                <div className="modal-overlay" onClick={() => setShowSettingsModal(false)}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()}>
+                        <h2 style={{marginBottom: '24px', color: 'var(--text-primary)'}}>Pengaturan Akun</h2>
+                        
+                        <div style={{background: 'var(--item-bg)', padding: '20px', borderRadius: '12px', marginBottom: '24px'}}>
+                            <div style={{marginBottom: '12px'}}>
+                                <span style={{color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'block'}}>Username</span>
+                                <strong style={{color: 'var(--text-primary)', fontSize: '1.1rem'}}>{user.username}</strong>
+                            </div>
+                            <div style={{marginBottom: '12px'}}>
+                                <span style={{color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'block'}}>Peran / Hak Akses</span>
+                                <strong style={{color: 'var(--text-primary)', fontSize: '1.1rem'}}>{user.role === 'OWNER' ? 'Pemilik Toko' : 'Manajer Toko'}</strong>
+                            </div>
+                            {user.role === 'MANAGER' && (
+                                <div>
+                                    <span style={{color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'block'}}>Lokasi Cabang</span>
+                                    <strong style={{color: 'var(--text-primary)', fontSize: '1.1rem'}}>Toko {user.branch_id}</strong>
+                                </div>
+                            )}
+                        </div>
+
+                        <div style={{display: 'flex', gap: '12px', justifyContent: 'flex-end'}}>
+                            <button className="btn btn-outline" onClick={() => setShowSettingsModal(false)}>Tutup</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
