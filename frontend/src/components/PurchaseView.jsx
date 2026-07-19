@@ -86,7 +86,7 @@ const PurchaseView = ({ user }) => {
     return (
         <div style={{animation: 'fadeIn 0.5s ease-out', display: 'flex', gap: '24px', height: '100%'}}>
             <div className="glass-panel" style={{flex: 2, display: 'flex', flexDirection: 'column'}}>
-                <h2>Katalog Pembelian (Kulakan)</h2>
+                <h2>Katalog Pembelian</h2>
                 <input 
                     type="text" 
                     className="input-field" 
@@ -102,7 +102,7 @@ const PurchaseView = ({ user }) => {
                             <div style={{fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '8px'}}>[{p.sku}]</div>
                             <div style={{marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                                 <span style={{color: 'var(--primary-color)', fontWeight: 'bold'}}>Stok: {p.stock}</span>
-                                <span style={{background: 'rgba(56, 189, 248, 0.1)', color: 'var(--secondary-color)', padding: '4px 8px', borderRadius: '4px'}}>+ Kulakan</span>
+                                <span style={{background: 'rgba(56, 189, 248, 0.1)', color: 'var(--secondary-color)', padding: '4px 8px', borderRadius: '4px'}}>+ Beli</span>
                             </div>
                         </div>
                     ))}
@@ -110,7 +110,7 @@ const PurchaseView = ({ user }) => {
             </div>
 
             <div className="glass-panel" style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
-                <h2>Keranjang Kulakan</h2>
+                <h2>Keranjang Pembelian</h2>
                 <div style={{flex: 1, overflowY: 'auto', marginBottom: '16px'}}>
                     {cart.map(c => (
                         <div key={c.id} style={{display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px', background: 'var(--item-bg)', padding: '12px', borderRadius: '8px'}}>
@@ -148,7 +148,7 @@ const PurchaseView = ({ user }) => {
                         </select>
                     </div>
                     <button className="btn btn-secondary" style={{width: '100%', padding: '16px', fontSize: '1.1rem'}} onClick={checkout} disabled={loading || cart.length === 0}>
-                        {loading ? 'Memproses...' : 'Selesaikan Kulakan'}
+                        {loading ? 'Memproses...' : 'Selesaikan Pembelian'}
                     </button>
                 </div>
             </div>

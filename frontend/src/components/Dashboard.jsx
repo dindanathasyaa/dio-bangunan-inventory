@@ -68,7 +68,7 @@ const Dashboard = ({ user, setUser }) => {
                     {user.role === 'OWNER' && (
                         <>
                             <div style={{fontSize: '0.8rem', color: 'var(--text-secondary)', padding: '12px 20px', fontWeight: 'bold', letterSpacing: '1px', marginTop: '16px'}}>MANAJEMEN OWNER</div>
-                            <Link to="/purchases" className={`nav-link ${location.pathname === '/purchases' ? 'active' : ''}`}>Pembelian (Kulakan)</Link>
+                            <Link to="/purchases" className={`nav-link ${location.pathname === '/purchases' ? 'active' : ''}`}>Pembelian</Link>
                             <Link to="/cash" className={`nav-link ${location.pathname === '/cash' ? 'active' : ''}`}>Kas, Piutang, Hutang</Link>
                             <Link to="/categories" className={`nav-link ${location.pathname === '/categories' ? 'active' : ''}`}>Pengaturan Kategori</Link>
                             <Link to="/scanner" className={`nav-link ${location.pathname === '/scanner' ? 'active' : ''}`}>Scan Barcode</Link>
