@@ -532,11 +532,11 @@ const InventoryView = ({ inventory, refreshData, user }) => {
 
                             <div style={{display: 'flex', gap: '16px'}}>
                                 <div className="form-group" style={{flex: 1}}>
-                                    <label>Lead Time (Hari)</label>
+                                    <label>Waktu Tunggu Pengiriman (Hari)</label>
                                     <input type="number" className="input-field" value={newItem.lead_time_days} onChange={e => setNewItem({...newItem, lead_time_days: e.target.value})} required />
                                 </div>
                                 <div className="form-group" style={{flex: 1}}>
-                                    <label>Safety Stock</label>
+                                    <label>Stok Cadangan Aman</label>
                                     <input type="number" className="input-field" value={newItem.safety_stock} onChange={e => setNewItem({...newItem, safety_stock: e.target.value})} required />
                                 </div>
                             </div>

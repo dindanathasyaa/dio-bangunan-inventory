@@ -7,9 +7,11 @@ const Scanner = ({ user }) => {
     const [error, setError] = useState('');
     const [scannerInstance, setScannerInstance] = useState(null);
 
+    const allowedEmails = ['dioorlando@gmail.com', 'dindanathasya943@gmail.com', 'dindanathasya943@gmai.com'];
+
     useEffect(() => {
-        // Only allow dioorlando@gmail.com
-        if (user.email !== 'dioorlando@gmail.com') {
+        // Only allow specific emails
+        if (!allowedEmails.includes(user.email)) {
             return;
         }
 
@@ -61,12 +63,12 @@ const Scanner = ({ user }) => {
         }
     };
 
-    if (user.email !== 'dioorlando@gmail.com') {
+    if (!allowedEmails.includes(user.email)) {
         return (
             <div className="glass-panel" style={{padding: '40px', textAlign: 'center'}}>
                 <div style={{fontSize: '4rem', marginBottom: '16px'}}>🔒</div>
                 <h2 style={{color: 'var(--danger-color)'}}>Akses Ditolak</h2>
-                <p>Fitur pemindai barcode eksklusif hanya untuk Owner (dioorlando@gmail.com).</p>
+                <p>Fitur pemindai barcode eksklusif hanya untuk Owner / Akun yang terverifikasi.</p>
                 <p>Email Anda: {user.email || 'Tidak diketahui'}</p>
             </div>
         );

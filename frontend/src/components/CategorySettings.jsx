@@ -71,11 +71,11 @@ const CategorySettings = () => {
                     <input type="text" className="input-field" value={name} onChange={e => setName(e.target.value)} required placeholder="Bahan Bangunan" />
                 </div>
                 <div>
-                    <label style={{display: 'block', color: 'var(--text-secondary)', marginBottom: '8px'}}>Lead Time Default (Hari)</label>
+                    <label style={{display: 'block', color: 'var(--text-secondary)', marginBottom: '8px'}}>Waktu Tunggu Pengiriman / Lead Time (Hari)</label>
                     <input type="number" className="input-field" value={leadTime} onChange={e => setLeadTime(e.target.value)} required min="1" />
                 </div>
                 <div>
-                    <label style={{display: 'block', color: 'var(--text-secondary)', marginBottom: '8px'}}>Safety Stock Default</label>
+                    <label style={{display: 'block', color: 'var(--text-secondary)', marginBottom: '8px'}}>Stok Cadangan Aman / Safety Stock</label>
                     <input type="number" className="input-field" value={safetyStock} onChange={e => setSafetyStock(e.target.value)} required min="1" />
                 </div>
                 <button type="submit" className="btn btn-primary" disabled={loading}>
@@ -90,8 +90,8 @@ const CategorySettings = () => {
                     <tr>
                         <th>ID</th>
                         <th>Kategori</th>
-                        <th>Default Lead Time (Hari)</th>
-                        <th>Default Safety Stock</th>
+                        <th>Default Waktu Tunggu (Hari)</th>
+                        <th>Default Stok Cadangan</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
