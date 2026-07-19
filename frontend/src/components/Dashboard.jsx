@@ -63,7 +63,7 @@ const Dashboard = ({ user, setUser }) => {
                     {isSidebarOpen ? '❮' : '❯'}
                 </button>
                 <div className="logo-container" style={{paddingBottom: '0', display: 'flex', justifyContent: 'center'}}>
-                    <img src="/logo-transparent.png" alt="Dio Bangunan Logo" className="logo-img" style={{width: '280px'}} />
+                    <img src="/logo-transparent.png" alt="Dio Bangunan Logo" className="logo-img" style={{width: '100%'}} />
                 </div>
                 
                 <nav style={{display: 'flex', flexDirection: 'column', marginTop: '10px'}}>
