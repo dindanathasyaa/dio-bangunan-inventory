@@ -46,7 +46,7 @@ const PurchaseView = ({ user }) => {
     }
 
     return (
-        <div style={{animation: 'fadeIn 0.5s ease-out', maxWidth: '600px', margin: '0 auto', padding: '24px'}}>
+        <div style={{animation: 'fadeIn 0.5s ease-out', width: '100%', padding: '24px'}}>
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
                 <h1 style={{margin: 0}}>Pencatatan Pembelian (Hutang)</h1>
                 <button className="btn btn-outline" onClick={() => navigate('/')}>Kembali ke Dashboard</button>

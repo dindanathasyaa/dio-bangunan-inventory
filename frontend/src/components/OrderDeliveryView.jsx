@@ -85,7 +85,7 @@ const OrderDeliveryView = ({ user }) => {
             </div>
 
             {view === 'NewOrder' && (
-                <div style={{maxWidth: '600px', margin: '0 auto', width: '100%'}}>
+                <div style={{width: '100%'}}>
                     <div className="glass-panel">
                         <h2 style={{marginBottom: '24px'}}>Input Orderan & Pengantaran</h2>
                         <form onSubmit={submitOrder}>

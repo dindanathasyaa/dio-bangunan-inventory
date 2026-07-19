@@ -238,6 +238,7 @@ const ControlCenter = ({ user }) => {
 
 // ... keep InventoryView as is
 const InventoryView = ({ inventory, refreshData, user }) => {
+    const [search, setSearch] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('Semua');
@@ -263,7 +264,11 @@ const InventoryView = ({ inventory, refreshData, user }) => {
     }, []);
 
     const categories = ['Semua', ...new Set(inventory.map(item => item.category))];
-    const filteredInventory = selectedCategory === 'Semua' ? inventory : inventory.filter(item => item.category === selectedCategory);
+    const filteredInventory = inventory.filter(item => {
+        const matchesCategory = selectedCategory === 'Semua' || item.category === selectedCategory;
+        const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase()) || item.sku.toLowerCase().includes(search.toLowerCase());
+        return matchesCategory && matchesSearch;
+    });
 
     const handleAddItem = async (e) => {
         e.preventDefault();
@@ -298,6 +303,14 @@ const InventoryView = ({ inventory, refreshData, user }) => {
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
                 <h1 style={{margin: 0}}>Data Inventory</h1>
                 <div style={{display: 'flex', gap: '16px', alignItems: 'center'}}>
+                    <input 
+                        type="text" 
+                        className="input-field" 
+                        placeholder="Cari barang atau kode..." 
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        style={{marginBottom: 0, minWidth: '250px'}}
+                    />
                     <div style={{position: 'relative'}}>
                         <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} style={{minWidth: '240px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', background: 'var(--item-bg)', border: isDropdownOpen ? '2px solid var(--primary-color)' : '1px solid var(--border-color)', color: 'var(--text-primary)', padding: '12px 20px', borderRadius: '14px', outline: 'none'}}>
                             <span style={{fontWeight: '600'}}>{selectedCategory}</span>
