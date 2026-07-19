@@ -46,15 +46,6 @@ const Login = ({ setUser }) => {
                     />
                     <button type="submit" className="btn" style={{marginTop: '12px'}}>Login ke Dashboard</button>
                 </form>
-                
-                <div style={{marginTop: '32px', fontSize: '0.85rem', color: 'var(--text-secondary)', textAlign: 'left', background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '8px'}}>
-                    <p style={{fontWeight: 'bold', marginBottom: '8px', color: 'white'}}>📋 Akun Demo:</p>
-                    <ul style={{listStylePosition: 'inside'}}>
-                        <li><strong>owner</strong> / password</li>
-                        <li><strong>manager1</strong> / password</li>
-                        <li><strong>manager2</strong> / password</li>
-                    </ul>
-                </div>
             </div>
         </div>
     );
