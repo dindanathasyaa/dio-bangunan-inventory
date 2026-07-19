@@ -94,9 +94,9 @@ const Dashboard = ({ user, setUser }) => {
                 
                 <div style={{marginTop: 'auto'}}>
                     <div style={{display: 'flex', justifyContent: 'center', marginBottom: '16px'}}>
-                        <div className="role-badge" style={{width: '100%'}}>
-                            {user.role === 'OWNER' ? 'Pemilik' : `Manajer Toko ${user.branch_id}`}
-                        </div>
+                        <button className="role-badge" style={{width: '100%', border: 'none', cursor: 'pointer', gap: '8px'}}>
+                            ⚙️ Settings
+                        </button>
                     </div>
                     <button className="btn btn-danger" style={{width: '100%'}} onClick={handleLogout}>
                         Logout
