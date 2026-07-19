@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Barcode from 'react-barcode';
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
+import DSSView from './DSSView';
+import InventoryView from './InventoryView';
+import CategorySettings from './CategorySettings';
+import Scanner from './Scanner';
 
 const Dashboard = ({ user, setUser }) => {
     const navigate = useNavigate();
@@ -92,6 +96,16 @@ const Dashboard = ({ user, setUser }) => {
                     <Link to="/inventory" className={`nav-link ${location.pathname === '/inventory' ? 'active' : ''}`}>
                         Data Inventory
                     </Link>
+                    {user.role === 'OWNER' && (
+                        <>
+                            <Link to="/categories" className={`nav-link ${location.pathname === '/categories' ? 'active' : ''}`}>
+                                Pengaturan Kategori
+                            </Link>
+                            <Link to="/scanner" className={`nav-link ${location.pathname === '/scanner' ? 'active' : ''}`}>
+                                Scan Barcode (Eksklusif)
+                            </Link>
+                        </>
+                    )}
                 </nav>
                 
                 <div style={{marginTop: 'auto'}}>
@@ -127,6 +141,8 @@ const Dashboard = ({ user, setUser }) => {
                 <Routes>
                     <Route path="/" element={<DSSView dss={dss} user={user} theme={theme} toggleTheme={toggleTheme} />} />
                     <Route path="/inventory" element={<InventoryView inventory={inventory} refreshData={fetchData} user={user} />} />
+                    <Route path="/categories" element={<CategorySettings />} />
+                    <Route path="/scanner" element={<Scanner user={user} />} />
                 </Routes>
             </main>
 
@@ -250,14 +266,29 @@ const InventoryView = ({ inventory, refreshData, user }) => {
     const [showModal, setShowModal] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('Semua');
+    const [dbCategories, setDbCategories] = useState([]);
+    const [unitType, setUnitType] = useState('Kodi/Lembar');
+    const [kodi, setKodi] = useState(0);
+    const [lembar, setLembar] = useState(0);
+
     const [newItem, setNewItem] = useState({
         sku: '',
         name: '',
-        category: '',
+        category_id: '',
+        unit: 'Lembar',
         price: '',
-        stock: '',
+        stock: 0,
+        lead_time_days: 3,
+        safety_stock: 5,
         branch_id: user.role === 'MANAGER' ? user.branch_id : 1
     });
+
+    useEffect(() => {
+        // Fetch categories from DB for the form
+        axios.get('http://localhost:5000/api/categories').then(res => {
+            setDbCategories(res.data);
+        }).catch(err => console.error(err));
+    }, []);
 
     const categories = ['Semua', ...new Set(inventory.map(item => item.category))];
     
@@ -268,14 +299,38 @@ const InventoryView = ({ inventory, refreshData, user }) => {
     const handleAddItem = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/inventory', newItem);
+            const dataToSubmit = {
+                ...newItem,
+                stock: lembar
+            };
+            await axios.post('http://localhost:5000/api/inventory', dataToSubmit);
             setShowModal(false);
-            setNewItem({ sku: '', name: '', category: '', price: '', stock: '', branch_id: user.role === 'MANAGER' ? user.branch_id : 1 });
+            setNewItem({ sku: '', name: '', category_id: '', unit: 'Lembar', price: '', stock: 0, lead_time_days: 3, safety_stock: 5, branch_id: user.role === 'MANAGER' ? user.branch_id : 1 });
+            setKodi(0);
+            setLembar(0);
             refreshData();
         } catch (err) {
             console.error("Error adding item:", err);
             alert("Gagal menambahkan barang. SKU mungkin sudah ada.");
         }
+    };
+
+    const handleCategoryChange = (e) => {
+        const catId = e.target.value;
+        const cat = dbCategories.find(c => c.id === parseInt(catId));
+        if (cat) {
+            setNewItem({...newItem, category_id: catId, lead_time_days: cat.default_lead_time, safety_stock: cat.default_safety_stock});
+        }
+    };
+
+    const handleKodiChange = (val) => {
+        setKodi(val);
+        setLembar(val * 20);
+    };
+
+    const handleLembarChange = (val) => {
+        setLembar(val);
+        setKodi(val / 20);
     };
 
     return (
@@ -431,7 +486,12 @@ const InventoryView = ({ inventory, refreshData, user }) => {
                             </div>
                             <div className="form-group">
                                 <label>Kategori</label>
-                                <input type="text" className="input-field" value={newItem.category} onChange={e => setNewItem({...newItem, category: e.target.value})} required />
+                                <select className="input-field" value={newItem.category_id} onChange={handleCategoryChange} required>
+                                    <option value="" disabled>Pilih Kategori</option>
+                                    {dbCategories.map(cat => (
+                                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                    ))}
+                                </select>
                             </div>
                             <div style={{display: 'flex', gap: '16px'}}>
                                 <div className="form-group" style={{flex: 1}}>
@@ -439,8 +499,47 @@ const InventoryView = ({ inventory, refreshData, user }) => {
                                     <input type="number" className="input-field" value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} required />
                                 </div>
                                 <div className="form-group" style={{flex: 1}}>
-                                    <label>Stok Awal</label>
-                                    <input type="number" className="input-field" value={newItem.stock} onChange={e => setNewItem({...newItem, stock: e.target.value})} required />
+                                    <label>Jenis Satuan Form</label>
+                                    <select className="input-field" value={unitType} onChange={e => setUnitType(e.target.value)}>
+                                        <option value="Kodi/Lembar">Kodi / Lembar</option>
+                                        <option value="Tunggal">Satuan Tunggal (Sak, Kg, dll)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {unitType === 'Kodi/Lembar' ? (
+                                <div style={{display: 'flex', gap: '16px', background: 'var(--item-bg)', padding: '16px', borderRadius: '8px', marginBottom: '16px'}}>
+                                    <div className="form-group" style={{flex: 1, marginBottom: 0}}>
+                                        <label>Stok (Kodi)</label>
+                                        <input type="number" className="input-field" value={kodi} onChange={e => handleKodiChange(e.target.value)} />
+                                    </div>
+                                    <div style={{display: 'flex', alignItems: 'center', marginTop: '24px'}}>🔀</div>
+                                    <div className="form-group" style={{flex: 1, marginBottom: 0}}>
+                                        <label>Stok (Lembar)</label>
+                                        <input type="number" className="input-field" value={lembar} onChange={e => handleLembarChange(e.target.value)} />
+                                    </div>
+                                </div>
+                            ) : (
+                                <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
+                                    <div className="form-group" style={{flex: 1}}>
+                                        <label>Satuan (Misal: Sak, Dus)</label>
+                                        <input type="text" className="input-field" value={newItem.unit} onChange={e => setNewItem({...newItem, unit: e.target.value})} required={unitType === 'Tunggal'} />
+                                    </div>
+                                    <div className="form-group" style={{flex: 1}}>
+                                        <label>Stok</label>
+                                        <input type="number" className="input-field" value={lembar} onChange={e => handleLembarChange(e.target.value)} required />
+                                    </div>
+                                </div>
+                            )}
+
+                            <div style={{display: 'flex', gap: '16px'}}>
+                                <div className="form-group" style={{flex: 1}}>
+                                    <label>Lead Time (Hari)</label>
+                                    <input type="number" className="input-field" value={newItem.lead_time_days} onChange={e => setNewItem({...newItem, lead_time_days: e.target.value})} required />
+                                </div>
+                                <div className="form-group" style={{flex: 1}}>
+                                    <label>Safety Stock</label>
+                                    <input type="number" className="input-field" value={newItem.safety_stock} onChange={e => setNewItem({...newItem, safety_stock: e.target.value})} required />
                                 </div>
                             </div>
                             

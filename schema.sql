@@ -10,20 +10,30 @@ CREATE TABLE branches (
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50),
+    email VARCHAR(100) UNIQUE NULL,
     password VARCHAR(255),
     role ENUM('OWNER', 'MANAGER'),
     branch_id INT NULL,
     FOREIGN KEY (branch_id) REFERENCES branches(id)
 );
 
+CREATE TABLE categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) UNIQUE,
+    default_lead_time INT DEFAULT 3,
+    default_safety_stock INT DEFAULT 5
+);
+
 CREATE TABLE products (
     id INT AUTO_INCREMENT PRIMARY KEY,
     sku VARCHAR(50) UNIQUE,
     name VARCHAR(255),
-    category VARCHAR(100),
+    category_id INT,
+    unit VARCHAR(50),
     price DECIMAL(10,2),
     ordering_cost DECIMAL(10,2) DEFAULT 0,
-    holding_cost DECIMAL(10,2) DEFAULT 0
+    holding_cost DECIMAL(10,2) DEFAULT 0,
+    FOREIGN KEY (category_id) REFERENCES categories(id)
 );
 
 CREATE TABLE inventory (
@@ -52,23 +62,28 @@ CREATE TABLE transactions (
 -- Insert Dummy Data for Demo
 INSERT INTO branches (name, address) VALUES ('Toko 1 (Pusat)', 'Jl. Merdeka No. 1'), ('Toko 2 (Cabang)', 'Jl. Sudirman No. 2');
 
-INSERT INTO users (username, password, role, branch_id) VALUES 
-('owner', 'password', 'OWNER', NULL),
-('manager1', 'password', 'MANAGER', 1),
-('manager2', 'password', 'MANAGER', 2);
+INSERT INTO users (username, email, password, role, branch_id) VALUES 
+('owner', 'dioorlando@gmail.com', 'password', 'OWNER', NULL),
+('manager1', 'manager1@diobangunan.com', 'password', 'MANAGER', 1),
+('manager2', 'manager2@diobangunan.com', 'password', 'MANAGER', 2);
 
-INSERT INTO products (sku, name, category, price, ordering_cost, holding_cost) VALUES 
-('PRD001', 'Semen Portland 50kg', 'Bahan Bangunan', 65000.00, 50000.00, 2000.00),
-('PRD002', 'Cat Tembok Putih 5kg', 'Cat', 120000.00, 30000.00, 5000.00),
-('PRD003', 'Paku Beton 5cm (Box)', 'Paku', 25000.00, 10000.00, 1000.00);
+INSERT INTO categories (name, default_lead_time, default_safety_stock) VALUES 
+('Bahan Bangunan', 3, 20),
+('Cat', 2, 10),
+('Paku', 1, 15);
+
+INSERT INTO products (sku, name, category_id, unit, price, ordering_cost, holding_cost) VALUES 
+('PRD001', 'Semen Portland 50kg', 1, 'Sak', 65000.00, 50000.00, 2000.00),
+('PRD002', 'Cat Tembok Putih 5kg', 2, 'Kaleng', 120000.00, 30000.00, 5000.00),
+('PRD003', 'Paku Beton 5cm', 3, 'Kg', 25000.00, 10000.00, 1000.00);
 
 INSERT INTO inventory (product_id, branch_id, stock, lead_time_days, safety_stock) VALUES 
-(1, 1, 150, 2, 20),
-(1, 2, 10, 2, 15), -- Low stock in branch 2
-(2, 1, 30, 3, 10),
-(2, 2, 40, 3, 10),
-(3, 1, 5, 1, 10), -- Low stock in branch 1
-(3, 2, 100, 1, 10); -- Excess stock in branch 2, good for transfer
+(1, 1, 150, 3, 20),
+(1, 2, 10, 3, 20),
+(2, 1, 30, 2, 10),
+(2, 2, 40, 2, 10),
+(3, 1, 5, 1, 15),
+(3, 2, 100, 1, 15);
 
 INSERT INTO transactions (product_id, branch_id, type, quantity) VALUES 
 (1, 1, 'IN', 150),
