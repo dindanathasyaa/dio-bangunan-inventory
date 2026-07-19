@@ -14,7 +14,11 @@ const Login = ({ setUser }) => {
             localStorage.setItem('user', JSON.stringify(response.data));
             setUser(response.data);
         } catch (err) {
-            setError('Username atau Password salah!');
+            if (!err.response) {
+                setError('Gagal terhubung ke server. Pastikan backend sudah berjalan.');
+            } else {
+                setError('Username atau Password salah!');
+            }
         }
     };
 
@@ -22,7 +26,7 @@ const Login = ({ setUser }) => {
         <div className="login-container">
             <div className="glass-panel login-form" style={{background: 'rgba(255, 255, 255, 0.15)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 8px 32px rgba(0,0,0,0.2)'}}>
                 <div className="logo-container" style={{marginBottom: '1rem'}}>
-                    <img src="/logo.jpeg" alt="Dio Bangunan Logo" className="logo-img" style={{maxWidth: '220px', borderRadius: '16px'}} />
+                    <img src="/logo-v2.jpeg" alt="Dio Bangunan Logo" className="logo-img" style={{maxWidth: '220px', borderRadius: '16px'}} />
                 </div>
                 
                 {error && <div style={{color: 'var(--danger-color)', marginBottom: '16px', background: 'rgba(239, 68, 68, 0.1)', padding: '10px', borderRadius: '8px'}}>{error}</div>}
