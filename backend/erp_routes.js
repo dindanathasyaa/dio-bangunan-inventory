@@ -119,6 +119,33 @@ module.exports = function(app, pool) {
     });
 
     // --- ORDERS (Phone Orders) ---
+    app.post('/api/orders/simple', async (req, res) => {
+        const { branch_id, customer_name, phone, address, total_amount } = req.body;
+        const connection = await pool.getConnection();
+        try {
+            await connection.beginTransaction();
+
+            const [orderRes] = await connection.query(
+                `INSERT INTO orders (branch_id, customer_name, phone, address, total_amount) VALUES (?, ?, ?, ?, ?)`,
+                [branch_id, customer_name, phone, address, total_amount]
+            );
+            const order_id = orderRes.insertId;
+
+            await connection.query(
+                `INSERT INTO deliveries (order_id) VALUES (?)`,
+                [order_id]
+            );
+
+            await connection.commit();
+            res.status(201).json({ message: 'Order berhasil', order_id });
+        } catch (error) {
+            await connection.rollback();
+            res.status(500).json({ error: error.message });
+        } finally {
+            connection.release();
+        }
+    });
+
     app.post('/api/orders', async (req, res) => {
         const { branch_id, customer_name, phone, address, items } = req.body;
         const connection = await pool.getConnection();
