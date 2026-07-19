@@ -4,8 +4,8 @@ import axios from 'axios';
 const CategorySettings = () => {
     const [categories, setCategories] = useState([]);
     const [name, setName] = useState('');
-    const [leadTime, setLeadTime] = useState(3);
-    const [safetyStock, setSafetyStock] = useState(5);
+    const [minStock, setMinStock] = useState(5);
+    const [maxStock, setMaxStock] = useState(50);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
 
@@ -29,13 +29,13 @@ const CategorySettings = () => {
         try {
             await axios.post('http://localhost:5000/api/categories', {
                 name,
-                default_lead_time: leadTime,
-                default_safety_stock: safetyStock
+                min_stock: minStock,
+                max_stock: maxStock
             });
             setMessage('Kategori berhasil ditambahkan!');
             setName('');
-            setLeadTime(3);
-            setSafetyStock(5);
+            setMinStock(5);
+            setMaxStock(50);
             fetchCategories();
         } catch (error) {
             setMessage('Gagal menambahkan kategori');
@@ -45,13 +45,13 @@ const CategorySettings = () => {
         }
     };
 
-    const handleUpdate = async (id, newLeadTime, newSafetyStock) => {
+    const handleUpdate = async (id, newMin, newMax) => {
         try {
             const cat = categories.find(c => c.id === id);
             await axios.put(`http://localhost:5000/api/categories/${id}`, {
                 name: cat.name,
-                default_lead_time: newLeadTime,
-                default_safety_stock: newSafetyStock
+                min_stock: newMin,
+                max_stock: newMax
             });
             fetchCategories();
             alert('Berhasil diperbarui');
@@ -71,12 +71,12 @@ const CategorySettings = () => {
                     <input type="text" className="input-field" value={name} onChange={e => setName(e.target.value)} required placeholder="Bahan Bangunan" />
                 </div>
                 <div>
-                    <label style={{display: 'block', color: 'var(--text-secondary)', marginBottom: '8px'}}>Waktu Tunggu Pengiriman / Lead Time (Hari)</label>
-                    <input type="number" className="input-field" value={leadTime} onChange={e => setLeadTime(e.target.value)} required min="1" />
+                    <label style={{display: 'block', color: 'var(--text-secondary)', marginBottom: '8px'}}>Batas Minimum Stok</label>
+                    <input type="number" className="input-field" value={minStock} onChange={e => setMinStock(e.target.value)} required min="0" />
                 </div>
                 <div>
-                    <label style={{display: 'block', color: 'var(--text-secondary)', marginBottom: '8px'}}>Stok Cadangan Aman / Safety Stock</label>
-                    <input type="number" className="input-field" value={safetyStock} onChange={e => setSafetyStock(e.target.value)} required min="1" />
+                    <label style={{display: 'block', color: 'var(--text-secondary)', marginBottom: '8px'}}>Batas Maksimal Stok</label>
+                    <input type="number" className="input-field" value={maxStock} onChange={e => setMaxStock(e.target.value)} required min="1" />
                 </div>
                 <button type="submit" className="btn btn-primary" disabled={loading}>
                     {loading ? 'Menyimpan...' : 'Tambah Kategori'}
@@ -90,8 +90,8 @@ const CategorySettings = () => {
                     <tr>
                         <th>ID</th>
                         <th>Kategori</th>
-                        <th>Default Waktu Tunggu (Hari)</th>
-                        <th>Default Stok Cadangan</th>
+                        <th>Batas Minimum Stok</th>
+                        <th>Batas Maksimal Stok</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -101,13 +101,13 @@ const CategorySettings = () => {
                             <td>{cat.id}</td>
                             <td>{cat.name}</td>
                             <td>
-                                <input type="number" className="input-field" defaultValue={cat.default_lead_time} id={`lt-${cat.id}`} style={{width: '80px', padding: '4px 8px'}} />
+                                <input type="number" className="input-field" defaultValue={cat.min_stock} id={`min-${cat.id}`} style={{width: '80px', padding: '4px 8px'}} />
                             </td>
                             <td>
-                                <input type="number" className="input-field" defaultValue={cat.default_safety_stock} id={`ss-${cat.id}`} style={{width: '80px', padding: '4px 8px'}} />
+                                <input type="number" className="input-field" defaultValue={cat.max_stock} id={`max-${cat.id}`} style={{width: '80px', padding: '4px 8px'}} />
                             </td>
                             <td>
-                                <button className="btn btn-secondary" onClick={() => handleUpdate(cat.id, document.getElementById(`lt-${cat.id}`).value, document.getElementById(`ss-${cat.id}`).value)}>
+                                <button className="btn btn-secondary" onClick={() => handleUpdate(cat.id, document.getElementById(`min-${cat.id}`).value, document.getElementById(`max-${cat.id}`).value)}>
                                     Simpan Perubahan
                                 </button>
                             </td>

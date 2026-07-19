@@ -38,7 +38,7 @@ app.post('/api/login', async (req, res) => {
 app.get('/api/inventory', async (req, res) => {
     const branch_id = req.query.branch_id;
     let query = `
-        SELECT i.id, p.name, p.sku, c.name as category, p.unit, i.stock, i.lead_time_days, i.safety_stock, i.branch_id, b.name as branch_name 
+        SELECT i.id, p.name, p.sku, c.name as category, p.unit, i.stock, i.min_stock, i.max_stock, i.branch_id, b.name as branch_name 
         FROM inventory i
         JOIN products p ON i.product_id = p.id
         LEFT JOIN categories c ON p.category_id = c.id
@@ -59,7 +59,7 @@ app.get('/api/inventory', async (req, res) => {
 
 // Add New Inventory Item
 app.post('/api/inventory', async (req, res) => {
-    const { sku, name, category_id, unit, price, stock, branch_id, lead_time_days, safety_stock } = req.body;
+    const { sku, name, category_id, unit, price, stock, branch_id, min_stock, max_stock } = req.body;
     try {
         // 1. Check if product exists by SKU, if not, insert into products
         let product_id;
@@ -77,10 +77,10 @@ app.post('/api/inventory', async (req, res) => {
 
         // 2. Insert or update inventory for the specific branch
         await pool.query(
-            `INSERT INTO inventory (product_id, branch_id, stock, lead_time_days, safety_stock) 
+            `INSERT INTO inventory (product_id, branch_id, stock, min_stock, max_stock) 
              VALUES (?, ?, ?, ?, ?) 
              ON DUPLICATE KEY UPDATE stock = stock + ?`,
-            [product_id, branch_id, stock, lead_time_days, safety_stock, stock]
+            [product_id, branch_id, stock, min_stock, max_stock, stock]
         );
 
         // 3. Log transaction
@@ -106,11 +106,11 @@ app.get('/api/categories', async (req, res) => {
 });
 
 app.post('/api/categories', async (req, res) => {
-    const { name, default_lead_time, default_safety_stock } = req.body;
+    const { name, min_stock, max_stock } = req.body;
     try {
         await pool.query(
-            'INSERT INTO categories (name, default_lead_time, default_safety_stock) VALUES (?, ?, ?)',
-            [name, default_lead_time || 3, default_safety_stock || 5]
+            'INSERT INTO categories (name, min_stock, max_stock) VALUES (?, ?, ?)',
+            [name, min_stock || 5, max_stock || 50]
         );
         res.status(201).json({ message: 'Kategori berhasil ditambahkan' });
     } catch (error) {
@@ -120,11 +120,11 @@ app.post('/api/categories', async (req, res) => {
 
 app.put('/api/categories/:id', async (req, res) => {
     const { id } = req.params;
-    const { name, default_lead_time, default_safety_stock } = req.body;
+    const { name, min_stock, max_stock } = req.body;
     try {
         await pool.query(
-            'UPDATE categories SET name = ?, default_lead_time = ?, default_safety_stock = ? WHERE id = ?',
-            [name, default_lead_time, default_safety_stock, id]
+            'UPDATE categories SET name = ?, min_stock = ?, max_stock = ? WHERE id = ?',
+            [name, min_stock, max_stock, id]
         );
         res.json({ message: 'Kategori berhasil diupdate' });
     } catch (error) {
@@ -134,27 +134,22 @@ app.put('/api/categories/:id', async (req, res) => {
 
 // DSS Routes
 app.get('/api/dss/recommendations', async (req, res) => {
-    // 1. ROP (Reorder Point) calculation
-    // ROP = (Average Daily Sales * Lead Time) + Safety Stock
-    // Since we don't have historical daily sales in the dummy data, let's assume Average Daily Sales = 5 for demo purposes.
-    const avgDailySales = 5; 
-    
     try {
         const [inventoryRows] = await pool.query(`
-            SELECT i.product_id, i.branch_id, p.name, i.stock, i.lead_time_days, i.safety_stock, b.name as branch_name, p.sku
+            SELECT i.product_id, i.branch_id, p.name, i.stock, i.min_stock, i.max_stock, b.name as branch_name, p.sku
             FROM inventory i
             JOIN products p ON i.product_id = p.id
             JOIN branches b ON i.branch_id = b.id
         `);
         
-        let ropAlerts = [];
-        let transferSuggestions = [];
-
+        let ropAlerts = []; // We will reuse the variable name to keep frontend compatible, but it represents "Low Stock Alerts"
+        let transferSuggestions = []; // Represents "Overstock Alerts" now
+        
         for (let item of inventoryRows) {
-            const rop = (avgDailySales * item.lead_time_days) + item.safety_stock;
-            item.rop = rop;
+            item.rop = item.min_stock; // For frontend compatibility
             
-            if (item.stock <= rop) {
+            // Check minimum stock
+            if (item.stock <= item.min_stock) {
                 ropAlerts.push({
                     product_id: item.product_id,
                     product_name: item.name,
@@ -162,36 +157,22 @@ app.get('/api/dss/recommendations', async (req, res) => {
                     branch_id: item.branch_id,
                     branch_name: item.branch_name,
                     current_stock: item.stock,
-                    rop: rop,
-                    message: `Stok kritis! Sisa ${item.stock} di bawah batas ROP (${rop}).`
+                    rop: item.min_stock,
+                    message: `Stok mau habis! Tersisa ${item.stock}, batas minimum adalah ${item.min_stock}. Segera pesan lagi.`
                 });
+            }
 
-                // Check other branches for excess stock (Smart Transfer)
-                const [otherBranches] = await pool.query(`
-                    SELECT i.stock, i.branch_id, b.name as branch_name, i.safety_stock, i.lead_time_days
-                    FROM inventory i
-                    JOIN branches b ON i.branch_id = b.id
-                    WHERE i.product_id = ? AND i.branch_id != ?
-                `, [item.product_id, item.branch_id]);
-
-                for (let other of otherBranches) {
-                    const otherRop = (avgDailySales * other.lead_time_days) + other.safety_stock;
-                    // If the other branch has more than its ROP + the needed amount
-                    const needed = rop - item.stock;
-                    if (other.stock > (otherRop + needed)) {
-                        transferSuggestions.push({
-                            product_id: item.product_id,
-                            product_name: item.name,
-                            sku: item.sku,
-                            from_branch: other.branch_id,
-                            from_branch_name: other.branch_name,
-                            to_branch: item.branch_id,
-                            to_branch_name: item.branch_name,
-                            suggested_qty: needed,
-                            message: `Transfer ${needed} ${item.name} dari ${other.branch_name} ke ${item.branch_name} disarankan (stok ${other.branch_name} melimpah).`
-                        });
-                    }
-                }
+            // Check maximum stock (Overstock)
+            if (item.stock >= item.max_stock) {
+                transferSuggestions.push({
+                    product_id: item.product_id,
+                    product_name: item.name,
+                    sku: item.sku,
+                    from_branch: item.branch_id,
+                    from_branch_name: item.branch_name,
+                    suggested_qty: item.stock - item.max_stock,
+                    message: `Gudang kepenuhan! Terdapat ${item.stock} stok, melampaui batas maksimal (${item.max_stock}). Kurangi order atau adakan promo.`
+                });
             }
         }
 

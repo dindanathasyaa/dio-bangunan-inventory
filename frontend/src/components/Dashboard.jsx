@@ -196,16 +196,16 @@ const DSSView = ({ dss, user, theme, toggleTheme }) => (
         <div className="dashboard-grid">
             <div className="glass-panel" style={{borderTop: '4px solid var(--primary-color)'}}>
                 <div className="metric-card">
-                    <span className="metric-label">Peringatan ROP (Reorder Point)</span>
+                    <span className="metric-label">Peringatan Stok Minimum (Habis)</span>
                     <span className="metric-value" style={{color: 'var(--primary-color)'}}>{dss.ropAlerts.length}</span>
-                    <p style={{fontSize: '0.875rem'}}>Item berada di bawah batas aman.</p>
+                    <p style={{fontSize: '0.875rem'}}>Barang yang harus segera di-restok.</p>
                 </div>
             </div>
             <div className="glass-panel" style={{borderTop: '4px solid var(--secondary-color)'}}>
                 <div className="metric-card">
-                    <span className="metric-label">Saran Transfer Antar-Cabang</span>
+                    <span className="metric-label">Peringatan Stok Maksimum (Overstock)</span>
                     <span className="metric-value" style={{color: 'var(--secondary-color)'}}>{dss.transferSuggestions.length}</span>
-                    <p style={{fontSize: '0.875rem'}}>Peluang efisiensi (Smart Transfer).</p>
+                    <p style={{fontSize: '0.875rem'}}>Barang menumpuk melampaui batas maksimal.</p>
                 </div>
             </div>
         </div>
@@ -214,7 +214,7 @@ const DSSView = ({ dss, user, theme, toggleTheme }) => (
             {dss.ropAlerts.length > 0 && (
                 <div className="glass-panel alert-card critical">
                     <h3 style={{color: 'var(--primary-color)', display: 'flex', alignItems: 'center', gap: '8px'}}>
-                        Peringatan Restok (ROP Tercapai)
+                        Peringatan Restok (Stok Minimum Tercapai)
                     </h3>
                     <div style={{marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px'}}>
                         {dss.ropAlerts.map((alert, idx) => (
@@ -232,16 +232,16 @@ const DSSView = ({ dss, user, theme, toggleTheme }) => (
             {dss.transferSuggestions.length > 0 && (
                 <div className="glass-panel alert-card success">
                     <h3 style={{color: 'var(--secondary-color)', display: 'flex', alignItems: 'center', gap: '8px'}}>
-                        Rekomendasi Transfer Cerdas
+                        Peringatan Stok Maksimum (Overstock)
                     </h3>
-                    <p style={{marginBottom: '20px'}}>Terdapat kelebihan stok di cabang lain yang bisa dialokasikan untuk menutupi kekurangan.</p>
+                    <p style={{marginBottom: '20px'}}>Terdapat stok yang melampaui batas maksimal, perlu tindakan (seperti diskon) agar gudang tidak penuh.</p>
                     <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px'}}>
                         {dss.transferSuggestions.map((ts, idx) => (
                             <div key={idx} style={{background: 'var(--item-bg)', border: '1px solid var(--border-color)', padding: '20px', borderRadius: '12px'}}>
                                 <div style={{color: 'var(--text-primary)', fontWeight: 'bold', marginBottom: '12px'}}>[{ts.sku}] {ts.product_name}</div>
                                 <div style={{fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '16px', lineHeight: '1.5'}}>{ts.message}</div>
                                 {user.role === 'OWNER' && (
-                                    <button className="btn btn-secondary" style={{width: '100%', fontSize: '0.9rem'}}>Setujui Transfer</button>
+                                    <button className="btn btn-secondary" style={{width: '100%', fontSize: '0.9rem'}}>Buat Diskon Promo</button>
                                 )}
                             </div>
                         ))}
@@ -253,7 +253,7 @@ const DSSView = ({ dss, user, theme, toggleTheme }) => (
                 <div className="glass-panel" style={{textAlign: 'center', padding: '64px'}}>
                     <div style={{fontSize: '4rem', marginBottom: '16px'}}>✅</div>
                     <h3 style={{color: 'var(--text-primary)'}}>Semua Stok Terkendali</h3>
-                    <p>Tidak ada peringatan ROP atau saran transfer saat ini.</p>
+                    <p>Tidak ada peringatan stok habis atau peringatan stok melimpah saat ini.</p>
                 </div>
             )}
         </div>
@@ -276,8 +276,8 @@ const InventoryView = ({ inventory, refreshData, user }) => {
         unit: 'Lembar',
         price: '',
         stock: 0,
-        lead_time_days: 3,
-        safety_stock: 5,
+        min_stock: 5,
+        max_stock: 50,
         branch_id: user.role === 'MANAGER' ? user.branch_id : 1
     });
 
@@ -303,7 +303,7 @@ const InventoryView = ({ inventory, refreshData, user }) => {
             };
             await axios.post('http://localhost:5000/api/inventory', dataToSubmit);
             setShowModal(false);
-            setNewItem({ sku: '', name: '', category_id: '', unit: 'Lembar', price: '', stock: 0, lead_time_days: 3, safety_stock: 5, branch_id: user.role === 'MANAGER' ? user.branch_id : 1 });
+            setNewItem({ sku: '', name: '', category_id: '', unit: 'Lembar', price: '', stock: 0, min_stock: 5, max_stock: 50, branch_id: user.role === 'MANAGER' ? user.branch_id : 1 });
             setKodi(0);
             setLembar(0);
             refreshData();
@@ -317,7 +317,7 @@ const InventoryView = ({ inventory, refreshData, user }) => {
         const catId = e.target.value;
         const cat = dbCategories.find(c => c.id === parseInt(catId));
         if (cat) {
-            setNewItem({...newItem, category_id: catId, lead_time_days: cat.default_lead_time, safety_stock: cat.default_safety_stock});
+            setNewItem({...newItem, category_id: catId, min_stock: cat.min_stock, max_stock: cat.max_stock});
         }
     };
 
@@ -438,8 +438,7 @@ const InventoryView = ({ inventory, refreshData, user }) => {
                     </thead>
                     <tbody>
                         {filteredInventory.map(item => {
-                            const rop = (5 * item.lead_time_days) + item.safety_stock;
-                            const isLow = item.stock <= rop;
+                            const isLow = item.stock <= item.min_stock;
                             return (
                                 <tr key={item.id}>
                                     <td style={{padding: '8px 16px'}}>
@@ -532,12 +531,12 @@ const InventoryView = ({ inventory, refreshData, user }) => {
 
                             <div style={{display: 'flex', gap: '16px'}}>
                                 <div className="form-group" style={{flex: 1}}>
-                                    <label>Waktu Tunggu Pengiriman (Hari)</label>
-                                    <input type="number" className="input-field" value={newItem.lead_time_days} onChange={e => setNewItem({...newItem, lead_time_days: e.target.value})} required />
+                                    <label>Batas Minimum Stok</label>
+                                    <input type="number" className="input-field" value={newItem.min_stock} onChange={e => setNewItem({...newItem, min_stock: e.target.value})} required />
                                 </div>
                                 <div className="form-group" style={{flex: 1}}>
-                                    <label>Stok Cadangan Aman</label>
-                                    <input type="number" className="input-field" value={newItem.safety_stock} onChange={e => setNewItem({...newItem, safety_stock: e.target.value})} required />
+                                    <label>Batas Maksimal Stok</label>
+                                    <input type="number" className="input-field" value={newItem.max_stock} onChange={e => setNewItem({...newItem, max_stock: e.target.value})} required />
                                 </div>
                             </div>
                             
