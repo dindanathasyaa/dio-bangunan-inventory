@@ -83,19 +83,24 @@ const Dashboard = ({ user, setUser }) => {
                     </button>
                 </div>
             </aside>
+            
+            {/* Sidebar Toggle Button - Positioned in app-container so it is never clipped */}
+            <button 
+                className="sidebar-toggle" 
+                onClick={toggleSidebar}
+                style={{
+                    position: 'absolute',
+                    top: '40px',
+                    left: isSidebarOpen ? '244px' : '0px',
+                    borderRadius: isSidebarOpen ? '50%' : '0 50% 50% 0',
+                    transition: 'left 0.3s ease',
+                    zIndex: 100
+                }}
+            >
+                {isSidebarOpen ? '❮' : '❯'}
+            </button>
+            
             <main className="main-content">
-                <button 
-                    className="sidebar-toggle" 
-                    onClick={toggleSidebar}
-                    style={{
-                        left: isSidebarOpen ? '-16px' : '0px',
-                        borderRadius: isSidebarOpen ? '50%' : '0 50% 50% 0',
-                        borderLeft: isSidebarOpen ? '2px solid var(--border-color)' : 'none'
-                    }}
-                >
-                    {isSidebarOpen ? '❮' : '❯'}
-                </button>
-                
                 <Routes>
                     <Route path="/" element={<DSSView dss={dss} user={user} theme={theme} toggleTheme={toggleTheme} />} />
                     <Route path="/inventory" element={<InventoryView inventory={inventory} refreshData={fetchData} user={user} />} />

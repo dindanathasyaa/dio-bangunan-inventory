@@ -109,6 +109,7 @@ p {
   display: flex;
   height: 100vh;
   overflow: hidden; /* Prevent full page scroll */
+  position: relative;
 }
 
 .sidebar {
@@ -134,9 +135,6 @@ p {
 
 /* Sidebar Toggle Button */
 .sidebar-toggle {
-  position: absolute;
-  top: 40px;
-  left: -16px;
   background: var(--primary-color);
   border: 2px solid var(--border-color);
   color: white;
