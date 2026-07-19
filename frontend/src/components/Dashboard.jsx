@@ -59,9 +59,6 @@ const Dashboard = ({ user, setUser }) => {
     return (
         <div className="app-container">
             <aside className={`sidebar ${!isSidebarOpen ? 'collapsed' : ''}`} style={{position: 'relative'}}>
-                <button className="sidebar-toggle" onClick={toggleSidebar}>
-                    {isSidebarOpen ? '❮' : '❯'}
-                </button>
                 <div className="logo-container" style={{paddingBottom: '0', display: 'flex', justifyContent: 'center'}}>
                     <img src="/logo-transparent.png" alt="Dio Bangunan Logo" className="logo-img" style={{width: '100%'}} />
                 </div>
@@ -87,6 +84,18 @@ const Dashboard = ({ user, setUser }) => {
                 </div>
             </aside>
             <main className="main-content">
+                <button 
+                    className="sidebar-toggle" 
+                    onClick={toggleSidebar}
+                    style={{
+                        left: isSidebarOpen ? '-16px' : '0px',
+                        borderRadius: isSidebarOpen ? '50%' : '0 50% 50% 0',
+                        borderLeft: isSidebarOpen ? '2px solid var(--border-color)' : 'none'
+                    }}
+                >
+                    {isSidebarOpen ? '❮' : '❯'}
+                </button>
+                
                 <Routes>
                     <Route path="/" element={<DSSView dss={dss} user={user} theme={theme} toggleTheme={toggleTheme} />} />
                     <Route path="/inventory" element={<InventoryView inventory={inventory} refreshData={fetchData} user={user} />} />
