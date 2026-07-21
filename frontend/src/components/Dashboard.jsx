@@ -303,7 +303,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
     const [activeBarcode, setActiveBarcode] = useState(null);
     const [editingData, setEditingData] = useState(null);
     const [dbCategories, setDbCategories] = useState([]);
-    const [unitType, setUnitType] = useState('Kodi/Lembar');
+    const [unitType, setUnitType] = useState('Satuan Majemuk');
     const [kodi, setKodi] = useState(0);
     const [lembar, setLembar] = useState(0);
 
@@ -541,10 +541,21 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                             <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
                                 <div className="form-group" style={{flex: 1}}><label>Modal Barang (Rp)</label><input type="number" className="input-field" value={newItem.base_price} onChange={e => setNewItem({...newItem, base_price: e.target.value})} required /></div>
                                 <div className="form-group" style={{flex: 1}}><label>Harga Jual (Rp)</label><input type="number" className="input-field" value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} required /></div>
-                                <div className="form-group" style={{flex: 1}}><label>Jenis Satuan</label><select className="input-field" value={unitType} onChange={e => setUnitType(e.target.value)}><option value="Kodi/Lembar">Kodi / Lembar</option><option value="Tunggal">Satuan Tunggal</option></select></div>
+                                <div className="form-group" style={{flex: 1}}>
+                                    <label>Jenis Satuan</label>
+                                    <select 
+                                        className="input-field" 
+                                        value={unitType} 
+                                        onChange={e => setUnitType(e.target.value)}
+                                        style={{border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold'}}
+                                    >
+                                        <option value="Satuan Majemuk">Satuan Majemuk</option>
+                                        <option value="Tunggal">Satuan Tunggal</option>
+                                    </select>
+                                </div>
                             </div>
                             
-                            {unitType === 'Kodi/Lembar' ? (
+                            {unitType === 'Satuan Majemuk' ? (
                                 <div style={{display: 'flex', gap: '16px', background: 'var(--item-bg)', padding: '16px', borderRadius: '8px', marginBottom: '16px'}}>
                                     <div className="form-group" style={{flex: 1, marginBottom: 0}}><label>Stok (Kodi)</label><input type="number" className="input-field" value={kodi} onChange={e => {setKodi(e.target.value); setLembar(e.target.value*20);}} /></div>
                                     <div className="form-group" style={{flex: 1, marginBottom: 0}}><label>Stok (Lembar)</label><input type="number" className="input-field" value={lembar} onChange={e => {setLembar(e.target.value); setKodi(e.target.value/20);}} /></div>
