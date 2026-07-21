@@ -303,7 +303,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
     const [activeBarcode, setActiveBarcode] = useState(null);
     const [editingData, setEditingData] = useState(null);
     const [dbCategories, setDbCategories] = useState([]);
-    const [unitType, setUnitType] = useState('Satuan Majemuk');
+    const [unitType, setUnitType] = useState('');
     const [kodi, setKodi] = useState(0);
     const [lembar, setLembar] = useState(0);
     const [isUnitDropdownOpen, setIsUnitDropdownOpen] = useState(false);
@@ -550,7 +550,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                             onClick={() => setIsUnitDropdownOpen(!isUnitDropdownOpen)}
                                             style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box', border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer'}}
                                         >
-                                            <span>{unitType}</span>
+                                            <span>{unitType || 'Jenis Satuan'}</span>
                                             <span style={{fontSize: '0.8rem'}}>▼</span>
                                         </div>
                                         {isUnitDropdownOpen && (
