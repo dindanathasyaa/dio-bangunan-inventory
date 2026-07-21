@@ -44,7 +44,9 @@ const SalesView = ({ user, activeBranch }) => {
 
     const viewDetail = async (date) => {
         try {
-            const dateStr = date.split('T')[0];
+            const d = new Date(date);
+            const pad = n => n.toString().padStart(2, '0');
+            const dateStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
             const res = await axios.get(`http://localhost:5000/api/sales?branch_id=${activeBranch}&date=${dateStr}`);
             setDetailData(res.data);
             setDetailDate(date);
