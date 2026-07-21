@@ -289,18 +289,31 @@ const InventoryView = ({ inventory, refreshData, user }) => {
         }
     };
 
-    const downloadBarcode = (sku) => {
-        const svg = document.querySelector(`#barcode-${sku} svg`) || document.getElementById(`barcode-${sku}`);
+    const downloadBarcodePng = (sku) => {
+        const svg = document.querySelector(`#barcode-modal-${sku} svg`) || document.getElementById(`barcode-modal-${sku}`);
         if (!svg) return alert("Barcode belum siap");
+        
         const svgData = new XMLSerializer().serializeToString(svg);
-        const blob = new Blob([svgData], {type: "image/svg+xml;charset=utf-8"});
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = `barcode-${sku}.svg`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const img = new Image();
+        
+        img.onload = () => {
+            canvas.width = img.width + 40;
+            canvas.height = img.height + 40;
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 20, 20);
+            
+            const pngFile = canvas.toDataURL("image/png");
+            const downloadLink = document.createElement("a");
+            downloadLink.download = `barcode-${sku}.png`;
+            downloadLink.href = pngFile;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        };
+        img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
     };
 
     return (
@@ -361,19 +374,9 @@ const InventoryView = ({ inventory, refreshData, user }) => {
                             return (
                                 <tr key={item.id}>
                                     <td style={{padding: '8px 16px'}}>
-                                        <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
-                                            <button className="btn-icon" style={{border: '1px solid var(--border-color)'}} onClick={() => setActiveBarcode(activeBarcode === item.sku ? null : item.sku)}>
-                                                {activeBarcode === item.sku ? 'Tutup' : 'Barcode'}
-                                            </button>
-                                            {activeBarcode === item.sku && (
-                                                <button className="btn-icon" onClick={() => downloadBarcode(item.sku)} title="Unduh Barcode">⬇️</button>
-                                            )}
-                                        </div>
-                                        {activeBarcode === item.sku && (
-                                            <div id={`barcode-${item.sku}`} style={{background: 'white', padding: '4px 8px', borderRadius: '4px', display: 'inline-block', marginTop: '8px'}}>
-                                                <Barcode value={item.sku} height={30} width={1.5} fontSize={12} displayValue={true} background="transparent" margin={0} />
-                                            </div>
-                                        )}
+                                        <button className="btn-navy" onClick={() => setActiveBarcode(item.sku)}>
+                                            Barcode
+                                        </button>
                                     </td>
                                     <td style={{color: 'var(--text-primary)', fontWeight: '500'}}>{item.name}</td>
                                     <td><span style={{background: 'var(--border-color)', padding: '4px 10px', borderRadius: '4px', fontSize: '0.8rem'}}>{item.category}</span></td>
@@ -386,6 +389,27 @@ const InventoryView = ({ inventory, refreshData, user }) => {
                     </tbody>
                 </table>
             </div>
+
+            {/* Modal Barcode */}
+            {activeBarcode && (
+                <div className="modal-overlay" onClick={() => setActiveBarcode(null)}>
+                    <div className="modal-content" style={{textAlign: 'center', width: 'auto', padding: '40px'}} onClick={e => e.stopPropagation()}>
+                        <h3 style={{marginBottom: '24px'}}>Kode Barcode: {activeBarcode}</h3>
+                        <div id={`barcode-modal-${activeBarcode}`} style={{background: 'white', padding: '24px', borderRadius: '12px', display: 'inline-block', marginBottom: '24px'}}>
+                            <Barcode value={activeBarcode} height={60} width={2} fontSize={16} displayValue={true} background="transparent" margin={0} />
+                        </div>
+                        <div>
+                            <button className="btn-icon" onClick={() => downloadBarcodePng(activeBarcode)} style={{fontSize: '2rem'}} title="Unduh format PNG">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Modal Tambah Barang */}
             {showModal && (
