@@ -319,7 +319,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
         sku: '',
         name: '',
         category_id: '',
-        unit: 'Lembar',
+        unit: '',
         price: '',
         base_price: '',
         stock: 0,
@@ -333,9 +333,6 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
         axios.get('http://localhost:5000/api/large_units').then(res => setLargeUnitsList(res.data)).catch(err => console.error(err));
         axios.get('http://localhost:5000/api/small_units').then(res => {
             setSmallUnitsList(res.data);
-            if(res.data.length > 0) {
-                setNewItem(prev => ({...prev, unit: res.data[0].name}));
-            }
         }).catch(err => console.error(err));
     }, []);
 
@@ -583,7 +580,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                             onClick={() => setIsUnitDropdownOpen(!isUnitDropdownOpen)}
                                             style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box', border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer'}}
                                         >
-                                            <span>{unitType || 'Jenis Satuan'}</span>
+                                            <span>{unitType || 'Pilih Jenis Satuan'}</span>
                                             <span style={{fontSize: '0.8rem'}}>▼</span>
                                         </div>
                                         {isUnitDropdownOpen && (
