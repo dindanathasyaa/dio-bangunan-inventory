@@ -244,8 +244,9 @@ const ControlCenter = ({ user }) => {
 
 const InventoryView = ({ inventory, refreshData, user }) => {
     const [search, setSearch] = useState('');
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [showModal, setShowModal] = useState(false);
-    const [selectedCategory, setSelectedCategory] = useState('Semua');
+    const [selectedCategory, setSelectedCategory] = useState('Kategori');
     const [activeBarcode, setActiveBarcode] = useState(null);
     const [dbCategories, setDbCategories] = useState([]);
     const [unitType, setUnitType] = useState('Kodi/Lembar');
@@ -268,9 +269,9 @@ const InventoryView = ({ inventory, refreshData, user }) => {
         axios.get('http://localhost:5000/api/categories').then(res => setDbCategories(res.data)).catch(err => console.error(err));
     }, []);
 
-    const categories = ['Semua', ...new Set(inventory.map(item => item.category))];
+    const categories = ['Kategori', ...new Set(inventory.map(item => item.category))];
     const filteredInventory = inventory.filter(item => {
-        const matchesCategory = selectedCategory === 'Semua' || item.category === selectedCategory;
+        const matchesCategory = selectedCategory === 'Kategori' || item.category === selectedCategory;
         const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase()) || item.sku.toLowerCase().includes(search.toLowerCase());
         return matchesCategory && matchesSearch;
     });
@@ -329,16 +330,31 @@ const InventoryView = ({ inventory, refreshData, user }) => {
                         onChange={e => setSearch(e.target.value)}
                         style={{marginBottom: 0, minWidth: '250px'}}
                     />
-                    <select 
-                        className="custom-select-3d" 
-                        value={selectedCategory} 
-                        onChange={e => setSelectedCategory(e.target.value)}
-                        style={{minWidth: '200px'}}
-                    >
-                        {categories.map(cat => (
-                            <option key={cat} value={cat}>{cat}</option>
-                        ))}
-                    </select>
+                    <div className="custom-dropdown-container">
+                        <div 
+                            className={`custom-select-3d ${isDropdownOpen ? 'active' : ''}`}
+                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                            style={{minWidth: '200px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}
+                        >
+                            <span>{selectedCategory}</span>
+                        </div>
+                        {isDropdownOpen && (
+                            <div className="custom-dropdown-menu">
+                                {categories.map(cat => (
+                                    <div 
+                                        key={cat} 
+                                        className={`custom-dropdown-item ${selectedCategory === cat ? 'selected' : ''}`}
+                                        onClick={() => {
+                                            setSelectedCategory(cat);
+                                            setIsDropdownOpen(false);
+                                        }}
+                                    >
+                                        {cat}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                     <button className="btn-circle" onClick={() => setShowModal(true)}>+</button>
                 </div>
             </div>
