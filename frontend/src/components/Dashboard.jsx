@@ -717,11 +717,11 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
 
                             <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
                                 <div className="form-group" style={{flex: 1}}><label>Modal Barang (Rp)</label><input type="number" className="input-field" value={newItem.base_price} onChange={e => setNewItem({...newItem, base_price: e.target.value})} required /></div>
-                                <div className="form-group" style={{flex: 1}}><label>Harga Jual (Rp)</label><input type="number" className="input-field" value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} required /></div>
+                                <div className="form-group" style={{flex: 1}}><label>Batas Minimum Stok</label><input type="number" className="input-field" value={newItem.min_stock} onChange={e => setNewItem({...newItem, min_stock: e.target.value})} required /></div>
                             </div>
 
-                            <div style={{display: 'flex', gap: '16px'}}>
-                                <div className="form-group" style={{flex: 1}}><label>Batas Minimum Stok</label><input type="number" className="input-field" value={newItem.min_stock} onChange={e => setNewItem({...newItem, min_stock: e.target.value})} required /></div>
+                            <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
+                                <div className="form-group" style={{flex: 1}}><label>Harga Jual (Rp)</label><input type="number" className="input-field" value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} required /></div>
                                 <div className="form-group" style={{flex: 1}}><label>Batas Maksimal Stok</label><input type="number" className="input-field" value={newItem.max_stock} onChange={e => setNewItem({...newItem, max_stock: e.target.value})} required /></div>
                             </div>
                             
