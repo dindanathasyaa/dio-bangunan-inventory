@@ -227,6 +227,7 @@ const CategorySettings = () => {
     };
 
     return (
+        <>
         <div className="glass-panel" style={{padding: '24px'}}>
             <h2 style={{marginBottom: '20px', color: 'var(--text-primary)'}}>Pengaturan Kategori & Parameter Inventory</h2>
             
@@ -377,6 +378,7 @@ const CategorySettings = () => {
                     ))}
                 </tbody>
             </table>
+        </div>
 
             {/* Confirm Modal */}
             {confirmModal.isOpen && (
@@ -402,7 +404,7 @@ const CategorySettings = () => {
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 };
 
