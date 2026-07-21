@@ -505,7 +505,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                     </select>
                                 </div>
                             )}
-                            <div className="form-group"><label>SKU</label><input type="text" className="input-field" value={newItem.sku} onChange={e => setNewItem({...newItem, sku: e.target.value})} required /></div>
+                            <div className="form-group"><label>Kode Barang</label><input type="text" className="input-field" value={newItem.sku} onChange={e => setNewItem({...newItem, sku: e.target.value})} required /></div>
                             <div className="form-group"><label>Nama Barang</label><input type="text" className="input-field" value={newItem.name} onChange={e => setNewItem({...newItem, name: e.target.value})} required /></div>
                             <div className="form-group">
                                 <label>Kategori</label>
@@ -572,7 +572,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                             .catch(err => alert("Gagal update data!"));
                         }}>
                             <div className="form-group" style={{marginBottom: '16px'}}>
-                                <label>Kode Barang (SKU)</label>
+                                <label>Kode Barang</label>
                                 <input type="text" className="input-field" value={editingData.sku} disabled style={{background: '#f3f4f6', cursor: 'not-allowed'}} />
                             </div>
                             <div className="form-group" style={{marginBottom: '16px'}}>
