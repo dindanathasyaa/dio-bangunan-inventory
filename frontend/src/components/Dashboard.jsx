@@ -297,6 +297,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
 const InventoryView = ({ inventory, refreshData, user, activeBranch, branches }) => {
     const [search, setSearch] = useState('');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isAddBranchDropdownOpen, setIsAddBranchDropdownOpen] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('Kategori');
     const [activeBarcode, setActiveBarcode] = useState(null);
@@ -498,11 +499,30 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                             {user.role === 'OWNER' && (
                                 <div className="form-group">
                                     <label>Toko Cabang</label>
-                                    <select className="input-field" value={newItem.branch_id} onChange={e => setNewItem({...newItem, branch_id: parseInt(e.target.value)})} required>
-                                        {branches && branches.map(b => (
-                                            <option key={b.id} value={b.id}>{b.name}</option>
-                                        ))}
-                                    </select>
+                                    <div className="custom-dropdown-container" style={{position: 'relative'}}>
+                                        <div 
+                                            className={`custom-select-3d ${isAddBranchDropdownOpen ? 'active' : ''}`}
+                                            onClick={() => setIsAddBranchDropdownOpen(!isAddBranchDropdownOpen)}
+                                            style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box'}}
+                                        >
+                                            <span>{branches?.find(b => b.id === newItem.branch_id)?.name || 'Pilih Toko Cabang'}</span>
+                                            <span style={{fontSize: '0.8rem', marginLeft: '8px', color: 'var(--primary-color)'}}>▼</span>
+                                        </div>
+                                        {isAddBranchDropdownOpen && (
+                                            <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000}}>
+                                                {branches && branches.map(b => (
+                                                    <div 
+                                                        key={b.id} 
+                                                        className={`custom-dropdown-item ${newItem.branch_id === b.id ? 'selected' : ''}`}
+                                                        onClick={() => { setNewItem({...newItem, branch_id: b.id}); setIsAddBranchDropdownOpen(false); }}
+                                                        style={{fontWeight: '500'}}
+                                                    >
+                                                        {b.name}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             )}
                             <div className="form-group"><label>Kode Barang</label><input type="text" className="input-field" value={newItem.sku} onChange={e => setNewItem({...newItem, sku: e.target.value})} required /></div>
