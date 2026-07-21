@@ -166,6 +166,43 @@ app.put('/api/categories/:id', async (req, res) => {
     }
 });
 
+// Large Units Routes
+app.get('/api/large_units', async (req, res) => {
+    try {
+        const [rows] = await pool.query('SELECT * FROM large_units');
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/large_units', async (req, res) => {
+    const { name, default_multiplier } = req.body;
+    try {
+        await pool.query(
+            'INSERT INTO large_units (name, default_multiplier) VALUES (?, ?)',
+            [name, default_multiplier || 1]
+        );
+        res.status(201).json({ message: 'Satuan besar berhasil ditambahkan' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.put('/api/large_units/:id', async (req, res) => {
+    const { id } = req.params;
+    const { default_multiplier } = req.body;
+    try {
+        await pool.query(
+            'UPDATE large_units SET default_multiplier = ? WHERE id = ?',
+            [default_multiplier, id]
+        );
+        res.json({ message: 'Satuan besar berhasil diupdate' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // DSS Routes
 app.get('/api/dss/recommendations', async (req, res) => {
     const branch_id = req.query.branch_id;

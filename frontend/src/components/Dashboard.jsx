@@ -310,6 +310,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
     const [isMajemukDropdownOpen, setIsMajemukDropdownOpen] = useState(false);
     const [majemukType, setMajemukType] = useState('');
     const [majemukMultiplier, setMajemukMultiplier] = useState(20);
+    const [largeUnitsList, setLargeUnitsList] = useState([]);
 
     const [newItem, setNewItem] = useState({
         sku: '',
@@ -326,6 +327,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
 
     useEffect(() => {
         axios.get('http://localhost:5000/api/categories').then(res => setDbCategories(res.data)).catch(err => console.error(err));
+        axios.get('http://localhost:5000/api/large_units').then(res => setLargeUnitsList(res.data)).catch(err => console.error(err));
     }, []);
 
     const categories = ['Kategori', ...new Set(inventory.map(item => item.category))];
@@ -594,20 +596,18 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                                 </div>
                                                 {isMajemukDropdownOpen && (
                                                     <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000, overflow: 'hidden', padding: 0}}>
-                                                        {['Kodi', 'Lusin', 'Dus', 'Pack'].map(type => (
+                                                        {largeUnitsList.map(unit => (
                                                             <div 
-                                                                key={type}
-                                                                className={`custom-dropdown-item ${majemukType === type ? 'selected' : ''}`}
+                                                                key={unit.name}
+                                                                className={`custom-dropdown-item ${majemukType === unit.name ? 'selected' : ''}`}
                                                                 onClick={() => {
-                                                                    setMajemukType(type);
+                                                                    setMajemukType(unit.name);
                                                                     setIsMajemukDropdownOpen(false);
-                                                                    if (type === 'Kodi') setMajemukMultiplier(20);
-                                                                    else if (type === 'Lusin') setMajemukMultiplier(12);
-                                                                    else if (majemukMultiplier === 20 || majemukMultiplier === 12) setMajemukMultiplier(10);
+                                                                    setMajemukMultiplier(unit.default_multiplier);
                                                                 }}
                                                                 style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
                                                             >
-                                                                {type}
+                                                                {unit.name}
                                                             </div>
                                                         ))}
                                                     </div>
@@ -625,8 +625,6 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                                     setMajemukMultiplier(val);
                                                     setLembar(kodi * val);
                                                 }} 
-                                                disabled={majemukType === 'Kodi' || majemukType === 'Lusin'}
-                                                style={{background: (majemukType === 'Kodi' || majemukType === 'Lusin') ? '#e5e7eb' : 'white'}}
                                             />
                                         </div>
                                     </div>

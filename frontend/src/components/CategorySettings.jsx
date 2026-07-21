@@ -8,6 +8,13 @@ const CategorySettings = () => {
     const [maxStock, setMaxStock] = useState(50);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
+    
+    // Large Units state
+    const [largeUnits, setLargeUnits] = useState([]);
+    const [unitName, setUnitName] = useState('');
+    const [unitMultiplier, setUnitMultiplier] = useState(1);
+    const [unitLoading, setUnitLoading] = useState(false);
+    const [unitMessage, setUnitMessage] = useState('');
 
     const fetchCategories = async () => {
         try {
@@ -18,8 +25,18 @@ const CategorySettings = () => {
         }
     };
 
+    const fetchLargeUnits = async () => {
+        try {
+            const res = await axios.get('http://localhost:5000/api/large_units');
+            setLargeUnits(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     useEffect(() => {
         fetchCategories();
+        fetchLargeUnits();
     }, []);
 
     const handleSubmit = async (e) => {
@@ -58,6 +75,40 @@ const CategorySettings = () => {
         } catch (error) {
             console.error(error);
             alert('Gagal memperbarui');
+        }
+    };
+
+    const handleUnitSubmit = async (e) => {
+        e.preventDefault();
+        setUnitLoading(true);
+        setUnitMessage('');
+        try {
+            await axios.post('http://localhost:5000/api/large_units', {
+                name: unitName,
+                default_multiplier: unitMultiplier
+            });
+            setUnitMessage('Satuan besar berhasil ditambahkan!');
+            setUnitName('');
+            setUnitMultiplier(1);
+            fetchLargeUnits();
+        } catch (error) {
+            setUnitMessage('Gagal menambahkan satuan besar');
+            console.error(error);
+        } finally {
+            setUnitLoading(false);
+        }
+    };
+
+    const handleUnitUpdate = async (id, newMultiplier) => {
+        try {
+            await axios.put(`http://localhost:5000/api/large_units/${id}`, {
+                default_multiplier: newMultiplier
+            });
+            fetchLargeUnits();
+            alert('Satuan berhasil diperbarui');
+        } catch (error) {
+            console.error(error);
+            alert('Gagal memperbarui satuan');
         }
     };
 
@@ -108,6 +159,53 @@ const CategorySettings = () => {
                             </td>
                             <td>
                                 <button className="btn btn-secondary" onClick={() => handleUpdate(cat.id, document.getElementById(`min-${cat.id}`).value, document.getElementById(`max-${cat.id}`).value)}>
+                                    Simpan Perubahan
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+
+            <hr style={{margin: '40px 0', borderColor: 'var(--border-color)'}} />
+
+            <h2 style={{marginBottom: '20px', color: 'var(--text-primary)'}}>Pengaturan Satuan Besar</h2>
+            
+            <form onSubmit={handleUnitSubmit} style={{display: 'flex', gap: '16px', marginBottom: '32px', alignItems: 'flex-end', flexWrap: 'wrap'}}>
+                <div>
+                    <label style={{display: 'block', color: 'var(--text-secondary)', marginBottom: '8px'}}>Nama Satuan</label>
+                    <input type="text" className="input-field" value={unitName} onChange={e => setUnitName(e.target.value)} required placeholder="Misal: Gross, Bal" />
+                </div>
+                <div>
+                    <label style={{display: 'block', color: 'var(--text-secondary)', marginBottom: '8px'}}>Nilai Pengali (Isi)</label>
+                    <input type="number" className="input-field" value={unitMultiplier} onChange={e => setUnitMultiplier(e.target.value)} required min="1" />
+                </div>
+                <button type="submit" className="btn btn-primary" disabled={unitLoading}>
+                    {unitLoading ? 'Menyimpan...' : 'Tambah Satuan'}
+                </button>
+            </form>
+            
+            {unitMessage && <div style={{marginBottom: '16px', color: 'var(--success-color)'}}>{unitMessage}</div>}
+
+            <table className="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nama Satuan</th>
+                        <th>Nilai Pengali Default</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {largeUnits.map(unit => (
+                        <tr key={unit.id}>
+                            <td>{unit.id}</td>
+                            <td>{unit.name}</td>
+                            <td>
+                                <input type="number" className="input-field" defaultValue={unit.default_multiplier} id={`multiplier-${unit.id}`} style={{width: '100px', padding: '4px 8px'}} />
+                            </td>
+                            <td>
+                                <button className="btn btn-secondary" onClick={() => handleUnitUpdate(unit.id, document.getElementById(`multiplier-${unit.id}`).value)}>
                                     Simpan Perubahan
                                 </button>
                             </td>
