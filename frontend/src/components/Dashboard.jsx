@@ -307,6 +307,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
     const [kodi, setKodi] = useState(0);
     const [lembar, setLembar] = useState(0);
     const [isUnitDropdownOpen, setIsUnitDropdownOpen] = useState(false);
+    const [isMajemukDropdownOpen, setIsMajemukDropdownOpen] = useState(false);
     const [majemukType, setMajemukType] = useState('Kodi');
     const [majemukMultiplier, setMajemukMultiplier] = useState(20);
 
@@ -582,23 +583,36 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                     <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
                                         <div className="form-group" style={{flex: 1, marginBottom: 0}}>
                                             <label>Pilih Satuan Besar</label>
-                                            <select 
-                                                className="input-field" 
-                                                value={majemukType} 
-                                                onChange={e => {
-                                                    const type = e.target.value;
-                                                    setMajemukType(type);
-                                                    if (type === 'Kodi') setMajemukMultiplier(20);
-                                                    else if (type === 'Lusin') setMajemukMultiplier(12);
-                                                    // For Dus/Pack we let the user define the multiplier, we can set a default of 10
-                                                    else if (majemukMultiplier === 20 || majemukMultiplier === 12) setMajemukMultiplier(10);
-                                                }}
-                                            >
-                                                <option value="Kodi">Kodi</option>
-                                                <option value="Lusin">Lusin</option>
-                                                <option value="Dus">Dus</option>
-                                                <option value="Pack">Pack</option>
-                                            </select>
+                                            <div className="custom-dropdown-container" style={{position: 'relative', width: '100%'}}>
+                                                <div 
+                                                    className={`custom-select-3d ${isMajemukDropdownOpen ? 'active' : ''}`}
+                                                    onClick={() => setIsMajemukDropdownOpen(!isMajemukDropdownOpen)}
+                                                    style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box', border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer'}}
+                                                >
+                                                    <span>{majemukType}</span>
+                                                    <span style={{fontSize: '0.8rem'}}>▼</span>
+                                                </div>
+                                                {isMajemukDropdownOpen && (
+                                                    <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000, overflow: 'hidden', padding: 0}}>
+                                                        {['Kodi', 'Lusin', 'Dus', 'Pack'].map(type => (
+                                                            <div 
+                                                                key={type}
+                                                                className={`custom-dropdown-item ${majemukType === type ? 'selected' : ''}`}
+                                                                onClick={() => {
+                                                                    setMajemukType(type);
+                                                                    setIsMajemukDropdownOpen(false);
+                                                                    if (type === 'Kodi') setMajemukMultiplier(20);
+                                                                    else if (type === 'Lusin') setMajemukMultiplier(12);
+                                                                    else if (majemukMultiplier === 20 || majemukMultiplier === 12) setMajemukMultiplier(10);
+                                                                }}
+                                                                style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
+                                                            >
+                                                                {type}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                         <div className="form-group" style={{flex: 1, marginBottom: 0}}>
                                             <label>Isi per 1 {majemukType} (Multiplier)</label>
