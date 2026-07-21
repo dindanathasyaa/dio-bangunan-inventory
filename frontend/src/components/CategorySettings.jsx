@@ -20,7 +20,16 @@ const CategorySettings = () => {
     const [smallUnits, setSmallUnits] = useState([]);
     const [smallUnitName, setSmallUnitName] = useState('');
     const [smallUnitLoading, setSmallUnitLoading] = useState(false);
+    const [smallUnitLoading, setSmallUnitLoading] = useState(false);
     const [smallUnitMessage, setSmallUnitMessage] = useState('');
+
+    // Modal states
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false, message: '', onConfirm: null });
+    const [alertModal, setAlertModal] = useState({ isOpen: false, message: '' });
+
+    const showAlert = (message) => {
+        setAlertModal({ isOpen: true, message });
+    };
 
     const fetchCategories = async () => {
         try {
@@ -87,27 +96,33 @@ const CategorySettings = () => {
                 max_stock: newMax
             });
             fetchCategories();
-            alert('Berhasil diperbarui');
+            showAlert('Berhasil diperbarui');
         } catch (error) {
             console.error(error);
-            alert('Gagal memperbarui');
+            showAlert('Gagal memperbarui');
         }
     };
 
-    const handleDeleteCategory = async (id) => {
-        if (!window.confirm('Apakah Anda yakin ingin menghapus kategori ini?')) return;
-        try {
-            await axios.delete(`http://localhost:5000/api/categories/${id}`);
-            fetchCategories();
-            alert('Kategori berhasil dihapus');
-        } catch (error) {
-            console.error(error);
-            if (error.response && error.response.data && error.response.data.error) {
-                alert(error.response.data.error);
-            } else {
-                alert('Gagal menghapus kategori');
+    const handleDeleteCategory = (id) => {
+        setConfirmModal({
+            isOpen: true,
+            message: 'Apakah Anda yakin ingin menghapus kategori ini?',
+            onConfirm: async () => {
+                setConfirmModal({ isOpen: false, message: '', onConfirm: null });
+                try {
+                    await axios.delete(`http://localhost:5000/api/categories/${id}`);
+                    fetchCategories();
+                    showAlert('Kategori berhasil dihapus');
+                } catch (error) {
+                    console.error(error);
+                    if (error.response && error.response.data && error.response.data.error) {
+                        showAlert(error.response.data.error);
+                    } else {
+                        showAlert('Gagal menghapus kategori');
+                    }
+                }
             }
-        }
+        });
     };
 
     const handleUnitSubmit = async (e) => {
@@ -137,10 +152,10 @@ const CategorySettings = () => {
                 default_multiplier: newMultiplier
             });
             fetchLargeUnits();
-            alert('Satuan berhasil diperbarui');
+            showAlert('Satuan berhasil diperbarui');
         } catch (error) {
             console.error(error);
-            alert('Gagal memperbarui satuan');
+            showAlert('Gagal memperbarui satuan');
         }
     };
 
@@ -169,35 +184,47 @@ const CategorySettings = () => {
                 name: newName
             });
             fetchSmallUnits();
-            alert('Satuan tunggal berhasil diperbarui');
+            showAlert('Satuan tunggal berhasil diperbarui');
         } catch (error) {
             console.error(error);
-            alert('Gagal memperbarui satuan tunggal');
+            showAlert('Gagal memperbarui satuan tunggal');
         }
     };
 
-    const handleDeleteLargeUnit = async (id) => {
-        if (!window.confirm('Apakah Anda yakin ingin menghapus satuan besar ini?')) return;
-        try {
-            await axios.delete(`http://localhost:5000/api/large_units/${id}`);
-            fetchLargeUnits();
-            alert('Satuan besar berhasil dihapus');
-        } catch (error) {
-            console.error(error);
-            alert('Gagal menghapus satuan besar');
-        }
+    const handleDeleteLargeUnit = (id) => {
+        setConfirmModal({
+            isOpen: true,
+            message: 'Apakah Anda yakin ingin menghapus satuan besar ini?',
+            onConfirm: async () => {
+                setConfirmModal({ isOpen: false, message: '', onConfirm: null });
+                try {
+                    await axios.delete(`http://localhost:5000/api/large_units/${id}`);
+                    fetchLargeUnits();
+                    showAlert('Satuan besar berhasil dihapus');
+                } catch (error) {
+                    console.error(error);
+                    showAlert('Gagal menghapus satuan besar');
+                }
+            }
+        });
     };
 
-    const handleDeleteSmallUnit = async (id) => {
-        if (!window.confirm('Apakah Anda yakin ingin menghapus satuan tunggal ini?')) return;
-        try {
-            await axios.delete(`http://localhost:5000/api/small_units/${id}`);
-            fetchSmallUnits();
-            alert('Satuan tunggal berhasil dihapus');
-        } catch (error) {
-            console.error(error);
-            alert('Gagal menghapus satuan tunggal');
-        }
+    const handleDeleteSmallUnit = (id) => {
+        setConfirmModal({
+            isOpen: true,
+            message: 'Apakah Anda yakin ingin menghapus satuan tunggal ini?',
+            onConfirm: async () => {
+                setConfirmModal({ isOpen: false, message: '', onConfirm: null });
+                try {
+                    await axios.delete(`http://localhost:5000/api/small_units/${id}`);
+                    fetchSmallUnits();
+                    showAlert('Satuan tunggal berhasil dihapus');
+                } catch (error) {
+                    console.error(error);
+                    showAlert('Gagal menghapus satuan tunggal');
+                }
+            }
+        });
     };
 
     return (
@@ -351,6 +378,31 @@ const CategorySettings = () => {
                     ))}
                 </tbody>
             </table>
+
+            {/* Confirm Modal */}
+            {confirmModal.isOpen && (
+                <div className="modal-overlay" style={{zIndex: 9999}}>
+                    <div className="modal-content" style={{maxWidth: '400px', textAlign: 'center'}}>
+                        <h3 style={{marginBottom: '16px', color: 'var(--text-primary)'}}>Konfirmasi</h3>
+                        <p style={{marginBottom: '24px', color: 'var(--text-secondary)'}}>{confirmModal.message}</p>
+                        <div style={{display: 'flex', gap: '12px', justifyContent: 'center'}}>
+                            <button className="btn btn-outline" onClick={() => setConfirmModal({ isOpen: false, message: '', onConfirm: null })}>Batal</button>
+                            <button className="btn btn-danger" style={{background: 'var(--danger-color, #ef4444)', color: 'white'}} onClick={confirmModal.onConfirm}>Hapus</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Alert Modal */}
+            {alertModal.isOpen && (
+                <div className="modal-overlay" style={{zIndex: 9999}}>
+                    <div className="modal-content" style={{maxWidth: '400px', textAlign: 'center'}}>
+                        <h3 style={{marginBottom: '16px', color: 'var(--text-primary)'}}>Informasi</h3>
+                        <p style={{marginBottom: '24px', color: 'var(--text-secondary)'}}>{alertModal.message}</p>
+                        <button className="btn btn-primary" onClick={() => setAlertModal({ isOpen: false, message: '' })}>OK</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
