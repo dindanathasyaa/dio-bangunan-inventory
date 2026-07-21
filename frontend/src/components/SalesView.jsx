@@ -198,7 +198,7 @@ const SalesView = ({ user, activeBranch }) => {
                         <p style={{fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '24px'}}>
                             Transaksi penjualan telah berhasil dicatat.
                         </p>
-                        <button className="btn" style={{width: '100%', background: '#10b981'}} onClick={() => setShowSuccessModal(false)}>
+                        <button className="btn" style={{width: '100%', background: '#10b981', boxShadow: '0 4px 15px rgba(16, 185, 129, 0.4)'}} onClick={() => setShowSuccessModal(false)}>
                             Lanjutkan
                         </button>
                     </div>
