@@ -241,7 +241,7 @@ p {
   left: 4px;
   width: 28px;
   height: 28px;
-  background: var(--primary-color);
+  background: var(--secondary-color);
   border-radius: 50%;
   transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   z-index: 1;

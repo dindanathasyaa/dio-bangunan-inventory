@@ -168,17 +168,17 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                 <div style={{display: 'flex', gap: '16px', alignItems: 'center'}}>
                     {user.role === 'OWNER' && (
                         <div style={{display: 'flex', alignItems: 'center'}}>
-                            <span style={{fontWeight: 'bold', color: 'white', marginRight: '12px', background: 'var(--primary-color)', padding: '12px 16px', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: '100%', boxSizing: 'border-box'}}>Pilih Toko:</span>
+                            <span style={{fontWeight: 'bold', color: 'white', marginRight: '12px', background: 'var(--secondary-color)', padding: '12px 16px', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: '100%', boxSizing: 'border-box'}}>Pilih Toko:</span>
                             <div className="custom-dropdown-container" style={{position: 'relative'}}>
                                 <div 
                                     className={`custom-select-3d ${isBranchDropdownOpen ? 'active' : ''}`}
                                     onClick={() => setIsBranchDropdownOpen(!isBranchDropdownOpen)}
-                                    style={{minWidth: '220px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'transparent', color: 'var(--primary-color)', border: '2px solid var(--primary-color)', borderRadius: '8px', boxSizing: 'border-box'}}
+                                    style={{minWidth: '220px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'transparent', color: 'var(--secondary-color)', border: '2px solid var(--secondary-color)', borderRadius: '8px', boxSizing: 'border-box'}}
                                 >
                                     <span>{activeBranch === 'all' ? 'Semua Toko (Gabungan)' : branches.find(b => b.id.toString() === activeBranch.toString())?.name}</span>
                                 </div>
                                 {isBranchDropdownOpen && (
-                                    <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000}}>
+                                    <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--secondary-color)', zIndex: 1000}}>
                                     <div 
                                         className={`custom-dropdown-item ${activeBranch === 'all' ? 'selected' : ''}`}
                                         onClick={() => { setActiveBranch('all'); setIsBranchDropdownOpen(false); }}
