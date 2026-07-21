@@ -168,11 +168,11 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                 <div style={{display: 'flex', gap: '16px', alignItems: 'center'}}>
                     {user.role === 'OWNER' && (
                         <div className="custom-dropdown-container" style={{display: 'flex', alignItems: 'center'}}>
-                            <span style={{fontWeight: 'bold', color: 'white', marginRight: '12px', background: 'var(--primary-color)', padding: '6px 12px', borderRadius: '8px'}}>Pilih Toko:</span>
+                            <span style={{fontWeight: 'bold', color: 'white', marginRight: '12px', background: 'var(--primary-color)', padding: '12px 16px', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: '100%', boxSizing: 'border-box'}}>Pilih Toko:</span>
                             <div 
                                 className={`custom-select-3d ${isBranchDropdownOpen ? 'active' : ''}`}
                                 onClick={() => setIsBranchDropdownOpen(!isBranchDropdownOpen)}
-                                style={{minWidth: '220px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'transparent', color: 'var(--primary-color)', border: '2px solid var(--primary-color)', borderRadius: '8px'}}
+                                style={{minWidth: '220px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'transparent', color: 'var(--primary-color)', border: '2px solid var(--primary-color)', borderRadius: '8px', boxSizing: 'border-box'}}
                             >
                                 <span>{activeBranch === 'all' ? 'Semua Toko (Gabungan)' : branches.find(b => b.id.toString() === activeBranch.toString())?.name}</span>
                             </div>
