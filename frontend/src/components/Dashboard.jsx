@@ -308,6 +308,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
     const [lembar, setLembar] = useState(0);
     const [isUnitDropdownOpen, setIsUnitDropdownOpen] = useState(false);
     const [isMajemukDropdownOpen, setIsMajemukDropdownOpen] = useState(false);
+    const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
     const [majemukType, setMajemukType] = useState('');
     const [majemukMultiplier, setMajemukMultiplier] = useState(20);
     const [largeUnitsList, setLargeUnitsList] = useState([]);
@@ -535,14 +536,33 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                             <div className="form-group" style={{marginBottom: '16px'}}><label>Nama Barang</label><input type="text" className="input-field" value={newItem.name} onChange={e => setNewItem({...newItem, name: e.target.value})} required /></div>
                             <div className="form-group" style={{marginBottom: '16px'}}>
                                 <label>Kategori</label>
-                                <select className="input-field" value={newItem.category_id} onChange={e => {
-                                    const catId = e.target.value;
-                                    const cat = dbCategories.find(c => c.id === parseInt(catId));
-                                    if(cat) setNewItem({...newItem, category_id: catId, min_stock: cat.min_stock, max_stock: cat.max_stock});
-                                }} required>
-                                    <option value="" disabled>Pilih Kategori</option>
-                                    {dbCategories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
-                                </select>
+                                <div className="custom-dropdown-container" style={{position: 'relative', width: '100%'}}>
+                                    <div 
+                                        className={`custom-select-3d ${isCategoryDropdownOpen ? 'active' : ''}`}
+                                        onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
+                                        style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box', border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer'}}
+                                    >
+                                        <span>{dbCategories.find(c => c.id === parseInt(newItem.category_id))?.name || 'Pilih Kategori'}</span>
+                                        <span style={{fontSize: '0.8rem'}}>▼</span>
+                                    </div>
+                                    {isCategoryDropdownOpen && (
+                                        <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000, overflow: 'hidden', padding: 0}}>
+                                            {dbCategories.map(cat => (
+                                                <div 
+                                                    key={cat.id}
+                                                    className={`custom-dropdown-item ${newItem.category_id == cat.id ? 'selected' : ''}`}
+                                                    onClick={() => {
+                                                        setNewItem({...newItem, category_id: cat.id, min_stock: cat.min_stock, max_stock: cat.max_stock});
+                                                        setIsCategoryDropdownOpen(false);
+                                                    }}
+                                                    style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
+                                                >
+                                                    {cat.name}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                             <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
                                 <div className="form-group" style={{flex: 1}}><label>Modal Barang (Rp)</label><input type="number" className="input-field" value={newItem.base_price} onChange={e => setNewItem({...newItem, base_price: e.target.value})} required /></div>
