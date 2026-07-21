@@ -177,7 +177,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                                 <span>{activeBranch === 'all' ? 'Semua Toko (Gabungan)' : branches.find(b => b.id.toString() === activeBranch.toString())?.name}</span>
                             </div>
                             {isBranchDropdownOpen && (
-                                <div className="custom-dropdown-menu" style={{right: 0, left: 'auto', marginTop: '48px', width: '220px', border: '2px solid var(--primary-color)', zIndex: 1000}}>
+                                <div className="custom-dropdown-menu" style={{right: 0, top: '100%', left: 'auto', marginTop: '4px', width: '220px', border: '2px solid var(--primary-color)', zIndex: 1000}}>
                                     <div 
                                         className={`custom-dropdown-item ${activeBranch === 'all' ? 'selected' : ''}`}
                                         onClick={() => { setActiveBranch('all'); setIsBranchDropdownOpen(false); }}
