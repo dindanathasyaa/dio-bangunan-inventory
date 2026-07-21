@@ -54,18 +54,17 @@ const PurchaseView = ({ user, activeBranch, branches }) => {
             </div>
             
             <div className="glass-panel">
-                <p style={{color: 'var(--text-secondary)', marginBottom: '24px'}}>Gunakan form ini untuk mencatat hutang Anda (Toko) kepada Supplier atau Pabrik atas pembelian barang.</p>
                 
                 <form onSubmit={submitDebt}>
                     {user.role === 'OWNER' && activeBranch === 'all' && (
-                        <div className="form-group">
+                        <div className="form-group" style={{marginBottom: '16px'}}>
                             <label>Toko Cabang Tujuan</label>
                             <select className="input-field" value={selectedBranch} onChange={e => setSelectedBranch(parseInt(e.target.value))} required>
                                 {branches && branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
                             </select>
                         </div>
                     )}
-                    <div className="form-group">
+                    <div className="form-group" style={{marginBottom: '16px'}}>
                         <label>Nama Toko / Supplier</label>
                         <input 
                             type="text" 
@@ -76,7 +75,7 @@ const PurchaseView = ({ user, activeBranch, branches }) => {
                             required 
                         />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group" style={{marginBottom: '24px'}}>
                         <label>Jumlah Hutang (Rp)</label>
                         <input 
                             type="number" 
