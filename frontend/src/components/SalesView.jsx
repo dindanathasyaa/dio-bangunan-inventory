@@ -109,7 +109,7 @@ const SalesView = ({ user, activeBranch }) => {
                             <div style={{fontWeight: 'bold', marginBottom: '8px'}}>{p.name}</div>
                             <div style={{fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '8px'}}>[{p.sku}]</div>
                             <div style={{marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                                <span style={{color: 'var(--primary-color)', fontWeight: 'bold'}}>Stok: {p.stock}</span>
+                                <span style={{color: 'var(--primary-color)', fontWeight: 'bold'}}>Stok: {Number(p.stock)}</span>
                                 <span style={{background: 'rgba(234, 88, 12, 0.1)', padding: '4px 8px', borderRadius: '4px'}}>+ Tambah</span>
                             </div>
                         </div>
