@@ -8,6 +8,7 @@ const SalesView = ({ user, activeBranch }) => {
     const [paymentMethod, setPaymentMethod] = useState('Cash');
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showZeroStockWarning, setShowZeroStockWarning] = useState(false);
 
     useEffect(() => {
         fetchProducts();
@@ -32,7 +33,7 @@ const SalesView = ({ user, activeBranch }) => {
             setCart(cart.map(x => x.id === product.id ? { ...exist, qty: exist.qty + 1 } : x));
         } else {
             if (product.stock <= 0) {
-                alert('Stok habis!');
+                setShowZeroStockWarning(true);
                 return;
             }
             // we assume a base_price for profit calculation, but API might not expose it. We'll use 80% of price as mock base_price if not available from inventory endpoint.
@@ -156,6 +157,29 @@ const SalesView = ({ user, activeBranch }) => {
                     </button>
                 </div>
             </div>
+
+            {/* Modal Peringatan Stok 0 */}
+            {showZeroStockWarning && (
+                <div className="modal-overlay" onClick={() => setShowZeroStockWarning(false)}>
+                    <div className="modal-content" style={{position: 'relative', maxWidth: '400px', textAlign: 'center'}} onClick={e => e.stopPropagation()}>
+                        <button 
+                            style={{position: 'absolute', top: '8px', right: '8px', background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-secondary)', padding: '4px 8px'}}
+                            onClick={() => setShowZeroStockWarning(false)}
+                            title="Tutup"
+                        >
+                            ✕
+                        </button>
+                        <div style={{fontSize: '3rem', marginBottom: '16px'}}>⚠️</div>
+                        <h2 style={{color: '#ef4444', marginBottom: '16px'}}>Stok Habis</h2>
+                        <p style={{fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '24px'}}>
+                            Maaf, stok barang ini sedang kosong (0) dan tidak dapat ditambahkan ke keranjang.
+                        </p>
+                        <button className="btn" style={{width: '100%', background: '#ef4444'}} onClick={() => setShowZeroStockWarning(false)}>
+                            Mengerti
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
