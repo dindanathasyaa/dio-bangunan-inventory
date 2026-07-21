@@ -9,6 +9,7 @@ const SalesView = ({ user, activeBranch }) => {
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
     const [showZeroStockWarning, setShowZeroStockWarning] = useState(false);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
 
     useEffect(() => {
         fetchProducts();
@@ -75,7 +76,7 @@ const SalesView = ({ user, activeBranch }) => {
                 items
             });
 
-            alert('Transaksi Penjualan Berhasil!');
+            setShowSuccessModal(true);
             setCart([]);
             setCustomerName('');
             fetchProducts();
@@ -176,6 +177,29 @@ const SalesView = ({ user, activeBranch }) => {
                         </p>
                         <button className="btn" style={{width: '100%', background: '#ef4444'}} onClick={() => setShowZeroStockWarning(false)}>
                             Mengerti
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal Sukses Transaksi */}
+            {showSuccessModal && (
+                <div className="modal-overlay" onClick={() => setShowSuccessModal(false)}>
+                    <div className="modal-content" style={{position: 'relative', maxWidth: '400px', textAlign: 'center'}} onClick={e => e.stopPropagation()}>
+                        <button 
+                            style={{position: 'absolute', top: '8px', right: '8px', background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-secondary)', padding: '4px 8px'}}
+                            onClick={() => setShowSuccessModal(false)}
+                            title="Tutup"
+                        >
+                            ✕
+                        </button>
+                        <div style={{fontSize: '3rem', marginBottom: '16px', color: '#10b981'}}>✅</div>
+                        <h2 style={{color: '#10b981', marginBottom: '16px'}}>Transaksi Berhasil!</h2>
+                        <p style={{fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '24px'}}>
+                            Transaksi penjualan telah berhasil dicatat.
+                        </p>
+                        <button className="btn" style={{width: '100%', background: '#10b981'}} onClick={() => setShowSuccessModal(false)}>
+                            Lanjutkan
                         </button>
                     </div>
                 </div>
