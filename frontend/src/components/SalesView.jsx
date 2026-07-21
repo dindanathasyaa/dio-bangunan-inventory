@@ -35,6 +35,7 @@ const SalesView = ({ user, activeBranch }) => {
             setShowRecapModal(true);
         } catch (error) {
             console.error(error);
+            alert('Gagal mengambil rekap: ' + error.message);
         }
     };
 
