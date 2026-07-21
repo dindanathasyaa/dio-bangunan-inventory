@@ -173,10 +173,10 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                                 <div 
                                     className={`custom-select-3d ${isBranchDropdownOpen ? 'active' : ''}`}
                                     onClick={() => setIsBranchDropdownOpen(!isBranchDropdownOpen)}
-                                    style={{minWidth: '220px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'transparent', color: 'var(--secondary-color)', border: '2px solid var(--secondary-color)', borderRadius: '8px', boxSizing: 'border-box'}}
+                                    style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'transparent', color: 'var(--secondary-color)', border: '2px solid var(--secondary-color)', borderRadius: '8px', boxSizing: 'border-box', padding: '12px 16px'}}
                                 >
                                     <span style={{fontWeight: 'bold'}}>{activeBranch === 'all' ? 'Semua Toko (Gabungan)' : branches.find(b => b.id.toString() === activeBranch.toString())?.name}</span>
-                                    <span style={{fontSize: '0.8rem', marginLeft: '32px'}}>▼</span>
+                                    <span style={{fontSize: '0.8rem', marginLeft: '16px'}}>▼</span>
                                 </div>
                                 {isBranchDropdownOpen && (
                                     <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--secondary-color)', zIndex: 1000}}>
