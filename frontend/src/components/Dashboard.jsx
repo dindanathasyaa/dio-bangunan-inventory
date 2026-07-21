@@ -308,7 +308,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
     const [lembar, setLembar] = useState(0);
     const [isUnitDropdownOpen, setIsUnitDropdownOpen] = useState(false);
     const [isMajemukDropdownOpen, setIsMajemukDropdownOpen] = useState(false);
-    const [majemukType, setMajemukType] = useState('Kodi');
+    const [majemukType, setMajemukType] = useState('');
     const [majemukMultiplier, setMajemukMultiplier] = useState(20);
 
     const [newItem, setNewItem] = useState({
@@ -589,7 +589,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                                     onClick={() => setIsMajemukDropdownOpen(!isMajemukDropdownOpen)}
                                                     style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box', border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer'}}
                                                 >
-                                                    <span>{majemukType}</span>
+                                                    <span>{majemukType || 'Satuan Besar'}</span>
                                                     <span style={{fontSize: '0.8rem'}}>▼</span>
                                                 </div>
                                                 {isMajemukDropdownOpen && (
