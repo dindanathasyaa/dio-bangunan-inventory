@@ -90,19 +90,19 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
                     <div className="glass-panel">
                         <h2 style={{marginBottom: '24px'}}>Input Orderan & Pengantaran</h2>
                         <form onSubmit={submitOrder}>
-                            <div className="form-group">
+                            <div className="form-group" style={{marginBottom: '16px'}}>
                                 <label>Nama Pelanggan</label>
                                 <input type="text" className="input-field" value={customerName} onChange={e => setCustomerName(e.target.value)} placeholder="Contoh: Bpk. Budi" required />
                             </div>
-                            <div className="form-group">
+                            <div className="form-group" style={{marginBottom: '16px'}}>
                                 <label>No Telepon (Opsional)</label>
                                 <input type="text" className="input-field" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Contoh: 08123456789" />
                             </div>
-                            <div className="form-group">
+                            <div className="form-group" style={{marginBottom: '16px'}}>
                                 <label>Alamat Pengantaran</label>
                                 <textarea className="input-field" rows="3" value={address} onChange={e => setAddress(e.target.value)} placeholder="Contoh: Jl. Merdeka No. 10" required></textarea>
                             </div>
-                            <div className="form-group">
+                            <div className="form-group" style={{marginBottom: '24px'}}>
                                 <label>Total Tagihan (Rp)</label>
                                 <input type="number" className="input-field" value={totalAmount} onChange={e => setTotalAmount(e.target.value)} placeholder="Contoh: 1500000" required />
                             </div>
