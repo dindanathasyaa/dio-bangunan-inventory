@@ -569,39 +569,36 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                     )}
                                 </div>
                             </div>
-                            <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
-                                <div className="form-group" style={{flex: 1}}><label>Modal Barang (Rp)</label><input type="number" className="input-field" value={newItem.base_price} onChange={e => setNewItem({...newItem, base_price: e.target.value})} required /></div>
-                                <div className="form-group" style={{flex: 1}}><label>Harga Jual (Rp)</label><input type="number" className="input-field" value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} required /></div>
-                                <div className="form-group" style={{flex: 1}}>
-                                    <label>Jenis Satuan</label>
-                                    <div className="custom-dropdown-container" style={{position: 'relative', width: '100%', zIndex: isUnitDropdownOpen ? 10 : 1}}>
-                                        <div 
-                                            className={`custom-select-3d ${isUnitDropdownOpen ? 'active' : ''}`}
-                                            onClick={() => setIsUnitDropdownOpen(!isUnitDropdownOpen)}
-                                            style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box', border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer'}}
-                                        >
-                                            <span style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{unitType || 'Pilih Jenis Satuan'}</span>
-                                            <span style={{fontSize: '0.8rem', marginLeft: '16px'}}>▼</span>
-                                        </div>
-                                        {isUnitDropdownOpen && (
-                                            <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000, overflow: 'hidden', padding: 0}}>
-                                                <div 
-                                                    className={`custom-dropdown-item ${unitType === 'Satuan Majemuk' ? 'selected' : ''}`}
-                                                    onClick={() => { setUnitType('Satuan Majemuk'); setIsUnitDropdownOpen(false); }}
-                                                    style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
-                                                >
-                                                    Satuan Majemuk
-                                                </div>
-                                                <div 
-                                                    className={`custom-dropdown-item ${unitType === 'Tunggal' ? 'selected' : ''}`}
-                                                    onClick={() => { setUnitType('Tunggal'); setIsUnitDropdownOpen(false); }}
-                                                    style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
-                                                >
-                                                    Satuan Tunggal
-                                                </div>
-                                            </div>
-                                        )}
+
+                            <div className="form-group" style={{marginBottom: '16px'}}>
+                                <label>Jenis Satuan</label>
+                                <div className="custom-dropdown-container" style={{position: 'relative', width: '100%', zIndex: isUnitDropdownOpen ? 10 : 1}}>
+                                    <div 
+                                        className={`custom-select-3d ${isUnitDropdownOpen ? 'active' : ''}`}
+                                        onClick={() => setIsUnitDropdownOpen(!isUnitDropdownOpen)}
+                                        style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box', border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer'}}
+                                    >
+                                        <span style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{unitType || 'Pilih Jenis Satuan'}</span>
+                                        <span style={{fontSize: '0.8rem', marginLeft: '16px'}}>▼</span>
                                     </div>
+                                    {isUnitDropdownOpen && (
+                                        <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000, overflow: 'hidden', padding: 0}}>
+                                            <div 
+                                                className={`custom-dropdown-item ${unitType === 'Satuan Majemuk' ? 'selected' : ''}`}
+                                                onClick={() => { setUnitType('Satuan Majemuk'); setIsUnitDropdownOpen(false); }}
+                                                style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
+                                            >
+                                                Satuan Majemuk
+                                            </div>
+                                            <div 
+                                                className={`custom-dropdown-item ${unitType === 'Tunggal' ? 'selected' : ''}`}
+                                                onClick={() => { setUnitType('Tunggal'); setIsUnitDropdownOpen(false); }}
+                                                style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
+                                            >
+                                                Satuan Tunggal
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             
@@ -717,6 +714,11 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                     <div className="form-group" style={{flex: 1}}><label>Stok</label><input type="number" className="input-field" value={lembar} onChange={e => {setLembar(e.target.value);}} required /></div>
                                 </div>
                             )}
+
+                            <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
+                                <div className="form-group" style={{flex: 1}}><label>Modal Barang (Rp)</label><input type="number" className="input-field" value={newItem.base_price} onChange={e => setNewItem({...newItem, base_price: e.target.value})} required /></div>
+                                <div className="form-group" style={{flex: 1}}><label>Harga Jual (Rp)</label><input type="number" className="input-field" value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} required /></div>
+                            </div>
 
                             <div style={{display: 'flex', gap: '16px'}}>
                                 <div className="form-group" style={{flex: 1}}><label>Batas Minimum Stok</label><input type="number" className="input-field" value={newItem.min_stock} onChange={e => setNewItem({...newItem, min_stock: e.target.value})} required /></div>
