@@ -307,6 +307,8 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
     const [kodi, setKodi] = useState(0);
     const [lembar, setLembar] = useState(0);
     const [isUnitDropdownOpen, setIsUnitDropdownOpen] = useState(false);
+    const [majemukType, setMajemukType] = useState('Kodi');
+    const [majemukMultiplier, setMajemukMultiplier] = useState(20);
 
     const [newItem, setNewItem] = useState({
         sku: '',
@@ -576,9 +578,72 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                             </div>
                             
                             {unitType === 'Satuan Majemuk' ? (
-                                <div style={{display: 'flex', gap: '16px', background: 'var(--item-bg)', padding: '16px', borderRadius: '8px', marginBottom: '16px'}}>
-                                    <div className="form-group" style={{flex: 1, marginBottom: 0}}><label>Stok (Kodi)</label><input type="number" className="input-field" value={kodi} onChange={e => {setKodi(e.target.value); setLembar(e.target.value*20);}} /></div>
-                                    <div className="form-group" style={{flex: 1, marginBottom: 0}}><label>Stok (Lembar)</label><input type="number" className="input-field" value={lembar} onChange={e => {setLembar(e.target.value); setKodi(e.target.value/20);}} /></div>
+                                <div style={{background: 'var(--item-bg)', padding: '16px', borderRadius: '8px', marginBottom: '16px'}}>
+                                    <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
+                                        <div className="form-group" style={{flex: 1, marginBottom: 0}}>
+                                            <label>Pilih Satuan Besar</label>
+                                            <select 
+                                                className="input-field" 
+                                                value={majemukType} 
+                                                onChange={e => {
+                                                    const type = e.target.value;
+                                                    setMajemukType(type);
+                                                    if (type === 'Kodi') setMajemukMultiplier(20);
+                                                    else if (type === 'Lusin') setMajemukMultiplier(12);
+                                                    // For Dus/Pack we let the user define the multiplier, we can set a default of 10
+                                                    else if (majemukMultiplier === 20 || majemukMultiplier === 12) setMajemukMultiplier(10);
+                                                }}
+                                            >
+                                                <option value="Kodi">Kodi</option>
+                                                <option value="Lusin">Lusin</option>
+                                                <option value="Dus">Dus</option>
+                                                <option value="Pack">Pack</option>
+                                            </select>
+                                        </div>
+                                        <div className="form-group" style={{flex: 1, marginBottom: 0}}>
+                                            <label>Isi per 1 {majemukType} (Multiplier)</label>
+                                            <input 
+                                                type="number" 
+                                                className="input-field" 
+                                                value={majemukMultiplier} 
+                                                onChange={e => {
+                                                    const val = Number(e.target.value);
+                                                    setMajemukMultiplier(val);
+                                                    setLembar(kodi * val);
+                                                }} 
+                                                disabled={majemukType === 'Kodi' || majemukType === 'Lusin'}
+                                                style={{background: (majemukType === 'Kodi' || majemukType === 'Lusin') ? '#e5e7eb' : 'white'}}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div style={{display: 'flex', gap: '16px'}}>
+                                        <div className="form-group" style={{flex: 1, marginBottom: 0}}>
+                                            <label>Stok ({majemukType})</label>
+                                            <input 
+                                                type="number" 
+                                                className="input-field" 
+                                                value={kodi} 
+                                                onChange={e => {
+                                                    const val = Number(e.target.value);
+                                                    setKodi(val); 
+                                                    setLembar(val * majemukMultiplier);
+                                                }} 
+                                            />
+                                        </div>
+                                        <div className="form-group" style={{flex: 1, marginBottom: 0}}>
+                                            <label>Stok (Eceran / {newItem.unit || 'Pcs'})</label>
+                                            <input 
+                                                type="number" 
+                                                className="input-field" 
+                                                value={lembar} 
+                                                onChange={e => {
+                                                    const val = Number(e.target.value);
+                                                    setLembar(val); 
+                                                    setKodi(val / majemukMultiplier);
+                                                }} 
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             ) : (
                                 <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
