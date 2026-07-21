@@ -535,8 +535,14 @@ p {
   background: var(--item-bg);
   border-bottom: 1px solid var(--border-color);
 }
-.data-table th {
+.data-table thead tr {
   background: linear-gradient(to right, #ffedd5, #fed7aa);
+}
+[data-theme="dark"] .data-table thead tr {
+  background: linear-gradient(to right, #431407, #7c2d12);
+}
+.data-table th {
+  background: transparent;
   color: #c2410c; /* Deep orange text for contrast */
   font-weight: 700;
   text-transform: uppercase;
@@ -545,7 +551,6 @@ p {
   border-bottom: 2px solid #fdba74;
 }
 [data-theme="dark"] .data-table th {
-  background: linear-gradient(to right, #431407, #7c2d12);
   color: #ffedd5;
   border-bottom: 2px solid #9a3412;
 }
