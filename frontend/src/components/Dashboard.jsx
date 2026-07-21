@@ -89,13 +89,7 @@ const Dashboard = ({ user, setUser }) => {
                     <button className="sidebar-toggle" onClick={toggleSidebar} style={{ position: 'absolute', top: '24px', left: '24px', width: '40px', height: '40px', borderRadius: '8px', zIndex: 100 }}>☰</button>
                 )}
                 
-                {/* Theme Toggle Button */}
-                <div style={{ position: 'absolute', top: '24px', right: '32px', zIndex: 10, display: 'flex', background: 'var(--item-bg)', borderRadius: '30px', padding: '4px', boxShadow: 'var(--glass-shadow)', border: '1px solid var(--border-color)' }}>
-                    <button onClick={() => { if(theme !== 'light') toggleTheme() }} style={{ background: theme === 'light' ? 'var(--primary-color)' : 'transparent', border: 'none', padding: '8px 16px', borderRadius: '24px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', fontSize: '1.2rem' }}>☀️</button>
-                    <button onClick={() => { if(theme !== 'dark') toggleTheme() }} style={{ background: theme === 'dark' ? 'var(--primary-color)' : 'transparent', border: 'none', padding: '8px 16px', borderRadius: '24px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', fontSize: '1.2rem' }}>🌙</button>
-                </div>
-
-                <div style={{height: '100%', paddingTop: '40px'}}>
+                <div style={{height: '100%', paddingTop: '16px'}}>
                     <Routes>
                         <Route path="/" element={<ControlCenter user={user} />} />
                         <Route path="/inventory" element={<InventoryView inventory={inventory} refreshData={fetchData} user={user} />} />
@@ -156,7 +150,19 @@ const ControlCenter = ({ user }) => {
 
     return (
         <div style={{animation: 'fadeIn 0.5s ease-out'}}>
-            <h1 style={{marginBottom: '8px'}}>Control Center</h1>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
+                <h1 style={{margin: 0}}>Control Center</h1>
+                <div className="theme-toggle" onClick={() => {
+                    const currentTheme = localStorage.getItem('theme') || 'dark';
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                    document.documentElement.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                    window.dispatchEvent(new Event('storage'));
+                }}>
+                    <div className="icon">☀️</div>
+                    <div className="icon">🌙</div>
+                </div>
+            </div>
             <p style={{color: 'var(--text-secondary)', marginBottom: '32px'}}>Ringkasan Cepat & Pintasan Navigasi</p>
             
             <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px'}}>
@@ -236,12 +242,11 @@ const ControlCenter = ({ user }) => {
     );
 };
 
-// ... keep InventoryView as is
 const InventoryView = ({ inventory, refreshData, user }) => {
     const [search, setSearch] = useState('');
     const [showModal, setShowModal] = useState(false);
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('Semua');
+    const [activeBarcode, setActiveBarcode] = useState(null);
     const [dbCategories, setDbCategories] = useState([]);
     const [unitType, setUnitType] = useState('Kodi/Lembar');
     const [kodi, setKodi] = useState(0);
@@ -311,20 +316,17 @@ const InventoryView = ({ inventory, refreshData, user }) => {
                         onChange={e => setSearch(e.target.value)}
                         style={{marginBottom: 0, minWidth: '250px'}}
                     />
-                    <div style={{position: 'relative'}}>
-                        <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} style={{minWidth: '240px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', background: 'var(--item-bg)', border: isDropdownOpen ? '2px solid var(--primary-color)' : '1px solid var(--border-color)', color: 'var(--text-primary)', padding: '12px 20px', borderRadius: '14px', outline: 'none'}}>
-                            <span style={{fontWeight: '600'}}>{selectedCategory}</span>
-                            <span>▼</span>
-                        </button>
-                        {isDropdownOpen && (
-                            <div style={{position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '10px', background: 'var(--item-bg)', borderRadius: '14px', zIndex: 50, border: '1px solid var(--border-color)', overflow: 'hidden', display: 'flex', flexDirection: 'column'}}>
-                                {categories.map(cat => (
-                                    <button key={cat} onClick={() => { setSelectedCategory(cat); setIsDropdownOpen(false); }} style={{padding: '14px 20px', background: 'transparent', color: 'var(--text-primary)', border: 'none', textAlign: 'left', cursor: 'pointer'}}>{cat}</button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                    <button className="btn" style={{width: '45px', height: '45px', borderRadius: '50%', padding: 0, fontSize: '1.8rem', display: 'flex', justifyContent: 'center', alignItems: 'center'}} onClick={() => setShowModal(true)}>+</button>
+                    <select 
+                        className="custom-select-3d" 
+                        value={selectedCategory} 
+                        onChange={e => setSelectedCategory(e.target.value)}
+                        style={{minWidth: '200px'}}
+                    >
+                        {categories.map(cat => (
+                            <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                    </select>
+                    <button className="btn-circle" onClick={() => setShowModal(true)}>+</button>
                 </div>
             </div>
             
@@ -342,20 +344,42 @@ const InventoryView = ({ inventory, refreshData, user }) => {
                     </thead>
                     <tbody>
                         {filteredInventory.map(item => {
-                            const isLow = item.stock <= item.min_stock;
+                            const isEmpty = Math.floor(item.stock) === 0;
+                            const isLow = Math.floor(item.stock) <= item.min_stock;
+                            
+                            let badgeClass = 'good';
+                            let badgeText = 'Aman';
+                            
+                            if (isEmpty) {
+                                badgeClass = 'danger';
+                                badgeText = 'Habis';
+                            } else if (isLow) {
+                                badgeClass = 'warning';
+                                badgeText = 'Kritis';
+                            }
+
                             return (
                                 <tr key={item.id}>
-                                    <td style={{padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px'}}>
-                                        <div id={`barcode-${item.sku}`} style={{background: 'white', padding: '4px 8px', borderRadius: '4px', display: 'inline-block'}}>
-                                            <Barcode value={item.sku} height={30} width={1.5} fontSize={12} displayValue={true} background="transparent" margin={0} />
+                                    <td style={{padding: '8px 16px'}}>
+                                        <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                                            <button className="btn-icon" style={{border: '1px solid var(--border-color)'}} onClick={() => setActiveBarcode(activeBarcode === item.sku ? null : item.sku)}>
+                                                {activeBarcode === item.sku ? 'Tutup' : 'Barcode'}
+                                            </button>
+                                            {activeBarcode === item.sku && (
+                                                <button className="btn-icon" onClick={() => downloadBarcode(item.sku)} title="Unduh Barcode">⬇️</button>
+                                            )}
                                         </div>
-                                        <button className="btn btn-outline" style={{padding: '4px 8px', fontSize: '0.8rem'}} onClick={() => downloadBarcode(item.sku)} title="Unduh Barcode">⬇️</button>
+                                        {activeBarcode === item.sku && (
+                                            <div id={`barcode-${item.sku}`} style={{background: 'white', padding: '4px 8px', borderRadius: '4px', display: 'inline-block', marginTop: '8px'}}>
+                                                <Barcode value={item.sku} height={30} width={1.5} fontSize={12} displayValue={true} background="transparent" margin={0} />
+                                            </div>
+                                        )}
                                     </td>
                                     <td style={{color: 'var(--text-primary)', fontWeight: '500'}}>{item.name}</td>
                                     <td><span style={{background: 'var(--border-color)', padding: '4px 10px', borderRadius: '4px', fontSize: '0.8rem'}}>{item.category}</span></td>
                                     <td>{item.branch_name}</td>
-                                    <td style={{fontWeight: 'bold', fontSize: '1.1rem'}}>{item.stock}</td>
-                                    <td><span className={`badge ${isLow ? 'low' : 'good'}`}>{isLow ? 'Stok Kritis' : 'Aman'}</span></td>
+                                    <td style={{fontWeight: 'bold', fontSize: '1.1rem'}}>{Math.floor(item.stock)}</td>
+                                    <td><span className={`badge ${badgeClass}`}>{badgeText}</span></td>
                                 </tr>
                             );
                         })}
