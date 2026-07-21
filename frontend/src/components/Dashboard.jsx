@@ -150,6 +150,7 @@ const Dashboard = ({ user, setUser }) => {
 const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
     const navigate = useNavigate();
     const [summary, setSummary] = useState(null);
+    const [isBranchDropdownOpen, setIsBranchDropdownOpen] = useState(false);
 
     useEffect(() => {
         axios.get(`http://localhost:5000/api/dashboard/summary?branch_id=${activeBranch}`)
@@ -166,18 +167,36 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                 
                 <div style={{display: 'flex', gap: '16px', alignItems: 'center'}}>
                     {user.role === 'OWNER' && (
-                        <div style={{display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--item-bg)', padding: '8px 16px', borderRadius: '12px', border: '1px solid var(--border-color)'}}>
-                            <span style={{fontWeight: 'bold', color: 'var(--text-secondary)'}}>Pilih Toko:</span>
-                            <select 
-                                value={activeBranch} 
-                                onChange={e => setActiveBranch(e.target.value)}
-                                style={{background: 'transparent', border: 'none', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1rem', outline: 'none', cursor: 'pointer'}}
+                        <div className="custom-dropdown-container" style={{display: 'flex', alignItems: 'center'}}>
+                            <span style={{fontWeight: 'bold', color: 'var(--text-secondary)', marginRight: '12px'}}>Pilih Toko:</span>
+                            <div 
+                                className={`custom-select-3d ${isBranchDropdownOpen ? 'active' : ''}`}
+                                onClick={() => setIsBranchDropdownOpen(!isBranchDropdownOpen)}
+                                style={{minWidth: '220px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--primary-color)', color: 'white', border: 'none'}}
                             >
-                                <option value="all">Semua Toko (Gabungan)</option>
-                                {branches.map(b => (
-                                    <option key={b.id} value={b.id}>{b.name}</option>
-                                ))}
-                            </select>
+                                <span>{activeBranch === 'all' ? 'Semua Toko (Gabungan)' : branches.find(b => b.id.toString() === activeBranch.toString())?.name}</span>
+                            </div>
+                            {isBranchDropdownOpen && (
+                                <div className="custom-dropdown-menu" style={{right: 0, left: 'auto', marginTop: '48px', width: '220px', border: '2px solid var(--primary-color)', zIndex: 1000}}>
+                                    <div 
+                                        className={`custom-dropdown-item ${activeBranch === 'all' ? 'selected' : ''}`}
+                                        onClick={() => { setActiveBranch('all'); setIsBranchDropdownOpen(false); }}
+                                        style={{fontWeight: '500'}}
+                                    >
+                                        Semua Toko (Gabungan)
+                                    </div>
+                                    {branches.map(b => (
+                                        <div 
+                                            key={b.id} 
+                                            className={`custom-dropdown-item ${activeBranch.toString() === b.id.toString() ? 'selected' : ''}`}
+                                            onClick={() => { setActiveBranch(b.id); setIsBranchDropdownOpen(false); }}
+                                            style={{fontWeight: '500'}}
+                                        >
+                                            {b.name}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     )}
 
