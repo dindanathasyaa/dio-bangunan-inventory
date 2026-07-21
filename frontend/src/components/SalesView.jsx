@@ -371,6 +371,19 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                         <tr><td colSpan="5" style={{textAlign: 'center'}}>Belum ada data penjualan</td></tr>
                                     )}
                                 </tbody>
+                                {detailData.length > 0 && (
+                                    <tfoot style={{position: 'sticky', bottom: 0, background: 'var(--panel-bg)', zIndex: 1, borderTop: '2px solid var(--border-color)'}}>
+                                        <tr>
+                                            <td colSpan="3" style={{textAlign: 'right', fontWeight: 'bold'}}>Total Keseluruhan:</td>
+                                            <td style={{textAlign: 'right', fontWeight: 'bold', color: 'var(--primary-color)'}}>
+                                                Rp {detailData.reduce((acc, row) => acc + Number(row.total_amount), 0).toLocaleString()}
+                                            </td>
+                                            <td style={{textAlign: 'right', fontWeight: 'bold', color: '#10b981'}}>
+                                                Rp {detailData.reduce((acc, row) => acc + Number(row.profit), 0).toLocaleString()}
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                )}
                             </table>
                         </div>
                     </div>
