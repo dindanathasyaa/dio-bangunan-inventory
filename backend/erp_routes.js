@@ -2,7 +2,7 @@ module.exports = function(app, pool) {
 
     // --- SALES ---
     app.post('/api/sales', async (req, res) => {
-        const { branch_id, customer_name, payment_method, items } = req.body;
+        const { branch_id, customer_name, payment_method, items, transaction_date } = req.body;
         // items: [{ product_id, qty, price, base_price }]
         const connection = await pool.getConnection();
         try {
@@ -16,10 +16,18 @@ module.exports = function(app, pool) {
                 total_profit += (item.qty * (item.price - item.base_price));
             }
 
-            const [saleRes] = await connection.query(
-                `INSERT INTO sales (branch_id, customer_name, total_amount, profit, payment_method) VALUES (?, ?, ?, ?, ?)`,
-                [branch_id, customer_name, total_amount, total_profit, payment_method]
-            );
+            let saleRes;
+            if (transaction_date) {
+                [saleRes] = await connection.query(
+                    `INSERT INTO sales (branch_id, customer_name, total_amount, profit, payment_method, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
+                    [branch_id, customer_name, total_amount, total_profit, payment_method, transaction_date]
+                );
+            } else {
+                [saleRes] = await connection.query(
+                    `INSERT INTO sales (branch_id, customer_name, total_amount, profit, payment_method) VALUES (?, ?, ?, ?, ?)`,
+                    [branch_id, customer_name, total_amount, total_profit, payment_method]
+                );
+            }
             const sale_id = saleRes.insertId;
 
             for (let item of items) {
@@ -35,15 +43,29 @@ module.exports = function(app, pool) {
             }
 
             if (payment_method === 'Cash') {
-                await connection.query(
-                    `INSERT INTO cash_flow (branch_id, type, amount, description, reference_id) VALUES (?, 'Masuk', ?, ?, ?)`,
-                    [branch_id, total_amount, `Penjualan Tunai: ${customer_name || 'Umum'}`, sale_id]
-                );
+                if (transaction_date) {
+                    await connection.query(
+                        `INSERT INTO cash_flow (branch_id, type, amount, description, reference_id, created_at) VALUES (?, 'Masuk', ?, ?, ?, ?)`,
+                        [branch_id, total_amount, `Penjualan Tunai: ${customer_name || 'Umum'}`, sale_id, transaction_date]
+                    );
+                } else {
+                    await connection.query(
+                        `INSERT INTO cash_flow (branch_id, type, amount, description, reference_id) VALUES (?, 'Masuk', ?, ?, ?)`,
+                        [branch_id, total_amount, `Penjualan Tunai: ${customer_name || 'Umum'}`, sale_id]
+                    );
+                }
             } else if (payment_method === 'Kredit') {
-                await connection.query(
-                    `INSERT INTO receivables (sale_id, customer_name, total_debt, status) VALUES (?, ?, ?, 'Belum Lunas')`,
-                    [sale_id, customer_name, total_amount]
-                );
+                if (transaction_date) {
+                    await connection.query(
+                        `INSERT INTO receivables (sale_id, customer_name, total_debt, status, created_at) VALUES (?, ?, ?, 'Belum Lunas', ?)`,
+                        [sale_id, customer_name, total_amount, transaction_date]
+                    );
+                } else {
+                    await connection.query(
+                        `INSERT INTO receivables (sale_id, customer_name, total_debt, status) VALUES (?, ?, ?, 'Belum Lunas')`,
+                        [sale_id, customer_name, total_amount]
+                    );
+                }
             }
 
             await connection.commit();
@@ -53,6 +75,30 @@ module.exports = function(app, pool) {
             res.status(500).json({ error: error.message });
         } finally {
             connection.release();
+        }
+    });
+
+    app.get('/api/sales/recap', async (req, res) => {
+        const branch_id = req.query.branch_id;
+        try {
+            let query = `
+                SELECT 
+                    DATE(created_at) as date, 
+                    SUM(total_amount) as total_sales, 
+                    SUM(profit) as total_profit, 
+                    COUNT(id) as total_transactions 
+                FROM sales 
+            `;
+            const params = [];
+            if (branch_id && branch_id !== 'all') {
+                query += `WHERE branch_id = ? `;
+                params.push(branch_id);
+            }
+            query += `GROUP BY DATE(created_at) ORDER BY date DESC LIMIT 30`;
+            const [rows] = await pool.query(query, params);
+            res.json(rows);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
         }
     });
 

@@ -10,6 +10,10 @@ const SalesView = ({ user, activeBranch }) => {
     const [loading, setLoading] = useState(false);
     const [showZeroStockWarning, setShowZeroStockWarning] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [isIndirectSale, setIsIndirectSale] = useState(false);
+    const [transactionDate, setTransactionDate] = useState('');
+    const [showRecapModal, setShowRecapModal] = useState(false);
+    const [recapData, setRecapData] = useState([]);
 
     useEffect(() => {
         fetchProducts();
@@ -19,6 +23,16 @@ const SalesView = ({ user, activeBranch }) => {
         try {
             const res = await axios.get(`http://localhost:5000/api/inventory?branch_id=${activeBranch}`);
             setProducts(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const fetchRecap = async () => {
+        try {
+            const res = await axios.get(`http://localhost:5000/api/sales/recap?branch_id=${activeBranch}`);
+            setRecapData(res.data);
+            setShowRecapModal(true);
         } catch (error) {
             console.error(error);
         }
@@ -73,12 +87,15 @@ const SalesView = ({ user, activeBranch }) => {
                 branch_id: user.role === 'MANAGER' ? user.branch_id : activeBranch,
                 customer_name: customerName,
                 payment_method: paymentMethod,
-                items
+                items,
+                transaction_date: isIndirectSale && transactionDate ? transactionDate : null
             });
 
             setShowSuccessModal(true);
             setCart([]);
             setCustomerName('');
+            setIsIndirectSale(false);
+            setTransactionDate('');
             fetchProducts();
         } catch (error) {
             console.error(error);
@@ -96,7 +113,14 @@ const SalesView = ({ user, activeBranch }) => {
         <div style={{animation: 'fadeIn 0.5s ease-out', display: 'flex', gap: '24px', height: '100%'}}>
             {/* Kiri: Daftar Produk */}
             <div className="glass-panel" style={{flex: 2, display: 'flex', flexDirection: 'column'}}>
-                <h2>Katalog Penjualan</h2>
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
+                    <h2 style={{margin: 0}}>Katalog Penjualan</h2>
+                    {user.role === 'OWNER' && (
+                        <button className="btn btn-secondary" style={{padding: '8px 16px', fontSize: '0.9rem'}} onClick={fetchRecap}>
+                            📊 Rekap Harian
+                        </button>
+                    )}
+                </div>
                 <input 
                     type="text" 
                     className="input-field" 
@@ -153,6 +177,17 @@ const SalesView = ({ user, activeBranch }) => {
                             <option value="Kredit">Kredit (Hutang)</option>
                         </select>
                     </div>
+                    {user.role === 'OWNER' && (
+                        <div className="form-group" style={{marginTop: '16px', marginBottom: '24px'}}>
+                            <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: 'var(--text-secondary)'}}>
+                                <input type="checkbox" checked={isIndirectSale} onChange={e => setIsIndirectSale(e.target.checked)} />
+                                Penjualan Terdahulu (Tanggal Lalu)
+                            </label>
+                            {isIndirectSale && (
+                                <input type="datetime-local" className="input-field" style={{marginTop: '8px'}} value={transactionDate} onChange={e => setTransactionDate(e.target.value)} required={isIndirectSale} />
+                            )}
+                        </div>
+                    )}
                     <button className="btn btn-primary" style={{width: '100%', padding: '16px', fontSize: '1.1rem'}} onClick={checkout} disabled={loading || cart.length === 0}>
                         {loading ? 'Memproses...' : 'Selesaikan Pembayaran'}
                     </button>
@@ -201,6 +236,42 @@ const SalesView = ({ user, activeBranch }) => {
                         <button className="btn" style={{width: '100%', background: '#10b981', boxShadow: '0 4px 15px rgba(16, 185, 129, 0.4)'}} onClick={() => setShowSuccessModal(false)}>
                             Lanjutkan
                         </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal Rekap Harian */}
+            {showRecapModal && (
+                <div className="modal-overlay" onClick={() => setShowRecapModal(false)}>
+                    <div className="modal-content" style={{maxWidth: '700px'}} onClick={e => e.stopPropagation()}>
+                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
+                            <h2>Rekap Penjualan Harian</h2>
+                            <button className="btn-icon" onClick={() => setShowRecapModal(false)}>✕</button>
+                        </div>
+                        <div className="table-container" style={{maxHeight: '400px', overflowY: 'auto'}}>
+                            <table className="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tanggal</th>
+                                        <th style={{textAlign: 'center'}}>Jml Transaksi</th>
+                                        <th style={{textAlign: 'right'}}>Total Omset</th>
+                                        <th style={{textAlign: 'right'}}>Total Profit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {recapData.length > 0 ? recapData.map((row, idx) => (
+                                        <tr key={idx}>
+                                            <td>{new Date(row.date).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}</td>
+                                            <td style={{textAlign: 'center'}}>{row.total_transactions}</td>
+                                            <td style={{textAlign: 'right', fontWeight: 'bold'}}>Rp {Number(row.total_sales).toLocaleString()}</td>
+                                            <td style={{textAlign: 'right', color: '#10b981', fontWeight: 'bold'}}>Rp {Number(row.total_profit).toLocaleString()}</td>
+                                        </tr>
+                                    )) : (
+                                        <tr><td colSpan="4" style={{textAlign: 'center'}}>Belum ada data penjualan</td></tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             )}
