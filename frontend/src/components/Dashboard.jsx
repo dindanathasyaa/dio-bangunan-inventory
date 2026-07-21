@@ -306,6 +306,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
     const [unitType, setUnitType] = useState('Satuan Majemuk');
     const [kodi, setKodi] = useState(0);
     const [lembar, setLembar] = useState(0);
+    const [isUnitDropdownOpen, setIsUnitDropdownOpen] = useState(false);
 
     const [newItem, setNewItem] = useState({
         sku: '',
@@ -543,15 +544,37 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                 <div className="form-group" style={{flex: 1}}><label>Harga Jual (Rp)</label><input type="number" className="input-field" value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} required /></div>
                                 <div className="form-group" style={{flex: 1}}>
                                     <label>Jenis Satuan</label>
-                                    <select 
-                                        className="input-field" 
-                                        value={unitType} 
-                                        onChange={e => setUnitType(e.target.value)}
-                                        style={{border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold'}}
-                                    >
-                                        <option value="Satuan Majemuk">Satuan Majemuk</option>
-                                        <option value="Tunggal">Satuan Tunggal</option>
-                                    </select>
+                                    <div className="custom-dropdown-container" style={{position: 'relative', width: '100%'}}>
+                                        <div 
+                                            className={`custom-select-3d ${isUnitDropdownOpen ? 'active' : ''}`}
+                                            onClick={() => setIsUnitDropdownOpen(!isUnitDropdownOpen)}
+                                            style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box', border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer'}}
+                                        >
+                                            <span>{unitType}</span>
+                                            <span style={{fontSize: '0.8rem'}}>▼</span>
+                                        </div>
+                                        {isUnitDropdownOpen && (
+                                            <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000, overflow: 'hidden', padding: 0}}>
+                                                <div style={{background: 'var(--primary-color)', color: 'white', padding: '12px 16px', fontWeight: 'bold'}}>
+                                                    Jenis Satuan
+                                                </div>
+                                                <div 
+                                                    className={`custom-dropdown-item branch-dropdown-item ${unitType === 'Satuan Majemuk' ? 'selected' : ''}`}
+                                                    onClick={() => { setUnitType('Satuan Majemuk'); setIsUnitDropdownOpen(false); }}
+                                                    style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
+                                                >
+                                                    Satuan Majemuk
+                                                </div>
+                                                <div 
+                                                    className={`custom-dropdown-item branch-dropdown-item ${unitType === 'Tunggal' ? 'selected' : ''}`}
+                                                    onClick={() => { setUnitType('Tunggal'); setIsUnitDropdownOpen(false); }}
+                                                    style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
+                                                >
+                                                    Satuan Tunggal
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                             
