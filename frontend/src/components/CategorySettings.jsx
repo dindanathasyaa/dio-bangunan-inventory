@@ -202,7 +202,11 @@ const CategorySettings = () => {
                     showAlert('Satuan besar berhasil dihapus');
                 } catch (error) {
                     console.error(error);
-                    showAlert('Gagal menghapus satuan besar');
+                    if (error.response && error.response.data && error.response.data.error) {
+                        showAlert(error.response.data.error);
+                    } else {
+                        showAlert('Gagal menghapus satuan besar');
+                    }
                 }
             }
         });
@@ -220,7 +224,11 @@ const CategorySettings = () => {
                     showAlert('Satuan tunggal berhasil dihapus');
                 } catch (error) {
                     console.error(error);
-                    showAlert('Gagal menghapus satuan tunggal');
+                    if (error.response && error.response.data && error.response.data.error) {
+                        showAlert(error.response.data.error);
+                    } else {
+                        showAlert('Gagal menghapus satuan tunggal');
+                    }
                 }
             }
         });
