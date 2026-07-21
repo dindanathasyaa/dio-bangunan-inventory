@@ -104,12 +104,17 @@ module.exports = function(app, pool) {
 
     app.get('/api/sales', async (req, res) => {
         const branch_id = req.query.branch_id;
+        const date = req.query.date;
         try {
-            let query = 'SELECT * FROM sales';
+            let query = 'SELECT * FROM sales WHERE 1=1';
             const params = [];
             if (branch_id && branch_id !== 'all') {
-                query += ' WHERE branch_id = ?';
+                query += ' AND branch_id = ?';
                 params.push(branch_id);
+            }
+            if (date) {
+                query += ' AND DATE(created_at) = ?';
+                params.push(date);
             }
             query += ' ORDER BY created_at DESC LIMIT 50';
             const [rows] = await pool.query(query, params);

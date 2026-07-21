@@ -14,6 +14,9 @@ const SalesView = ({ user, activeBranch }) => {
     const [transactionDate, setTransactionDate] = useState('');
     const [showRecapModal, setShowRecapModal] = useState(false);
     const [recapData, setRecapData] = useState([]);
+    const [showDetailModal, setShowDetailModal] = useState(false);
+    const [detailData, setDetailData] = useState([]);
+    const [detailDate, setDetailDate] = useState('');
 
     useEffect(() => {
         fetchProducts();
@@ -36,6 +39,19 @@ const SalesView = ({ user, activeBranch }) => {
         } catch (error) {
             console.error(error);
             alert('Gagal mengambil rekap: ' + error.message);
+        }
+    };
+
+    const viewDetail = async (date) => {
+        try {
+            const dateStr = date.split('T')[0];
+            const res = await axios.get(`http://localhost:5000/api/sales?branch_id=${activeBranch}&date=${dateStr}`);
+            setDetailData(res.data);
+            setDetailDate(date);
+            setShowDetailModal(true);
+        } catch (error) {
+            console.error(error);
+            alert('Gagal mengambil detail: ' + error.message);
         }
     };
 
@@ -257,6 +273,7 @@ const SalesView = ({ user, activeBranch }) => {
                                         <th style={{textAlign: 'center'}}>Jml Transaksi</th>
                                         <th style={{textAlign: 'right'}}>Total Omset</th>
                                         <th style={{textAlign: 'right'}}>Total Profit</th>
+                                        <th style={{textAlign: 'center'}}>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -266,9 +283,50 @@ const SalesView = ({ user, activeBranch }) => {
                                             <td style={{textAlign: 'center'}}>{row.total_transactions}</td>
                                             <td style={{textAlign: 'right', fontWeight: 'bold'}}>Rp {Number(row.total_sales).toLocaleString()}</td>
                                             <td style={{textAlign: 'right', color: '#10b981', fontWeight: 'bold'}}>Rp {Number(row.total_profit).toLocaleString()}</td>
+                                            <td style={{textAlign: 'center'}}>
+                                                <button className="btn btn-secondary" style={{padding: '4px 12px', fontSize: '0.85rem'}} onClick={() => viewDetail(row.date)}>Detail</button>
+                                            </td>
                                         </tr>
                                     )) : (
-                                        <tr><td colSpan="4" style={{textAlign: 'center'}}>Belum ada data penjualan</td></tr>
+                                        <tr><td colSpan="5" style={{textAlign: 'center'}}>Belum ada data penjualan</td></tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal Detail Penjualan */}
+            {showDetailModal && (
+                <div className="modal-overlay" onClick={() => setShowDetailModal(false)}>
+                    <div className="modal-content" style={{maxWidth: '800px'}} onClick={e => e.stopPropagation()}>
+                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
+                            <h2>Detail Penjualan: {new Date(detailDate).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}</h2>
+                            <button className="btn-icon" onClick={() => setShowDetailModal(false)}>✕</button>
+                        </div>
+                        <div className="table-container" style={{maxHeight: '400px', overflowY: 'auto'}}>
+                            <table className="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Waktu</th>
+                                        <th>Pelanggan</th>
+                                        <th>Pembayaran</th>
+                                        <th style={{textAlign: 'right'}}>Omset</th>
+                                        <th style={{textAlign: 'right'}}>Profit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {detailData.length > 0 ? detailData.map((row, idx) => (
+                                        <tr key={idx}>
+                                            <td>{new Date(row.created_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'})}</td>
+                                            <td>{row.customer_name || 'Umum'}</td>
+                                            <td>{row.payment_method}</td>
+                                            <td style={{textAlign: 'right'}}>Rp {Number(row.total_amount).toLocaleString()}</td>
+                                            <td style={{textAlign: 'right', color: '#10b981'}}>Rp {Number(row.profit).toLocaleString()}</td>
+                                        </tr>
+                                    )) : (
+                                        <tr><td colSpan="5" style={{textAlign: 'center'}}>Belum ada data penjualan</td></tr>
                                     )}
                                 </tbody>
                             </table>
