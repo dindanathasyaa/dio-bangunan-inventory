@@ -516,6 +516,8 @@ p {
   border-radius: 16px;
   width: 100%;
   max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
   border: 1px solid var(--border-color);
   box-shadow: var(--glass-shadow);
 }
