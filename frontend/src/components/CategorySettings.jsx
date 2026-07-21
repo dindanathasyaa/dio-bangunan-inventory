@@ -20,7 +20,6 @@ const CategorySettings = () => {
     const [smallUnits, setSmallUnits] = useState([]);
     const [smallUnitName, setSmallUnitName] = useState('');
     const [smallUnitLoading, setSmallUnitLoading] = useState(false);
-    const [smallUnitLoading, setSmallUnitLoading] = useState(false);
     const [smallUnitMessage, setSmallUnitMessage] = useState('');
 
     // Modal states
