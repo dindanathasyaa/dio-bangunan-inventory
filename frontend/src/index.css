@@ -537,10 +537,14 @@ p {
 }
 .data-table thead tr {
   background: linear-gradient(to right, #ffedd5, #fed7aa);
+  border-radius: 12px;
 }
 [data-theme="dark"] .data-table thead tr {
   background: linear-gradient(to right, #431407, #7c2d12);
+  border-radius: 12px;
 }
+.data-table th:first-child { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+.data-table th:last-child { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
 .data-table th {
   background: transparent;
   color: #c2410c; /* Deep orange text for contrast */
