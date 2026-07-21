@@ -497,7 +497,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                         <h2 style={{marginBottom: '24px'}}>Tambah Barang Baru</h2>
                         <form onSubmit={handleAddItem}>
                             {user.role === 'OWNER' && (
-                                <div className="form-group">
+                                <div className="form-group" style={{marginBottom: '16px'}}>
                                     <label>Toko Cabang</label>
                                     <div className="custom-dropdown-container" style={{position: 'relative'}}>
                                         <div 
@@ -524,9 +524,9 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                     </div>
                                 </div>
                             )}
-                            <div className="form-group"><label>Kode Barang</label><input type="text" className="input-field" value={newItem.sku} onChange={e => setNewItem({...newItem, sku: e.target.value})} required /></div>
-                            <div className="form-group"><label>Nama Barang</label><input type="text" className="input-field" value={newItem.name} onChange={e => setNewItem({...newItem, name: e.target.value})} required /></div>
-                            <div className="form-group">
+                            <div className="form-group" style={{marginBottom: '16px'}}><label>Kode Barang</label><input type="text" className="input-field" value={newItem.sku} onChange={e => setNewItem({...newItem, sku: e.target.value})} required /></div>
+                            <div className="form-group" style={{marginBottom: '16px'}}><label>Nama Barang</label><input type="text" className="input-field" value={newItem.name} onChange={e => setNewItem({...newItem, name: e.target.value})} required /></div>
+                            <div className="form-group" style={{marginBottom: '16px'}}>
                                 <label>Kategori</label>
                                 <select className="input-field" value={newItem.category_id} onChange={e => {
                                     const catId = e.target.value;
