@@ -104,7 +104,7 @@ const Dashboard = ({ user, setUser }) => {
                     <Routes>
                         <Route path="/" element={<ControlCenter user={user} activeBranch={activeBranch} setActiveBranch={setActiveBranch} branches={branches} />} />
                         <Route path="/inventory" element={<InventoryView inventory={inventory} refreshData={fetchData} user={user} activeBranch={activeBranch} branches={branches} />} />
-                        <Route path="/sales" element={<SalesView user={user} activeBranch={activeBranch} />} />
+                        <Route path="/sales" element={<SalesView user={user} activeBranch={activeBranch} setActiveBranch={setActiveBranch} branches={branches} />} />
                         <Route path="/orders" element={<OrderDeliveryView user={user} activeBranch={activeBranch} />} />
                         <Route path="/purchases" element={<PurchaseView user={user} activeBranch={activeBranch} branches={branches} />} />
                         <Route path="/cash" element={<CashDebtView user={user} activeBranch={activeBranch} branches={branches} />} />

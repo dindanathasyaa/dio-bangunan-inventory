@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const SalesView = ({ user, activeBranch }) => {
+const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
     const [products, setProducts] = useState([]);
     const [cart, setCart] = useState([]);
     const [customerName, setCustomerName] = useState('');
@@ -17,6 +17,7 @@ const SalesView = ({ user, activeBranch }) => {
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [detailData, setDetailData] = useState([]);
     const [detailDate, setDetailDate] = useState('');
+    const [isBranchDropdownOpen, setIsBranchDropdownOpen] = useState(false);
 
     useEffect(() => {
         fetchProducts();
@@ -134,11 +135,50 @@ const SalesView = ({ user, activeBranch }) => {
             <div className="glass-panel" style={{flex: 2, display: 'flex', flexDirection: 'column'}}>
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
                     <h2 style={{margin: 0}}>Katalog Penjualan</h2>
-                    {user.role === 'OWNER' && (
-                        <button className="btn btn-secondary" style={{padding: '8px 16px', fontSize: '0.9rem'}} onClick={fetchRecap}>
-                            📊 Rekap Harian
-                        </button>
-                    )}
+                    
+                    <div style={{display: 'flex', gap: '12px', alignItems: 'center'}}>
+                        {user.role === 'OWNER' && (
+                            <div style={{display: 'flex', alignItems: 'center'}}>
+                                <span style={{fontWeight: 'bold', color: 'white', marginRight: '8px', background: 'var(--secondary-color)', padding: '8px 12px', borderRadius: '6px', fontSize: '0.9rem'}}>Pilih Toko:</span>
+                                <div className="custom-dropdown-container" style={{position: 'relative', zIndex: 50}}>
+                                    <div 
+                                        className={`custom-select-3d ${isBranchDropdownOpen ? 'active' : ''}`}
+                                        onClick={() => setIsBranchDropdownOpen(!isBranchDropdownOpen)}
+                                        style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'transparent', color: 'var(--secondary-color)', border: '2px solid var(--secondary-color)', borderRadius: '6px', padding: '8px 12px', cursor: 'pointer', fontSize: '0.9rem'}}
+                                    >
+                                        <span style={{fontWeight: 'bold'}}>{activeBranch === 'all' ? 'Semua Toko' : branches?.find(b => b.id.toString() === activeBranch.toString())?.name}</span>
+                                        <span style={{fontSize: '0.8rem', marginLeft: '12px'}}>▼</span>
+                                    </div>
+                                    {isBranchDropdownOpen && (
+                                        <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--secondary-color)', zIndex: 1000, position: 'absolute', background: 'var(--panel-bg)', borderRadius: '6px', overflow: 'hidden'}}>
+                                            <div 
+                                                className={`custom-dropdown-item branch-dropdown-item ${activeBranch === 'all' ? 'selected' : ''}`}
+                                                onClick={() => { setActiveBranch('all'); setIsBranchDropdownOpen(false); }}
+                                                style={{padding: '8px 12px', cursor: 'pointer', fontWeight: '500', fontSize: '0.9rem'}}
+                                            >
+                                                Semua Toko
+                                            </div>
+                                            {branches?.map(b => (
+                                                <div 
+                                                    key={b.id} 
+                                                    className={`custom-dropdown-item branch-dropdown-item ${activeBranch.toString() === b.id.toString() ? 'selected' : ''}`}
+                                                    onClick={() => { setActiveBranch(b.id); setIsBranchDropdownOpen(false); }}
+                                                    style={{padding: '8px 12px', cursor: 'pointer', fontWeight: '500', fontSize: '0.9rem'}}
+                                                >
+                                                    {b.name}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                        {user.role === 'OWNER' && (
+                            <button className="btn btn-secondary" style={{padding: '8px 16px', fontSize: '0.9rem'}} onClick={fetchRecap}>
+                                📊 Rekap Harian
+                            </button>
+                        )}
+                    </div>
                 </div>
                 <input 
                     type="text" 
