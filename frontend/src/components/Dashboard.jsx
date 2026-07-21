@@ -394,8 +394,8 @@ const InventoryView = ({ inventory, refreshData, user }) => {
             {activeBarcode && (
                 <div className="modal-overlay" onClick={() => setActiveBarcode(null)}>
                     <div className="modal-content" style={{textAlign: 'center', width: 'auto', padding: '40px', position: 'relative'}} onClick={e => e.stopPropagation()}>
-                        <button className="btn-icon" onClick={() => setActiveBarcode(null)} style={{position: 'absolute', top: '16px', left: '16px', fontSize: '1.5rem', padding: '4px 12px', fontWeight: 'bold'}} title="Kembali">
-                            ←
+                        <button className="btn-icon" onClick={() => setActiveBarcode(null)} style={{position: 'absolute', top: '16px', right: '16px', fontSize: '1.5rem', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold'}} title="Tutup">
+                            ✕
                         </button>
                         <h3 style={{marginBottom: '24px'}}>Kode Barcode: {activeBarcode}</h3>
                         <div id={`barcode-modal-${activeBarcode}`} style={{background: 'white', padding: '24px', borderRadius: '12px', display: 'inline-block', marginBottom: '24px'}}>
