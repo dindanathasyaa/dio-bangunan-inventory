@@ -2,19 +2,19 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const StockAlertView = ({ type }) => {
+const StockAlertView = ({ type, activeBranch }) => {
     const navigate = useNavigate();
     const [alerts, setAlerts] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchAlerts();
-    }, [type]);
+    }, [type, activeBranch]);
 
     const fetchAlerts = async () => {
         setLoading(true);
         try {
-            const dssRes = await axios.get('http://localhost:5000/api/dss/recommendations');
+            const dssRes = await axios.get(`http://localhost:5000/api/dss/recommendations?branch_id=${activeBranch}`);
             if (type === 'min') {
                 setAlerts(dssRes.data.ropAlerts);
             } else if (type === 'max') {

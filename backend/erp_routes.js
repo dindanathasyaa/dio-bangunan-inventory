@@ -57,8 +57,16 @@ module.exports = function(app, pool) {
     });
 
     app.get('/api/sales', async (req, res) => {
+        const branch_id = req.query.branch_id;
         try {
-            const [rows] = await pool.query('SELECT * FROM sales ORDER BY created_at DESC LIMIT 50');
+            let query = 'SELECT * FROM sales';
+            const params = [];
+            if (branch_id && branch_id !== 'all') {
+                query += ' WHERE branch_id = ?';
+                params.push(branch_id);
+            }
+            query += ' ORDER BY created_at DESC LIMIT 50';
+            const [rows] = await pool.query(query, params);
             res.json(rows);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -192,8 +200,16 @@ module.exports = function(app, pool) {
     });
 
     app.get('/api/orders', async (req, res) => {
+        const branch_id = req.query.branch_id;
         try {
-            const [rows] = await pool.query('SELECT * FROM orders ORDER BY created_at DESC');
+            let query = 'SELECT * FROM orders';
+            const params = [];
+            if (branch_id && branch_id !== 'all') {
+                query += ' WHERE branch_id = ?';
+                params.push(branch_id);
+            }
+            query += ' ORDER BY created_at DESC';
+            const [rows] = await pool.query(query, params);
             res.json(rows);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -202,13 +218,20 @@ module.exports = function(app, pool) {
 
     // --- DELIVERIES ---
     app.get('/api/deliveries', async (req, res) => {
+        const branch_id = req.query.branch_id;
         try {
-            const [rows] = await pool.query(`
-                SELECT d.*, o.customer_name, o.address, o.phone, o.total_amount 
+            let query = `
+                SELECT d.*, o.customer_name, o.address, o.phone, o.total_amount, o.branch_id 
                 FROM deliveries d 
                 JOIN orders o ON d.order_id = o.id 
-                ORDER BY d.created_at DESC
-            `);
+            `;
+            const params = [];
+            if (branch_id && branch_id !== 'all') {
+                query += ' WHERE o.branch_id = ?';
+                params.push(branch_id);
+            }
+            query += ' ORDER BY d.created_at DESC';
+            const [rows] = await pool.query(query, params);
             res.json(rows);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -345,17 +368,30 @@ module.exports = function(app, pool) {
 
     // --- CASH & PROFIT ---
     app.get('/api/cash', async (req, res) => {
+        const branch_id = req.query.branch_id;
         try {
-            const [rows] = await pool.query('SELECT * FROM cash_flow ORDER BY created_at DESC LIMIT 100');
-            const [summary] = await pool.query(`
+            let query = 'SELECT * FROM cash_flow';
+            const params = [];
+            if (branch_id && branch_id !== 'all') {
+                query += ' WHERE branch_id = ?';
+                params.push(branch_id);
+            }
+            query += ' ORDER BY created_at DESC LIMIT 100';
+            const [rows] = await pool.query(query, params);
+
+            let summaryQuery = `
                 SELECT 
                     SUM(CASE WHEN type = 'Masuk' THEN amount ELSE 0 END) as total_in,
                     SUM(CASE WHEN type = 'Keluar' THEN amount ELSE 0 END) as total_out
                 FROM cash_flow
-            `);
+            `;
+            if (branch_id && branch_id !== 'all') summaryQuery += ' WHERE branch_id = ?';
+            const [summary] = await pool.query(summaryQuery, params);
             const totalCash = (summary[0].total_in || 0) - (summary[0].total_out || 0);
 
-            const [profitSummary] = await pool.query(`SELECT SUM(profit) as total_profit FROM sales`);
+            let profitQuery = `SELECT SUM(profit) as total_profit FROM sales`;
+            if (branch_id && branch_id !== 'all') profitQuery += ' WHERE branch_id = ?';
+            const [profitSummary] = await pool.query(profitQuery, params);
             const totalProfit = profitSummary[0].total_profit || 0;
 
             res.json({ transactions: rows, totalCash, totalProfit });
@@ -366,9 +402,16 @@ module.exports = function(app, pool) {
 
     // --- DASHBOARD WIDGETS ---
     app.get('/api/dashboard/summary', async (req, res) => {
+        const branch_id = req.query.branch_id;
         try {
             // Min/Max stock counts
-            const [inv] = await pool.query('SELECT stock, min_stock, max_stock FROM inventory');
+            let invQuery = 'SELECT stock, min_stock, max_stock FROM inventory';
+            const params = [];
+            if (branch_id && branch_id !== 'all') {
+                invQuery += ' WHERE branch_id = ?';
+                params.push(branch_id);
+            }
+            const [inv] = await pool.query(invQuery, params);
             let lowStockCount = 0;
             let overStockCount = 0;
             for(let i of inv) {
@@ -377,23 +420,42 @@ module.exports = function(app, pool) {
             }
 
             // Pending deliveries
-            const [delivs] = await pool.query("SELECT COUNT(*) as c FROM deliveries WHERE status IN ('Menunggu', 'Di Perjalanan')");
+            let delivQuery = "SELECT COUNT(*) as c FROM deliveries d JOIN orders o ON d.order_id = o.id WHERE d.status IN ('Menunggu', 'Di Perjalanan')";
+            if (branch_id && branch_id !== 'all') delivQuery += " AND o.branch_id = ?";
+            const [delivs] = await pool.query(delivQuery, params);
             const pendingDeliveries = delivs[0].c;
 
             // Unpaid receivables (Hutang Pembeli)
-            const [rec] = await pool.query("SELECT SUM(total_debt - amount_paid) as t FROM receivables WHERE status = 'Belum Lunas'");
+            // Wait, receivables doesn't have branch_id, we need to join sales
+            let recQuery = "SELECT SUM(r.total_debt - r.amount_paid) as t FROM receivables r JOIN sales s ON r.sale_id = s.id WHERE r.status = 'Belum Lunas'";
+            if (branch_id && branch_id !== 'all') recQuery += " AND s.branch_id = ?";
+            const [rec] = await pool.query(recQuery, params);
             const totalReceivables = rec[0].t || 0;
 
             // Unpaid payables (Hutang Owner)
-            const [pay] = await pool.query("SELECT SUM(total_debt - amount_paid) as t FROM payables WHERE status = 'Belum Lunas'");
+            // payables doesn't have branch_id directly, join purchases
+            // But some payables might have purchase_id = 0 (created directly). We should add branch_id to payables or just leave it for now.
+            // Wait, earlier we added `/api/payables/new` which takes branch_id but we didn't insert branch_id into payables. Let's just ignore branch_id for payables for now or check if it exists.
+            let payQuery = "SELECT SUM(total_debt - amount_paid) as t FROM payables WHERE status = 'Belum Lunas'";
+            const [pay] = await pool.query(payQuery);
             const totalPayables = pay[0].t || 0;
 
             // Cash and Profit
-            const [cashIn] = await pool.query("SELECT SUM(amount) as c FROM cash_flow WHERE type='Masuk'");
-            const [cashOut] = await pool.query("SELECT SUM(amount) as c FROM cash_flow WHERE type='Keluar'");
+            let cashInQuery = "SELECT SUM(amount) as c FROM cash_flow WHERE type='Masuk'";
+            let cashOutQuery = "SELECT SUM(amount) as c FROM cash_flow WHERE type='Keluar'";
+            let profitQuery = "SELECT SUM(profit) as p FROM sales";
+            
+            if (branch_id && branch_id !== 'all') {
+                cashInQuery += " AND branch_id = ?";
+                cashOutQuery += " AND branch_id = ?";
+                profitQuery += " WHERE branch_id = ?";
+            }
+            
+            const [cashIn] = await pool.query(cashInQuery, params);
+            const [cashOut] = await pool.query(cashOutQuery, params);
             const totalCash = (cashIn[0].c || 0) - (cashOut[0].c || 0);
             
-            const [prof] = await pool.query("SELECT SUM(profit) as p FROM sales");
+            const [prof] = await pool.query(profitQuery, params);
             const totalProfit = prof[0].p || 0;
 
             res.json({

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const OrderDeliveryView = ({ user }) => {
+const OrderDeliveryView = ({ user, activeBranch }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const [view, setView] = useState(location.state?.view || 'NewOrder'); // NewOrder, DeliveryBoard
@@ -19,11 +19,11 @@ const OrderDeliveryView = ({ user }) => {
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [activeBranch]);
 
     const fetchData = async () => {
         try {
-            const delRes = await axios.get('http://localhost:5000/api/deliveries');
+            const delRes = await axios.get(`http://localhost:5000/api/deliveries?branch_id=${activeBranch}`);
             setDeliveries(delRes.data);
         } catch (error) {
             console.error(error);
@@ -32,11 +32,12 @@ const OrderDeliveryView = ({ user }) => {
 
     const submitOrder = async (e) => {
         e.preventDefault();
+        if (activeBranch === 'all') return alert('Pilih toko cabang spesifik terlebih dahulu untuk membuat pesanan!');
         if (!customerName || !address || !totalAmount) return alert('Nama, Alamat, dan Total Tagihan harus diisi!');
         setLoading(true);
         try {
             await axios.post('http://localhost:5000/api/orders/simple', {
-                branch_id: user.role === 'MANAGER' ? user.branch_id : 1,
+                branch_id: user.role === 'MANAGER' ? user.branch_id : activeBranch,
                 customer_name: customerName,
                 phone,
                 address,

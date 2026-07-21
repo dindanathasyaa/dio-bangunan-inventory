@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const CashDebtView = ({ user }) => {
+const CashDebtView = ({ user, activeBranch, branches }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const [view, setView] = useState(location.state?.view || 'CashFlow'); // CashFlow, Receivables, Payables
@@ -13,19 +13,19 @@ const CashDebtView = ({ user }) => {
 
     useEffect(() => {
         fetchData();
-    }, [view]);
+    }, [view, activeBranch]);
 
     const fetchData = async () => {
         try {
             if (view === 'CashFlow') {
-                const res = await axios.get('http://localhost:5000/api/cash');
+                const res = await axios.get(`http://localhost:5000/api/cash?branch_id=${activeBranch}`);
                 setTransactions(res.data.transactions);
                 setSummary({ cash: res.data.totalCash, profit: res.data.totalProfit });
             } else if (view === 'Receivables') {
-                const res = await axios.get('http://localhost:5000/api/receivables');
+                const res = await axios.get(`http://localhost:5000/api/receivables?branch_id=${activeBranch}`);
                 setReceivables(res.data);
             } else if (view === 'Payables') {
-                const res = await axios.get('http://localhost:5000/api/payables');
+                const res = await axios.get(`http://localhost:5000/api/payables?branch_id=${activeBranch}`);
                 setPayables(res.data);
             }
         } catch (error) {
@@ -34,11 +34,17 @@ const CashDebtView = ({ user }) => {
     };
 
     const handlePayReceivable = async (id, amount) => {
+        let payBranch = user.role === 'MANAGER' ? user.branch_id : activeBranch;
+        if (payBranch === 'all') {
+            const chosen = prompt("Masukkan ID Toko (1 untuk Pusat, 2 untuk Cabang) tempat uang diterima:");
+            if (!chosen) return;
+            payBranch = parseInt(chosen);
+        }
         try {
             await axios.post('http://localhost:5000/api/receivables/pay', {
                 receivable_id: id,
                 amount: amount,
-                branch_id: user.role === 'MANAGER' ? user.branch_id : 1
+                branch_id: payBranch
             });
             fetchData();
             alert('Pembayaran berhasil dicatat!');
@@ -48,11 +54,17 @@ const CashDebtView = ({ user }) => {
     };
 
     const handlePayPayable = async (id, amount) => {
+        let payBranch = user.role === 'MANAGER' ? user.branch_id : activeBranch;
+        if (payBranch === 'all') {
+            const chosen = prompt("Masukkan ID Toko (1 untuk Pusat, 2 untuk Cabang) tempat uang dikeluarkan:");
+            if (!chosen) return;
+            payBranch = parseInt(chosen);
+        }
         try {
             await axios.post('http://localhost:5000/api/payables/pay', {
                 payable_id: id,
                 amount: amount,
-                branch_id: user.role === 'MANAGER' ? user.branch_id : 1
+                branch_id: payBranch
             });
             fetchData();
             alert('Pembayaran hutang berhasil dicatat!');

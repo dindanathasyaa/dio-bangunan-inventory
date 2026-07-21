@@ -19,23 +19,32 @@ const Dashboard = ({ user, setUser }) => {
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [showSettingsModal, setShowSettingsModal] = useState(false);
+    
+    // Multi-Branch State
+    const [activeBranch, setActiveBranch] = useState(user.role === 'OWNER' ? 'all' : user.branch_id);
+    const [branches, setBranches] = useState([]);
 
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('theme', theme);
     }, [theme]);
 
+    useEffect(() => {
+        axios.get('http://localhost:5000/api/branches')
+            .then(res => setBranches(res.data))
+            .catch(console.error);
+    }, []);
+
     const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
     useEffect(() => {
         fetchData();
-    }, [user]);
+    }, [user, activeBranch]);
 
     const fetchData = async () => {
         try {
-            const branchQuery = user.role === 'MANAGER' ? `?branch_id=${user.branch_id}` : '';
-            const invRes = await axios.get(`http://localhost:5000/api/inventory${branchQuery}`);
+            const invRes = await axios.get(`http://localhost:5000/api/inventory?branch_id=${activeBranch}`);
             setInventory(invRes.data);
         } catch (error) {
             console.error(error);
@@ -89,19 +98,43 @@ const Dashboard = ({ user, setUser }) => {
                     <button className="sidebar-toggle" onClick={toggleSidebar} style={{ position: 'absolute', top: '24px', left: '24px', width: '40px', height: '40px', borderRadius: '8px', zIndex: 100 }}>☰</button>
                 )}
                 
-                <div style={{height: '100%', paddingTop: '16px'}}>
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 24px', marginBottom: '16px'}}>
+                    {user.role === 'OWNER' ? (
+                        <div style={{display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--item-bg)', padding: '8px 16px', borderRadius: '12px', border: '1px solid var(--border-color)'}}>
+                            <span style={{fontSize: '1.2rem'}}>🏢</span>
+                            <span style={{fontWeight: 'bold', color: 'var(--text-secondary)'}}>Pilih Toko:</span>
+                            <select 
+                                value={activeBranch} 
+                                onChange={e => setActiveBranch(e.target.value)}
+                                style={{background: 'transparent', border: 'none', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '1rem', outline: 'none', cursor: 'pointer'}}
+                            >
+                                <option value="all">Semua Toko (Gabungan)</option>
+                                {branches.map(b => (
+                                    <option key={b.id} value={b.id}>{b.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    ) : (
+                        <div style={{display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--item-bg)', padding: '8px 16px', borderRadius: '12px', border: '1px solid var(--border-color)'}}>
+                            <span style={{fontSize: '1.2rem'}}>🏢</span>
+                            <span style={{fontWeight: 'bold', color: 'var(--primary-color)'}}>Toko Cabang {user.branch_id}</span>
+                        </div>
+                    )}
+                </div>
+
+                <div style={{height: '100%', padding: '0 24px'}}>
                     <Routes>
-                        <Route path="/" element={<ControlCenter user={user} />} />
-                        <Route path="/inventory" element={<InventoryView inventory={inventory} refreshData={fetchData} user={user} />} />
-                        <Route path="/sales" element={<SalesView user={user} />} />
-                        <Route path="/orders" element={<OrderDeliveryView user={user} />} />
-                        <Route path="/purchases" element={<PurchaseView user={user} />} />
-                        <Route path="/cash" element={<CashDebtView user={user} />} />
+                        <Route path="/" element={<ControlCenter user={user} activeBranch={activeBranch} />} />
+                        <Route path="/inventory" element={<InventoryView inventory={inventory} refreshData={fetchData} user={user} activeBranch={activeBranch} branches={branches} />} />
+                        <Route path="/sales" element={<SalesView user={user} activeBranch={activeBranch} />} />
+                        <Route path="/orders" element={<OrderDeliveryView user={user} activeBranch={activeBranch} />} />
+                        <Route path="/purchases" element={<PurchaseView user={user} activeBranch={activeBranch} branches={branches} />} />
+                        <Route path="/cash" element={<CashDebtView user={user} activeBranch={activeBranch} branches={branches} />} />
                         <Route path="/categories" element={<CategorySettings />} />
-                        <Route path="/scanner" element={<Scanner user={user} />} />
+                        <Route path="/scanner" element={<Scanner user={user} activeBranch={activeBranch} />} />
                         
-                        <Route path="/alert-min" element={<StockAlertView type="min" />} />
-                        <Route path="/alert-max" element={<StockAlertView type="max" />} />
+                        <Route path="/alert-min" element={<StockAlertView type="min" activeBranch={activeBranch} />} />
+                        <Route path="/alert-max" element={<StockAlertView type="max" activeBranch={activeBranch} />} />
                     </Routes>
                 </div>
             </main>
@@ -136,15 +169,15 @@ const Dashboard = ({ user, setUser }) => {
     );
 };
 
-const ControlCenter = ({ user }) => {
+const ControlCenter = ({ user, activeBranch }) => {
     const navigate = useNavigate();
     const [summary, setSummary] = useState(null);
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/dashboard/summary')
+        axios.get(`http://localhost:5000/api/dashboard/summary?branch_id=${activeBranch}`)
             .then(res => setSummary(res.data))
             .catch(console.error);
-    }, []);
+    }, [activeBranch]);
 
     if (!summary) return <div style={{padding: '32px', textAlign: 'center'}}>Memuat Control Center...</div>;
 
@@ -242,7 +275,7 @@ const ControlCenter = ({ user }) => {
     );
 };
 
-const InventoryView = ({ inventory, refreshData, user }) => {
+const InventoryView = ({ inventory, refreshData, user, activeBranch, branches }) => {
     const [search, setSearch] = useState('');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -282,7 +315,7 @@ const InventoryView = ({ inventory, refreshData, user }) => {
         try {
             await axios.post('http://localhost:5000/api/inventory', { ...newItem, stock: lembar });
             setShowModal(false);
-            setNewItem({ sku: '', name: '', category_id: '', unit: 'Lembar', price: '', stock: 0, min_stock: 5, max_stock: 50, branch_id: user.role === 'MANAGER' ? user.branch_id : 1 });
+            setNewItem({ sku: '', name: '', category_id: '', unit: 'Lembar', price: '', stock: 0, min_stock: 5, max_stock: 50, branch_id: user.role === 'MANAGER' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : 1) });
             setKodi(0); setLembar(0);
             refreshData();
         } catch (err) {
@@ -443,6 +476,16 @@ const InventoryView = ({ inventory, refreshData, user }) => {
                     <div className="modal-content" onClick={e => e.stopPropagation()}>
                         <h2 style={{marginBottom: '24px'}}>Tambah Barang Baru</h2>
                         <form onSubmit={handleAddItem}>
+                            {user.role === 'OWNER' && (
+                                <div className="form-group">
+                                    <label>Toko Cabang</label>
+                                    <select className="input-field" value={newItem.branch_id} onChange={e => setNewItem({...newItem, branch_id: parseInt(e.target.value)})} required>
+                                        {branches && branches.map(b => (
+                                            <option key={b.id} value={b.id}>{b.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
                             <div className="form-group"><label>SKU</label><input type="text" className="input-field" value={newItem.sku} onChange={e => setNewItem({...newItem, sku: e.target.value})} required /></div>
                             <div className="form-group"><label>Nama Barang</label><input type="text" className="input-field" value={newItem.name} onChange={e => setNewItem({...newItem, name: e.target.value})} required /></div>
                             <div className="form-group">

@@ -34,6 +34,16 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+// Branches Route
+app.get('/api/branches', async (req, res) => {
+    try {
+        const [rows] = await pool.query('SELECT * FROM branches');
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Inventory Routes
 app.get('/api/inventory', async (req, res) => {
     const branch_id = req.query.branch_id;
@@ -45,7 +55,7 @@ app.get('/api/inventory', async (req, res) => {
         JOIN branches b ON i.branch_id = b.id
     `;
     const params = [];
-    if (branch_id) {
+    if (branch_id && branch_id !== 'all') {
         query += ' WHERE i.branch_id = ?';
         params.push(branch_id);
     }
@@ -158,13 +168,21 @@ app.put('/api/categories/:id', async (req, res) => {
 
 // DSS Routes
 app.get('/api/dss/recommendations', async (req, res) => {
+    const branch_id = req.query.branch_id;
     try {
-        const [inventoryRows] = await pool.query(`
+        let query = `
             SELECT i.product_id, i.branch_id, p.name, i.stock, i.min_stock, i.max_stock, b.name as branch_name, p.sku
             FROM inventory i
             JOIN products p ON i.product_id = p.id
             JOIN branches b ON i.branch_id = b.id
-        `);
+        `;
+        const params = [];
+        if (branch_id && branch_id !== 'all') {
+            query += ' WHERE i.branch_id = ?';
+            params.push(branch_id);
+        }
+        
+        const [inventoryRows] = await pool.query(query, params);
         
         let ropAlerts = []; // We will reuse the variable name to keep frontend compatible, but it represents "Low Stock Alerts"
         let transferSuggestions = []; // Represents "Overstock Alerts" now

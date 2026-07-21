@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const PurchaseView = ({ user }) => {
+const PurchaseView = ({ user, activeBranch, branches }) => {
     const navigate = useNavigate();
+    const [selectedBranch, setSelectedBranch] = useState(activeBranch !== 'all' ? activeBranch : 1);
     const [supplierName, setSupplierName] = useState('');
     const [totalDebt, setTotalDebt] = useState('');
     const [loading, setLoading] = useState(false);
@@ -25,7 +26,7 @@ const PurchaseView = ({ user }) => {
             // Let's just create a new API endpoint `/api/payables/new` first.
             
             await axios.post('http://localhost:5000/api/payables/new', {
-                branch_id: user.role === 'MANAGER' ? user.branch_id : 1,
+                branch_id: user.role === 'MANAGER' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : selectedBranch),
                 supplier_name: supplierName,
                 total_debt: totalDebt
             });
@@ -56,6 +57,14 @@ const PurchaseView = ({ user }) => {
                 <p style={{color: 'var(--text-secondary)', marginBottom: '24px'}}>Gunakan form ini untuk mencatat hutang Anda (Toko) kepada Supplier atau Pabrik atas pembelian barang.</p>
                 
                 <form onSubmit={submitDebt}>
+                    {user.role === 'OWNER' && activeBranch === 'all' && (
+                        <div className="form-group">
+                            <label>Toko Cabang Tujuan</label>
+                            <select className="input-field" value={selectedBranch} onChange={e => setSelectedBranch(parseInt(e.target.value))} required>
+                                {branches && branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                            </select>
+                        </div>
+                    )}
                     <div className="form-group">
                         <label>Nama Toko / Supplier</label>
                         <input 

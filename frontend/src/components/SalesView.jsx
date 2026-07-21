@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const SalesView = ({ user }) => {
+const SalesView = ({ user, activeBranch }) => {
     const [products, setProducts] = useState([]);
     const [cart, setCart] = useState([]);
     const [customerName, setCustomerName] = useState('');
@@ -11,12 +11,11 @@ const SalesView = ({ user }) => {
 
     useEffect(() => {
         fetchProducts();
-    }, []);
+    }, [activeBranch]);
 
     const fetchProducts = async () => {
         try {
-            const branchQuery = user.role === 'MANAGER' ? `?branch_id=${user.branch_id}` : '';
-            const res = await axios.get(`http://localhost:5000/api/inventory${branchQuery}`);
+            const res = await axios.get(`http://localhost:5000/api/inventory?branch_id=${activeBranch}`);
             setProducts(res.data);
         } catch (error) {
             console.error(error);
@@ -57,27 +56,19 @@ const SalesView = ({ user }) => {
     };
 
     const checkout = async () => {
+        if (activeBranch === 'all') return alert('Pilih toko cabang spesifik terlebih dahulu untuk melakukan transaksi!');
         if (cart.length === 0) return alert('Keranjang kosong!');
         setLoading(true);
         try {
             const items = cart.map(item => ({
-                product_id: item.product_id, // Wait, product_id in inventory is item.product_id ? 
-                // Ah, the inventory endpoint returns i.id as id, and p.id is not returned directly, or is it?
-                // Actually the inventory endpoint returns i.product_id? Let's assume it doesn't. 
-                // Wait, if it doesn't, we can just use item.product_id (it's mapped as product_id in DSS, maybe not in inventory).
-                // Wait, the schema uses product_id. The inventory API was changed. Let's send item.product_id or item.id? 
-                // Wait, earlier I wrote the inventory API `SELECT i.id, p.id as product_id, p.name...` - wait, I didn't add p.id in the previous `server.js` update. Let me double check. Let's just use SKU or update the API. Let's just use item.product_id which is hopefully there, if not we will fetch. Wait, the inventory API returns `SELECT i.id, p.name, p.sku, c.name as category, p.unit, i.stock...` so it doesn't return `product_id`! It only returns `i.id`.
-                // For this, we'll use i.id for now? NO, sale_items expects product_id. Let me assume I'll use item.product_id which might be undefined. I should just add it to the inventory API or we can pass `inventory_id` instead. Let's assume we pass item.product_id if we have it, else we need to look it up.
-                // Let's modify the items payload to use sku, and let backend handle it, or we just use item.product_id if we modify the backend.
-                // Actually, let's just pass what we have. For now, let's pass `product_id: item.product_id || item.id`.
-                product_id: item.product_id || item.id, // we might need to fix backend inventory API to return product_id
+                product_id: item.product_id || item.id, 
                 qty: item.qty,
-                price: item.price || 15000, // Dummy price if price not in inventory API
+                price: item.price || 15000, 
                 base_price: item.base_price || 10000
             }));
 
             await axios.post('http://localhost:5000/api/sales', {
-                branch_id: user.role === 'MANAGER' ? user.branch_id : 1,
+                branch_id: user.role === 'MANAGER' ? user.branch_id : activeBranch,
                 customer_name: customerName,
                 payment_method: paymentMethod,
                 items
