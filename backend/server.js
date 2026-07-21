@@ -69,7 +69,7 @@ app.get('/api/inventory', async (req, res) => {
 
 // Add New Inventory Item
 app.post('/api/inventory', async (req, res) => {
-    const { sku, name, category_id, unit, price, stock, branch_id, min_stock, max_stock } = req.body;
+    const { sku, name, category_id, unit, price, base_price, stock, branch_id, min_stock, max_stock } = req.body;
     try {
         // 1. Check if product exists by SKU, if not, insert into products
         let product_id;
@@ -79,8 +79,8 @@ app.post('/api/inventory', async (req, res) => {
             product_id = existingProducts[0].id;
         } else {
             const [result] = await pool.query(
-                'INSERT INTO products (sku, name, category_id, unit, price) VALUES (?, ?, ?, ?, ?)',
-                [sku, name, category_id, unit, price || 0]
+                'INSERT INTO products (sku, name, category_id, unit, price, base_price) VALUES (?, ?, ?, ?, ?, ?)',
+                [sku, name, category_id, unit, price || 0, base_price || 0]
             );
             product_id = result.insertId;
         }

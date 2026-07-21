@@ -313,6 +313,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
         category_id: '',
         unit: 'Lembar',
         price: '',
+        base_price: '',
         stock: 0,
         min_stock: 5,
         max_stock: 50,
@@ -537,9 +538,10 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                     {dbCategories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                                 </select>
                             </div>
-                            <div style={{display: 'flex', gap: '16px'}}>
+                            <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
+                                <div className="form-group" style={{flex: 1}}><label>Modal Barang (Rp)</label><input type="number" className="input-field" value={newItem.base_price} onChange={e => setNewItem({...newItem, base_price: e.target.value})} required /></div>
                                 <div className="form-group" style={{flex: 1}}><label>Harga Jual (Rp)</label><input type="number" className="input-field" value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} required /></div>
-                                <div className="form-group" style={{flex: 1}}><label>Jenis Satuan Form</label><select className="input-field" value={unitType} onChange={e => setUnitType(e.target.value)}><option value="Kodi/Lembar">Kodi / Lembar</option><option value="Tunggal">Satuan Tunggal</option></select></div>
+                                <div className="form-group" style={{flex: 1}}><label>Jenis Satuan</label><select className="input-field" value={unitType} onChange={e => setUnitType(e.target.value)}><option value="Kodi/Lembar">Kodi / Lembar</option><option value="Tunggal">Satuan Tunggal</option></select></div>
                             </div>
                             
                             {unitType === 'Kodi/Lembar' ? (
