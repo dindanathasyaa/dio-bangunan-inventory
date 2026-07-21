@@ -536,7 +536,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                             <div className="form-group" style={{marginBottom: '16px'}}><label>Nama Barang</label><input type="text" className="input-field" value={newItem.name} onChange={e => setNewItem({...newItem, name: e.target.value})} required /></div>
                             <div className="form-group" style={{marginBottom: '16px'}}>
                                 <label>Kategori</label>
-                                <div className="custom-dropdown-container" style={{position: 'relative', width: '100%'}}>
+                                <div className="custom-dropdown-container" style={{position: 'relative', width: '100%', zIndex: isCategoryDropdownOpen ? 10 : 1}}>
                                     <div 
                                         className={`custom-select-3d ${isCategoryDropdownOpen ? 'active' : ''}`}
                                         onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
@@ -569,7 +569,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                 <div className="form-group" style={{flex: 1}}><label>Harga Jual (Rp)</label><input type="number" className="input-field" value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} required /></div>
                                 <div className="form-group" style={{flex: 1}}>
                                     <label>Jenis Satuan</label>
-                                    <div className="custom-dropdown-container" style={{position: 'relative', width: '100%'}}>
+                                    <div className="custom-dropdown-container" style={{position: 'relative', width: '100%', zIndex: isUnitDropdownOpen ? 10 : 1}}>
                                         <div 
                                             className={`custom-select-3d ${isUnitDropdownOpen ? 'active' : ''}`}
                                             onClick={() => setIsUnitDropdownOpen(!isUnitDropdownOpen)}
@@ -605,7 +605,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                     <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
                                         <div className="form-group" style={{flex: 1, marginBottom: 0}}>
                                             <label>Pilih Satuan Besar</label>
-                                            <div className="custom-dropdown-container" style={{position: 'relative', width: '100%'}}>
+                                            <div className="custom-dropdown-container" style={{position: 'relative', width: '100%', zIndex: isMajemukDropdownOpen ? 10 : 1}}>
                                                 <div 
                                                     className={`custom-select-3d ${isMajemukDropdownOpen ? 'active' : ''}`}
                                                     onClick={() => setIsMajemukDropdownOpen(!isMajemukDropdownOpen)}
