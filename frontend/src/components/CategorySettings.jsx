@@ -94,6 +94,22 @@ const CategorySettings = () => {
         }
     };
 
+    const handleDeleteCategory = async (id) => {
+        if (!window.confirm('Apakah Anda yakin ingin menghapus kategori ini?')) return;
+        try {
+            await axios.delete(`http://localhost:5000/api/categories/${id}`);
+            fetchCategories();
+            alert('Kategori berhasil dihapus');
+        } catch (error) {
+            console.error(error);
+            if (error.response && error.response.data && error.response.data.error) {
+                alert(error.response.data.error);
+            } else {
+                alert('Gagal menghapus kategori');
+            }
+        }
+    };
+
     const handleUnitSubmit = async (e) => {
         e.preventDefault();
         setUnitLoading(true);
@@ -205,9 +221,12 @@ const CategorySettings = () => {
                             <td>
                                 <input type="number" className="input-field" defaultValue={cat.max_stock} id={`max-${cat.id}`} style={{width: '80px', padding: '4px 8px'}} />
                             </td>
-                            <td>
+                            <td style={{display: 'flex', gap: '8px'}}>
                                 <button className="btn btn-secondary" onClick={() => handleUpdate(cat.id, document.getElementById(`min-${cat.id}`).value, document.getElementById(`max-${cat.id}`).value)}>
-                                    Simpan Perubahan
+                                    Simpan
+                                </button>
+                                <button className="btn btn-danger" onClick={() => handleDeleteCategory(cat.id)} style={{background: 'var(--danger-color, #ef4444)', color: 'white'}}>
+                                    Hapus
                                 </button>
                             </td>
                         </tr>

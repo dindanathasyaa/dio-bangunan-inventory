@@ -166,6 +166,20 @@ app.put('/api/categories/:id', async (req, res) => {
     }
 });
 
+app.delete('/api/categories/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await pool.query('DELETE FROM categories WHERE id = ?', [id]);
+        res.json({ message: 'Kategori berhasil dihapus' });
+    } catch (error) {
+        // Handle foreign key constraint error if products exist
+        if (error.code === 'ER_ROW_IS_REFERENCED_2') {
+            return res.status(400).json({ error: 'Tidak dapat menghapus kategori karena masih ada barang yang menggunakan kategori ini.' });
+        }
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Large Units Routes
 app.get('/api/large_units', async (req, res) => {
     try {
