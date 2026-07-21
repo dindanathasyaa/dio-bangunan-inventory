@@ -95,6 +95,30 @@ app.post('/api/inventory', async (req, res) => {
     }
 });
 
+// Update Inventory Item
+app.put('/api/inventory/:id', async (req, res) => {
+    const { id } = req.params; // this is the inventory.id
+    const { name, stock, min_stock, max_stock } = req.body;
+    try {
+        // Find product_id for this inventory
+        const [inv] = await pool.query('SELECT product_id FROM inventory WHERE id = ?', [id]);
+        if (inv.length === 0) return res.status(404).json({ error: 'Data tidak ditemukan' });
+        
+        // Update product name
+        await pool.query('UPDATE products SET name = ? WHERE id = ?', [name, inv[0].product_id]);
+        
+        // Update inventory numbers
+        await pool.query(
+            'UPDATE inventory SET stock = ?, min_stock = ?, max_stock = ? WHERE id = ?',
+            [stock, min_stock, max_stock, id]
+        );
+
+        res.json({ message: 'Data berhasil diupdate' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Categories Routes
 app.get('/api/categories', async (req, res) => {
     try {

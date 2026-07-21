@@ -248,6 +248,7 @@ const InventoryView = ({ inventory, refreshData, user }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('Kategori');
     const [activeBarcode, setActiveBarcode] = useState(null);
+    const [editingData, setEditingData] = useState(null);
     const [dbCategories, setDbCategories] = useState([]);
     const [unitType, setUnitType] = useState('Kodi/Lembar');
     const [kodi, setKodi] = useState(0);
@@ -369,6 +370,7 @@ const InventoryView = ({ inventory, refreshData, user }) => {
                             <th>Cabang</th>
                             <th>Stok</th>
                             <th>Status</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -399,6 +401,11 @@ const InventoryView = ({ inventory, refreshData, user }) => {
                                     <td>{item.branch_name}</td>
                                     <td style={{fontWeight: 'bold', fontSize: '1.1rem'}}>{Math.floor(item.stock)}</td>
                                     <td><span className={`badge ${badgeClass}`}>{badgeText}</span></td>
+                                    <td>
+                                        <button className="btn-icon" style={{color: 'var(--primary-color)'}} onClick={() => setEditingData({...item})} title="Edit Data">
+                                            ✏️ Edit
+                                        </button>
+                                    </td>
                                 </tr>
                             );
                         })}
@@ -474,6 +481,59 @@ const InventoryView = ({ inventory, refreshData, user }) => {
                             <div style={{display: 'flex', gap: '12px', marginTop: '24px'}}>
                                 <button type="button" className="btn btn-outline" style={{flex: 1}} onClick={() => setShowModal(false)}>Batal</button>
                                 <button type="submit" className="btn" style={{flex: 1}}>Simpan Barang</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Edit Modal */}
+            {editingData && (
+                <div className="modal-overlay" onClick={() => setEditingData(null)}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()}>
+                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
+                            <h2>Edit Data Inventory</h2>
+                            <button className="btn-icon" onClick={() => setEditingData(null)}>✕</button>
+                        </div>
+                        <form onSubmit={(e) => {
+                            e.preventDefault();
+                            axios.put(`http://localhost:5000/api/inventory/${editingData.id}`, {
+                                name: editingData.name,
+                                stock: editingData.stock,
+                                min_stock: editingData.min_stock,
+                                max_stock: editingData.max_stock
+                            })
+                            .then(() => {
+                                refreshData();
+                                setEditingData(null);
+                            })
+                            .catch(err => alert("Gagal update data!"));
+                        }}>
+                            <div className="form-group" style={{marginBottom: '16px'}}>
+                                <label>Kode Barang (SKU)</label>
+                                <input type="text" className="input-field" value={editingData.sku} disabled style={{background: '#f3f4f6', cursor: 'not-allowed'}} />
+                            </div>
+                            <div className="form-group" style={{marginBottom: '16px'}}>
+                                <label>Nama Barang</label>
+                                <input type="text" className="input-field" value={editingData.name} onChange={e => setEditingData({...editingData, name: e.target.value})} required />
+                            </div>
+                            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginBottom: '24px'}}>
+                                <div className="form-group">
+                                    <label>Stok Saat Ini</label>
+                                    <input type="number" className="input-field" value={editingData.stock} onChange={e => setEditingData({...editingData, stock: parseInt(e.target.value)})} required />
+                                </div>
+                                <div className="form-group">
+                                    <label>Batas Minimum</label>
+                                    <input type="number" className="input-field" value={editingData.min_stock} onChange={e => setEditingData({...editingData, min_stock: parseInt(e.target.value)})} required />
+                                </div>
+                                <div className="form-group">
+                                    <label>Batas Maksimum</label>
+                                    <input type="number" className="input-field" value={editingData.max_stock} onChange={e => setEditingData({...editingData, max_stock: parseInt(e.target.value)})} required />
+                                </div>
+                            </div>
+                            <div style={{display: 'flex', justifyContent: 'flex-end', gap: '12px'}}>
+                                <button type="button" className="btn btn-outline" onClick={() => setEditingData(null)}>Batal</button>
+                                <button type="submit" className="btn">Simpan Perubahan</button>
                             </div>
                         </form>
                     </div>
