@@ -15,6 +15,12 @@ const CategorySettings = () => {
     const [unitMultiplier, setUnitMultiplier] = useState(1);
     const [unitLoading, setUnitLoading] = useState(false);
     const [unitMessage, setUnitMessage] = useState('');
+    
+    // Small Units state
+    const [smallUnits, setSmallUnits] = useState([]);
+    const [smallUnitName, setSmallUnitName] = useState('');
+    const [smallUnitLoading, setSmallUnitLoading] = useState(false);
+    const [smallUnitMessage, setSmallUnitMessage] = useState('');
 
     const fetchCategories = async () => {
         try {
@@ -34,9 +40,19 @@ const CategorySettings = () => {
         }
     };
 
+    const fetchSmallUnits = async () => {
+        try {
+            const res = await axios.get('http://localhost:5000/api/small_units');
+            setSmallUnits(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     useEffect(() => {
         fetchCategories();
         fetchLargeUnits();
+        fetchSmallUnits();
     }, []);
 
     const handleSubmit = async (e) => {
@@ -109,6 +125,38 @@ const CategorySettings = () => {
         } catch (error) {
             console.error(error);
             alert('Gagal memperbarui satuan');
+        }
+    };
+
+    const handleSmallUnitSubmit = async (e) => {
+        e.preventDefault();
+        setSmallUnitLoading(true);
+        setSmallUnitMessage('');
+        try {
+            await axios.post('http://localhost:5000/api/small_units', {
+                name: smallUnitName
+            });
+            setSmallUnitMessage('Satuan tunggal berhasil ditambahkan!');
+            setSmallUnitName('');
+            fetchSmallUnits();
+        } catch (error) {
+            setSmallUnitMessage('Gagal menambahkan satuan tunggal');
+            console.error(error);
+        } finally {
+            setSmallUnitLoading(false);
+        }
+    };
+
+    const handleSmallUnitUpdate = async (id, newName) => {
+        try {
+            await axios.put(`http://localhost:5000/api/small_units/${id}`, {
+                name: newName
+            });
+            fetchSmallUnits();
+            alert('Satuan tunggal berhasil diperbarui');
+        } catch (error) {
+            console.error(error);
+            alert('Gagal memperbarui satuan tunggal');
         }
     };
 
@@ -206,6 +254,47 @@ const CategorySettings = () => {
                             </td>
                             <td>
                                 <button className="btn btn-secondary" onClick={() => handleUnitUpdate(unit.id, document.getElementById(`multiplier-${unit.id}`).value)}>
+                                    Simpan Perubahan
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+
+            <hr style={{margin: '40px 0', borderColor: 'var(--border-color)'}} />
+
+            <h2 style={{marginBottom: '20px', color: 'var(--text-primary)'}}>Pengaturan Satuan Tunggal</h2>
+            
+            <form onSubmit={handleSmallUnitSubmit} style={{display: 'flex', gap: '16px', marginBottom: '32px', alignItems: 'flex-end', flexWrap: 'wrap'}}>
+                <div>
+                    <label style={{display: 'block', color: 'var(--text-secondary)', marginBottom: '8px'}}>Nama Satuan Tunggal</label>
+                    <input type="text" className="input-field" value={smallUnitName} onChange={e => setSmallUnitName(e.target.value)} required placeholder="Misal: Lembar, Pcs, Buah" />
+                </div>
+                <button type="submit" className="btn btn-primary" disabled={smallUnitLoading}>
+                    {smallUnitLoading ? 'Menyimpan...' : 'Tambah Satuan Tunggal'}
+                </button>
+            </form>
+            
+            {smallUnitMessage && <div style={{marginBottom: '16px', color: 'var(--success-color)'}}>{smallUnitMessage}</div>}
+
+            <table className="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nama Satuan Tunggal</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {smallUnits.map(unit => (
+                        <tr key={unit.id}>
+                            <td>{unit.id}</td>
+                            <td>
+                                <input type="text" className="input-field" defaultValue={unit.name} id={`small-unit-name-${unit.id}`} style={{width: '200px', padding: '4px 8px'}} />
+                            </td>
+                            <td>
+                                <button className="btn btn-secondary" onClick={() => handleSmallUnitUpdate(unit.id, document.getElementById(`small-unit-name-${unit.id}`).value)}>
                                     Simpan Perubahan
                                 </button>
                             </td>

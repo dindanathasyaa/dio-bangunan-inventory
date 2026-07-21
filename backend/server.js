@@ -203,6 +203,37 @@ app.put('/api/large_units/:id', async (req, res) => {
     }
 });
 
+// Small Units Routes
+app.get('/api/small_units', async (req, res) => {
+    try {
+        const [rows] = await pool.query('SELECT * FROM small_units');
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/small_units', async (req, res) => {
+    const { name } = req.body;
+    try {
+        await pool.query('INSERT INTO small_units (name) VALUES (?)', [name]);
+        res.status(201).json({ message: 'Satuan tunggal berhasil ditambahkan' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.put('/api/small_units/:id', async (req, res) => {
+    const { id } = req.params;
+    const { name } = req.body;
+    try {
+        await pool.query('UPDATE small_units SET name = ? WHERE id = ?', [name, id]);
+        res.json({ message: 'Satuan tunggal berhasil diupdate' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // DSS Routes
 app.get('/api/dss/recommendations', async (req, res) => {
     const branch_id = req.query.branch_id;

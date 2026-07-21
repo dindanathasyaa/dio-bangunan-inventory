@@ -309,9 +309,11 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
     const [isUnitDropdownOpen, setIsUnitDropdownOpen] = useState(false);
     const [isMajemukDropdownOpen, setIsMajemukDropdownOpen] = useState(false);
     const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+    const [isSmallUnitDropdownOpen, setIsSmallUnitDropdownOpen] = useState(false);
     const [majemukType, setMajemukType] = useState('');
     const [majemukMultiplier, setMajemukMultiplier] = useState(20);
     const [largeUnitsList, setLargeUnitsList] = useState([]);
+    const [smallUnitsList, setSmallUnitsList] = useState([]);
 
     const [newItem, setNewItem] = useState({
         sku: '',
@@ -329,6 +331,12 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
     useEffect(() => {
         axios.get('http://localhost:5000/api/categories').then(res => setDbCategories(res.data)).catch(err => console.error(err));
         axios.get('http://localhost:5000/api/large_units').then(res => setLargeUnitsList(res.data)).catch(err => console.error(err));
+        axios.get('http://localhost:5000/api/small_units').then(res => {
+            setSmallUnitsList(res.data);
+            if(res.data.length > 0) {
+                setNewItem(prev => ({...prev, unit: res.data[0].name}));
+            }
+        }).catch(err => console.error(err));
     }, []);
 
     const categories = ['Kategori', ...new Set(inventory.map(item => item.category))];
@@ -679,7 +687,36 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                 </div>
                             ) : (
                                 <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
-                                    <div className="form-group" style={{flex: 1}}><label>Satuan</label><input type="text" className="input-field" value={newItem.unit} onChange={e => setNewItem({...newItem, unit: e.target.value})} required /></div>
+                                    <div className="form-group" style={{flex: 1}}>
+                                        <label>Satuan</label>
+                                        <div className="custom-dropdown-container" style={{position: 'relative', width: '100%', zIndex: isSmallUnitDropdownOpen ? 10 : 1}}>
+                                            <div 
+                                                className={`custom-select-3d ${isSmallUnitDropdownOpen ? 'active' : ''}`}
+                                                onClick={() => setIsSmallUnitDropdownOpen(!isSmallUnitDropdownOpen)}
+                                                style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box', border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer'}}
+                                            >
+                                                <span>{newItem.unit || 'Pilih Satuan'}</span>
+                                                <span style={{fontSize: '0.8rem'}}>▼</span>
+                                            </div>
+                                            {isSmallUnitDropdownOpen && (
+                                                <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000, overflow: 'hidden', padding: 0}}>
+                                                    {smallUnitsList.map(unit => (
+                                                        <div 
+                                                            key={unit.name}
+                                                            className={`custom-dropdown-item ${newItem.unit === unit.name ? 'selected' : ''}`}
+                                                            onClick={() => {
+                                                                setNewItem({...newItem, unit: unit.name});
+                                                                setIsSmallUnitDropdownOpen(false);
+                                                            }}
+                                                            style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
+                                                        >
+                                                            {unit.name}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
                                     <div className="form-group" style={{flex: 1}}><label>Stok</label><input type="number" className="input-field" value={lembar} onChange={e => {setLembar(e.target.value);}} required /></div>
                                 </div>
                             )}
