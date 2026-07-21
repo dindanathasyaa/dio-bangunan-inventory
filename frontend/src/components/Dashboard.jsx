@@ -180,7 +180,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                                 {isBranchDropdownOpen && (
                                     <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--secondary-color)', zIndex: 1000}}>
                                     <div 
-                                        className={`custom-dropdown-item ${activeBranch === 'all' ? 'selected' : ''}`}
+                                        className={`custom-dropdown-item branch-dropdown-item ${activeBranch === 'all' ? 'selected' : ''}`}
                                         onClick={() => { setActiveBranch('all'); setIsBranchDropdownOpen(false); }}
                                         style={{fontWeight: '500'}}
                                     >
@@ -189,7 +189,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                                     {branches.map(b => (
                                         <div 
                                             key={b.id} 
-                                            className={`custom-dropdown-item ${activeBranch.toString() === b.id.toString() ? 'selected' : ''}`}
+                                            className={`custom-dropdown-item branch-dropdown-item ${activeBranch.toString() === b.id.toString() ? 'selected' : ''}`}
                                             onClick={() => { setActiveBranch(b.id); setIsBranchDropdownOpen(false); }}
                                             style={{fontWeight: '500'}}
                                         >
