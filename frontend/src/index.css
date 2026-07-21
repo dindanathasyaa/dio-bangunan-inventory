@@ -207,14 +207,14 @@ p {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
-  width: 80px;
-  height: 36px;
-  border-radius: 18px;
+  width: 104px;
+  height: 48px;
+  border-radius: 8px;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px;
+  padding: 3px;
   position: relative;
   box-shadow: var(--glass-shadow);
   transition: all 0.3s ease;
@@ -224,12 +224,12 @@ p {
   box-shadow: 0 6px 15px rgba(0,0,0,0.1);
 }
 .theme-toggle .icon {
-  width: 28px;
-  height: 28px;
+  width: 40px;
+  height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 50%;
+  border-radius: 6px;
   font-size: 1rem;
   z-index: 2;
   transition: all 0.3s ease;
@@ -237,17 +237,17 @@ p {
 .theme-toggle::before {
   content: '';
   position: absolute;
-  top: 4px;
-  left: 4px;
-  width: 28px;
-  height: 28px;
+  top: 3px;
+  left: 3px;
+  width: 40px;
+  height: 40px;
   background: var(--secondary-color);
-  border-radius: 50%;
+  border-radius: 6px;
   transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   z-index: 1;
 }
 [data-theme="dark"] .theme-toggle::before {
-  transform: translateX(44px);
+  transform: translateX(56px);
 }
 
 /* Role Badge */
