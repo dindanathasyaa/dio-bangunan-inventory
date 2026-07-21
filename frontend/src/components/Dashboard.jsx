@@ -601,15 +601,15 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                             <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginBottom: '24px'}}>
                                 <div className="form-group">
                                     <label>Stok Saat Ini</label>
-                                    <input type="number" className="input-field" value={editingData.stock} onChange={e => setEditingData({...editingData, stock: parseInt(e.target.value)})} required />
+                                    <input type="number" className="input-field" value={Number(editingData.stock)} onChange={e => setEditingData({...editingData, stock: parseInt(e.target.value)})} required />
                                 </div>
                                 <div className="form-group">
                                     <label>Batas Minimum</label>
-                                    <input type="number" className="input-field" value={editingData.min_stock} onChange={e => setEditingData({...editingData, min_stock: parseInt(e.target.value)})} required />
+                                    <input type="number" className="input-field" value={Number(editingData.min_stock)} onChange={e => setEditingData({...editingData, min_stock: parseInt(e.target.value)})} required />
                                 </div>
                                 <div className="form-group">
                                     <label>Batas Maksimum</label>
-                                    <input type="number" className="input-field" value={editingData.max_stock} onChange={e => setEditingData({...editingData, max_stock: parseInt(e.target.value)})} required />
+                                    <input type="number" className="input-field" value={Number(editingData.max_stock)} onChange={e => setEditingData({...editingData, max_stock: parseInt(e.target.value)})} required />
                                 </div>
                             </div>
                             <div style={{display: 'flex', justifyContent: 'flex-end', gap: '12px'}}>
