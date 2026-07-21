@@ -506,7 +506,6 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                             style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box'}}
                                         >
                                             <span>{branches?.find(b => b.id === newItem.branch_id)?.name || 'Pilih Toko Cabang'}</span>
-                                            <span style={{fontSize: '0.8rem', marginLeft: '8px', color: 'var(--primary-color)'}}>▼</span>
                                         </div>
                                         {isAddBranchDropdownOpen && (
                                             <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000}}>
