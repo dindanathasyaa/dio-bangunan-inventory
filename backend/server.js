@@ -174,10 +174,10 @@ app.delete('/api/categories/:id', async (req, res) => {
     } catch (error) {
         // Handle foreign key constraint error if products exist
         console.error('Delete Category Error:', error);
-        if (error.code === 'ER_ROW_IS_REFERENCED_2' || error.errno === 1451) {
+        if (error.code === 'ER_ROW_IS_REFERENCED_2' || error.errno === 1451 || error.code === 'ER_ROW_IS_REFERENCED' || error.errno === 1217) {
             return res.status(400).json({ error: 'Tidak dapat menghapus kategori karena masih ada barang yang menggunakan kategori ini.' });
         }
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error.message || 'Terjadi kesalahan internal' });
     }
 });
 
@@ -225,10 +225,10 @@ app.delete('/api/large_units/:id', async (req, res) => {
         res.json({ message: 'Satuan besar berhasil dihapus' });
     } catch (error) {
         console.error('Delete Large Unit Error:', error);
-        if (error.code === 'ER_ROW_IS_REFERENCED_2' || error.errno === 1451) {
+        if (error.code === 'ER_ROW_IS_REFERENCED_2' || error.errno === 1451 || error.code === 'ER_ROW_IS_REFERENCED' || error.errno === 1217) {
             return res.status(400).json({ error: 'Tidak dapat menghapus satuan besar ini karena masih digunakan oleh barang.' });
         }
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error.message || 'Terjadi kesalahan internal' });
     }
 });
 
@@ -270,10 +270,10 @@ app.delete('/api/small_units/:id', async (req, res) => {
         res.json({ message: 'Satuan tunggal berhasil dihapus' });
     } catch (error) {
         console.error('Delete Small Unit Error:', error);
-        if (error.code === 'ER_ROW_IS_REFERENCED_2' || error.errno === 1451) {
+        if (error.code === 'ER_ROW_IS_REFERENCED_2' || error.errno === 1451 || error.code === 'ER_ROW_IS_REFERENCED' || error.errno === 1217) {
             return res.status(400).json({ error: 'Tidak dapat menghapus satuan tunggal ini karena masih digunakan oleh barang.' });
         }
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error.message || 'Terjadi kesalahan internal' });
     }
 });
 

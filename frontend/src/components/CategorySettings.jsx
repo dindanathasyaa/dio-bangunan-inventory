@@ -114,11 +114,8 @@ const CategorySettings = () => {
                     showAlert('Kategori berhasil dihapus');
                 } catch (error) {
                     console.error(error);
-                    if (error.response && error.response.data && error.response.data.error) {
-                        showAlert(error.response.data.error);
-                    } else {
-                        showAlert('Gagal menghapus kategori');
-                    }
+                    const errorMsg = error.response?.data?.error || error.message || 'Gagal menghapus kategori';
+                    showAlert(errorMsg);
                 }
             }
         });
@@ -202,11 +199,8 @@ const CategorySettings = () => {
                     showAlert('Satuan besar berhasil dihapus');
                 } catch (error) {
                     console.error(error);
-                    if (error.response && error.response.data && error.response.data.error) {
-                        showAlert(error.response.data.error);
-                    } else {
-                        showAlert('Gagal menghapus satuan besar');
-                    }
+                    const errorMsg = error.response?.data?.error || error.message || 'Gagal menghapus satuan besar';
+                    showAlert(errorMsg);
                 }
             }
         });
@@ -224,11 +218,8 @@ const CategorySettings = () => {
                     showAlert('Satuan tunggal berhasil dihapus');
                 } catch (error) {
                     console.error(error);
-                    if (error.response && error.response.data && error.response.data.error) {
-                        showAlert(error.response.data.error);
-                    } else {
-                        showAlert('Gagal menghapus satuan tunggal');
-                    }
+                    const errorMsg = error.response?.data?.error || error.message || 'Gagal menghapus satuan tunggal';
+                    showAlert(errorMsg);
                 }
             }
         });
