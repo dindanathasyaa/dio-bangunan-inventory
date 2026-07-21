@@ -603,7 +603,7 @@ p {
   appearance: none;
   background: var(--item-bg);
   border: 2px solid var(--primary-color);
-  color: var(--text-primary);
+  color: var(--primary-color);
   padding: 12px 40px 12px 20px;
   border-radius: 12px;
   font-weight: 600;
