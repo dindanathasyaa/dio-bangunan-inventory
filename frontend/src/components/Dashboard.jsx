@@ -559,14 +559,14 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                                     Jenis Satuan
                                                 </div>
                                                 <div 
-                                                    className={`custom-dropdown-item branch-dropdown-item ${unitType === 'Satuan Majemuk' ? 'selected' : ''}`}
+                                                    className={`custom-dropdown-item ${unitType === 'Satuan Majemuk' ? 'selected' : ''}`}
                                                     onClick={() => { setUnitType('Satuan Majemuk'); setIsUnitDropdownOpen(false); }}
                                                     style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
                                                 >
                                                     Satuan Majemuk
                                                 </div>
                                                 <div 
-                                                    className={`custom-dropdown-item branch-dropdown-item ${unitType === 'Tunggal' ? 'selected' : ''}`}
+                                                    className={`custom-dropdown-item ${unitType === 'Tunggal' ? 'selected' : ''}`}
                                                     onClick={() => { setUnitType('Tunggal'); setIsUnitDropdownOpen(false); }}
                                                     style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
                                                 >
