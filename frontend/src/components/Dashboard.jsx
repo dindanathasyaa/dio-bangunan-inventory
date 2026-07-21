@@ -555,9 +555,6 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                         </div>
                                         {isUnitDropdownOpen && (
                                             <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000, overflow: 'hidden', padding: 0}}>
-                                                <div style={{background: 'var(--primary-color)', color: 'white', padding: '12px 16px', fontWeight: 'bold'}}>
-                                                    Jenis Satuan
-                                                </div>
                                                 <div 
                                                     className={`custom-dropdown-item ${unitType === 'Satuan Majemuk' ? 'selected' : ''}`}
                                                     onClick={() => { setUnitType('Satuan Majemuk'); setIsUnitDropdownOpen(false); }}
