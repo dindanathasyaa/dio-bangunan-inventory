@@ -402,8 +402,8 @@ const InventoryView = ({ inventory, refreshData, user }) => {
                                     <td style={{fontWeight: 'bold', fontSize: '1.1rem'}}>{Math.floor(item.stock)}</td>
                                     <td><span className={`badge ${badgeClass}`}>{badgeText}</span></td>
                                     <td>
-                                        <button className="btn-icon" style={{color: 'var(--primary-color)'}} onClick={() => setEditingData({...item})} title="Edit Data">
-                                            ✏️ Edit
+                                        <button className="btn-icon" style={{color: '#111827', fontWeight: 'bold', padding: '6px 12px', background: '#f3f4f6'}} onClick={() => setEditingData({...item})} title="Edit Data">
+                                            Edit
                                         </button>
                                     </td>
                                 </tr>
