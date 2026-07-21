@@ -658,7 +658,7 @@ p {
   background: transparent;
 }
 .custom-dropdown-item:hover, .custom-dropdown-item.selected {
-  background: #1d4ed8;
+  background: var(--primary-color);
   color: white;
 }
 @keyframes slideDown {
