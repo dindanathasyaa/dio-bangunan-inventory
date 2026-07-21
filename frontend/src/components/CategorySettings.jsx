@@ -176,6 +176,30 @@ const CategorySettings = () => {
         }
     };
 
+    const handleDeleteLargeUnit = async (id) => {
+        if (!window.confirm('Apakah Anda yakin ingin menghapus satuan besar ini?')) return;
+        try {
+            await axios.delete(`http://localhost:5000/api/large_units/${id}`);
+            fetchLargeUnits();
+            alert('Satuan besar berhasil dihapus');
+        } catch (error) {
+            console.error(error);
+            alert('Gagal menghapus satuan besar');
+        }
+    };
+
+    const handleDeleteSmallUnit = async (id) => {
+        if (!window.confirm('Apakah Anda yakin ingin menghapus satuan tunggal ini?')) return;
+        try {
+            await axios.delete(`http://localhost:5000/api/small_units/${id}`);
+            fetchSmallUnits();
+            alert('Satuan tunggal berhasil dihapus');
+        } catch (error) {
+            console.error(error);
+            alert('Gagal menghapus satuan tunggal');
+        }
+    };
+
     return (
         <div className="glass-panel" style={{padding: '24px'}}>
             <h2 style={{marginBottom: '20px', color: 'var(--text-primary)'}}>Pengaturan Kategori & Parameter Inventory</h2>
@@ -271,9 +295,12 @@ const CategorySettings = () => {
                             <td>
                                 <input type="number" className="input-field" defaultValue={unit.default_multiplier} id={`multiplier-${unit.id}`} style={{width: '100px', padding: '4px 8px'}} />
                             </td>
-                            <td>
+                            <td style={{display: 'flex', gap: '8px'}}>
                                 <button className="btn btn-secondary" onClick={() => handleUnitUpdate(unit.id, document.getElementById(`multiplier-${unit.id}`).value)}>
-                                    Simpan Perubahan
+                                    Simpan
+                                </button>
+                                <button className="btn btn-danger" onClick={() => handleDeleteLargeUnit(unit.id)} style={{background: 'var(--danger-color, #ef4444)', color: 'white'}}>
+                                    Hapus
                                 </button>
                             </td>
                         </tr>
@@ -312,9 +339,12 @@ const CategorySettings = () => {
                             <td>
                                 <input type="text" className="input-field" defaultValue={unit.name} id={`small-unit-name-${unit.id}`} style={{width: '200px', padding: '4px 8px'}} />
                             </td>
-                            <td>
+                            <td style={{display: 'flex', gap: '8px'}}>
                                 <button className="btn btn-secondary" onClick={() => handleSmallUnitUpdate(unit.id, document.getElementById(`small-unit-name-${unit.id}`).value)}>
-                                    Simpan Perubahan
+                                    Simpan
+                                </button>
+                                <button className="btn btn-danger" onClick={() => handleDeleteSmallUnit(unit.id)} style={{background: 'var(--danger-color, #ef4444)', color: 'white'}}>
+                                    Hapus
                                 </button>
                             </td>
                         </tr>

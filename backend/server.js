@@ -217,6 +217,16 @@ app.put('/api/large_units/:id', async (req, res) => {
     }
 });
 
+app.delete('/api/large_units/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await pool.query('DELETE FROM large_units WHERE id = ?', [id]);
+        res.json({ message: 'Satuan besar berhasil dihapus' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Small Units Routes
 app.get('/api/small_units', async (req, res) => {
     try {
@@ -243,6 +253,16 @@ app.put('/api/small_units/:id', async (req, res) => {
     try {
         await pool.query('UPDATE small_units SET name = ? WHERE id = ?', [name, id]);
         res.json({ message: 'Satuan tunggal berhasil diupdate' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.delete('/api/small_units/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await pool.query('DELETE FROM small_units WHERE id = ?', [id]);
+        res.json({ message: 'Satuan tunggal berhasil dihapus' });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
