@@ -547,8 +547,8 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                         onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
                                         style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box', border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer'}}
                                     >
-                                        <span>{dbCategories.find(c => c.id === parseInt(newItem.category_id))?.name || 'Pilih Kategori'}</span>
-                                        <span style={{fontSize: '0.8rem'}}>▼</span>
+                                        <span style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{dbCategories.find(c => c.id === parseInt(newItem.category_id))?.name || 'Pilih Kategori'}</span>
+                                        <span style={{fontSize: '0.8rem', marginLeft: '16px'}}>▼</span>
                                     </div>
                                     {isCategoryDropdownOpen && (
                                         <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000, overflow: 'hidden', padding: 0}}>
@@ -580,8 +580,8 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                             onClick={() => setIsUnitDropdownOpen(!isUnitDropdownOpen)}
                                             style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box', border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer'}}
                                         >
-                                            <span>{unitType || 'Pilih Jenis Satuan'}</span>
-                                            <span style={{fontSize: '0.8rem'}}>▼</span>
+                                            <span style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{unitType || 'Pilih Jenis Satuan'}</span>
+                                            <span style={{fontSize: '0.8rem', marginLeft: '16px'}}>▼</span>
                                         </div>
                                         {isUnitDropdownOpen && (
                                             <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000, overflow: 'hidden', padding: 0}}>
@@ -616,8 +616,8 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                                     onClick={() => setIsMajemukDropdownOpen(!isMajemukDropdownOpen)}
                                                     style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box', border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer'}}
                                                 >
-                                                    <span>{majemukType || 'Satuan Besar'}</span>
-                                                    <span style={{fontSize: '0.8rem'}}>▼</span>
+                                                    <span style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{majemukType || 'Satuan Besar'}</span>
+                                                    <span style={{fontSize: '0.8rem', marginLeft: '16px'}}>▼</span>
                                                 </div>
                                                 {isMajemukDropdownOpen && (
                                                     <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000, overflow: 'hidden', padding: 0}}>
@@ -692,8 +692,8 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                                 onClick={() => setIsSmallUnitDropdownOpen(!isSmallUnitDropdownOpen)}
                                                 style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box', border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer'}}
                                             >
-                                                <span>{newItem.unit || 'Pilih Satuan'}</span>
-                                                <span style={{fontSize: '0.8rem'}}>▼</span>
+                                                <span style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{newItem.unit || 'Pilih Satuan'}</span>
+                                                <span style={{fontSize: '0.8rem', marginLeft: '16px'}}>▼</span>
                                             </div>
                                             {isSmallUnitDropdownOpen && (
                                                 <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000, overflow: 'hidden', padding: 0}}>
