@@ -121,7 +121,13 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {transactions.filter(t => cashFlowDate ? new Date(t.created_at).toISOString().split('T')[0] === cashFlowDate : true).map(t => (
+                                {transactions.filter(t => {
+                                    if (!cashFlowDate) return true;
+                                    const d = new Date(t.created_at);
+                                    const pad = n => n.toString().padStart(2, '0');
+                                    const rowDateStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+                                    return rowDateStr === cashFlowDate;
+                                }).map(t => (
                                     <tr key={t.id}>
                                         <td>{new Date(t.created_at).toLocaleString()}</td>
                                         <td>{t.description}</td>
@@ -133,7 +139,13 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                                         <td style={{fontWeight: 'bold'}}>Rp {parseFloat(t.amount).toLocaleString()}</td>
                                     </tr>
                                 ))}
-                                {transactions.filter(t => cashFlowDate ? new Date(t.created_at).toISOString().split('T')[0] === cashFlowDate : true).length === 0 && (
+                                {transactions.filter(t => {
+                                    if (!cashFlowDate) return true;
+                                    const d = new Date(t.created_at);
+                                    const pad = n => n.toString().padStart(2, '0');
+                                    const rowDateStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+                                    return rowDateStr === cashFlowDate;
+                                }).length === 0 && (
                                     <tr><td colSpan="4" style={{textAlign: 'center'}}>Tidak ada transaksi pada tanggal ini</td></tr>
                                 )}
                             </tbody>

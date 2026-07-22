@@ -325,7 +325,19 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {recapData.filter(row => recapDate ? row.date === recapDate : true).length > 0 ? recapData.filter(row => recapDate ? row.date === recapDate : true).map((row, idx) => (
+                                    {recapData.filter(row => {
+                                        if (!recapDate) return true;
+                                        const d = new Date(row.date);
+                                        const pad = n => n.toString().padStart(2, '0');
+                                        const rowDateStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+                                        return rowDateStr === recapDate;
+                                    }).length > 0 ? recapData.filter(row => {
+                                        if (!recapDate) return true;
+                                        const d = new Date(row.date);
+                                        const pad = n => n.toString().padStart(2, '0');
+                                        const rowDateStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+                                        return rowDateStr === recapDate;
+                                    }).map((row, idx) => (
                                         <tr key={idx}>
                                             <td>{new Date(row.date).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}</td>
                                             <td style={{textAlign: 'center'}}>{row.total_transactions}</td>
