@@ -15,6 +15,7 @@ const PurchaseView = ({ user, activeBranch, branches }) => {
     const [buyPrice, setBuyPrice] = useState('');
     
     const [loading, setLoading] = useState(false);
+    const [messageModal, setMessageModal] = useState('');
 
     useEffect(() => {
         fetchInventory();
@@ -49,7 +50,7 @@ const PurchaseView = ({ user, activeBranch, branches }) => {
 
     const addItemToCart = () => {
         if (!selectedProductId || !qty || !buyPrice) {
-            return alert('Harap pilih barang, isi jumlah, dan harga beli.');
+            return setMessageModal('Harap pilih barang, isi jumlah, dan harga beli.');
         }
         const product = inventory.find(p => p.id.toString() === selectedProductId.toString());
         if (!product) return;
@@ -75,8 +76,8 @@ const PurchaseView = ({ user, activeBranch, branches }) => {
     };
 
     const submitPurchase = async (paymentMethod) => {
-        if (!supplierName) return alert('Nama Supplier harus diisi!');
-        if (cart.length === 0) return alert('Keranjang pembelian masih kosong!');
+        if (!supplierName) return setMessageModal('Nama Supplier harus diisi!');
+        if (cart.length === 0) return setMessageModal('Keranjang pembelian masih kosong!');
         
         setLoading(true);
         try {
@@ -88,12 +89,12 @@ const PurchaseView = ({ user, activeBranch, branches }) => {
                 items: cart
             });
 
-            alert(paymentMethod === 'Cash' ? 'Data Pembelian Tunai Berhasil Dicatat!' : 'Catatan Hutang Berhasil Disimpan!');
+            setMessageModal(paymentMethod === 'Cash' ? 'Data Pembelian Tunai Berhasil Dicatat!' : 'Catatan Hutang Berhasil Disimpan!');
             setSupplierName('');
             setCart([]);
         } catch (error) {
             console.error(error);
-            alert('Terjadi kesalahan saat menyimpan pembelian.');
+            setMessageModal('Terjadi kesalahan saat menyimpan pembelian.');
         } finally {
             setLoading(false);
         }
@@ -107,6 +108,15 @@ const PurchaseView = ({ user, activeBranch, branches }) => {
 
     return (
         <div style={{animation: 'fadeIn 0.5s ease-out', width: '100%', padding: '24px'}}>
+            {messageModal && (
+                <div className="modal-overlay" onClick={() => setMessageModal('')} style={{zIndex: 9999}}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()} style={{textAlign: 'center', maxWidth: '400px'}}>
+                        <h2 style={{color: 'var(--primary-color)', marginBottom: '16px'}}>Pemberitahuan</h2>
+                        <p style={{fontSize: '1.1rem', marginBottom: '24px'}}>{messageModal}</p>
+                        <button className="btn btn-primary" onClick={() => setMessageModal('')} style={{width: '100%'}}>Tutup</button>
+                    </div>
+                </div>
+            )}
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
                 <h1 style={{margin: 0}}>Pencatatan Pembelian</h1>
                 <button className="btn btn-outline" onClick={() => navigate('/')}>Kembali ke Dashboard</button>

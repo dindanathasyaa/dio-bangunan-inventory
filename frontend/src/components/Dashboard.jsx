@@ -302,6 +302,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
     const [selectedCategory, setSelectedCategory] = useState('Kategori');
     const [activeBarcode, setActiveBarcode] = useState(null);
     const [editingData, setEditingData] = useState(null);
+    const [messageModal, setMessageModal] = useState('');
     const [dbCategories, setDbCategories] = useState([]);
     const [unitType, setUnitType] = useState('');
     const [kodi, setKodi] = useState(0);
@@ -346,7 +347,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
     const handleAddItem = async (e) => {
         e.preventDefault();
         if (parseFloat(newItem.base_price) > parseFloat(newItem.price)) {
-            alert("Periksa Kembali Harga");
+            setMessageModal("Periksa Kembali Harga");
             return;
         }
         try {
@@ -390,6 +391,15 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
 
     return (
         <div style={{animation: 'fadeIn 0.5s ease-out'}}>
+            {messageModal && (
+                <div className="modal-overlay" onClick={() => setMessageModal('')} style={{zIndex: 9999}}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()} style={{textAlign: 'center', maxWidth: '400px'}}>
+                        <h2 style={{color: 'var(--primary-color)', marginBottom: '16px'}}>Pemberitahuan</h2>
+                        <p style={{fontSize: '1.1rem', marginBottom: '24px'}}>{messageModal}</p>
+                        <button className="btn btn-primary" onClick={() => setMessageModal('')} style={{width: '100%'}}>Tutup</button>
+                    </div>
+                </div>
+            )}
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
                 <h1 style={{margin: 0}}>Data Inventory</h1>
                 <div style={{display: 'flex', gap: '16px', alignItems: 'center'}}>
