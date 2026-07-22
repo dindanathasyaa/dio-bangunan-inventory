@@ -371,6 +371,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                     <tr>
                                         <th>Waktu</th>
                                         <th>Pelanggan</th>
+                                        <th>Barang Terjual</th>
                                         <th>Pembayaran</th>
                                         <th style={{textAlign: 'right'}}>Omset</th>
                                         <th style={{textAlign: 'right'}}>Profit</th>
@@ -381,6 +382,21 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                         <tr key={idx}>
                                             <td>{new Date(row.created_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'})}</td>
                                             <td>{row.customer_name || 'Umum'}</td>
+                                            <td>
+                                                {row.items ? (
+                                                    (typeof row.items === 'string' ? JSON.parse(row.items) : row.items).map((item, i) => {
+                                                        let displayQty = `${Number(item.qty)} ${item.unit}`;
+                                                        if (item.unit && item.unit.toLowerCase() === 'kodi') {
+                                                            displayQty = `${Number(item.qty)} kodi (${Number(item.qty) * 20} pcs)`;
+                                                        }
+                                                        return (
+                                                            <div key={i} style={{fontSize: '0.85rem', marginBottom: '2px'}}>
+                                                                • {item.name}: <b>{displayQty}</b>
+                                                            </div>
+                                                        )
+                                                    })
+                                                ) : '-'}
+                                            </td>
                                             <td>{row.payment_method}</td>
                                             <td style={{textAlign: 'right'}}>Rp {Number(row.total_amount).toLocaleString()}</td>
                                             <td style={{textAlign: 'right', color: '#10b981'}}>Rp {Number(row.profit).toLocaleString()}</td>
@@ -392,7 +408,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                 {detailData.length > 0 && (
                                     <tfoot style={{position: 'sticky', bottom: 0, background: 'var(--panel-bg)', zIndex: 1, borderTop: '2px solid var(--border-color)'}}>
                                         <tr>
-                                            <td colSpan="3" style={{textAlign: 'right', fontWeight: 'bold'}}>Total Keseluruhan:</td>
+                                            <td colSpan="4" style={{textAlign: 'right', fontWeight: 'bold'}}>Total Keseluruhan:</td>
                                             <td style={{textAlign: 'right', fontWeight: 'bold', color: 'var(--primary-color)'}}>
                                                 Rp {detailData.reduce((acc, row) => acc + Number(row.total_amount), 0).toLocaleString()}
                                             </td>
