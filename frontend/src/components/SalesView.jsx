@@ -360,7 +360,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
             {/* Modal Detail Penjualan */}
             {showDetailModal && (
                 <div className="modal-overlay" onClick={() => setShowDetailModal(false)}>
-                    <div className="modal-content" style={{maxWidth: '800px'}} onClick={e => e.stopPropagation()}>
+                    <div className="modal-content" style={{maxWidth: '1100px', width: '90%'}} onClick={e => e.stopPropagation()}>
                         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
                             <h2>Detail Penjualan: {new Date(detailDate).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}</h2>
                             <button className="btn-icon" onClick={() => setShowDetailModal(false)}>✕</button>
