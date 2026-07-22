@@ -371,7 +371,8 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                     <tr>
                                         <th>Waktu</th>
                                         <th>Pelanggan</th>
-                                        <th>Barang Terjual</th>
+                                        <th>Nama Barang</th>
+                                        <th>Jumlah</th>
                                         <th>Pembayaran</th>
                                         <th style={{textAlign: 'right'}}>Omset</th>
                                         <th style={{textAlign: 'right'}}>Profit</th>
@@ -384,14 +385,23 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                             <td>{row.customer_name || 'Umum'}</td>
                                             <td>
                                                 {row.items ? (
+                                                    (typeof row.items === 'string' ? JSON.parse(row.items) : row.items).map((item, i) => (
+                                                        <div key={i} style={{fontSize: '0.85rem', marginBottom: '4px'}}>
+                                                            • {item.name}
+                                                        </div>
+                                                    ))
+                                                ) : '-'}
+                                            </td>
+                                            <td>
+                                                {row.items ? (
                                                     (typeof row.items === 'string' ? JSON.parse(row.items) : row.items).map((item, i) => {
                                                         let displayQty = `${Number(item.qty)} ${item.unit}`;
                                                         if (item.unit && item.unit.toLowerCase() === 'kodi') {
                                                             displayQty = `${Number(item.qty)} kodi (${Number(item.qty) * 20} pcs)`;
                                                         }
                                                         return (
-                                                            <div key={i} style={{fontSize: '0.85rem', marginBottom: '2px'}}>
-                                                                • {item.name}: <b>{displayQty}</b>
+                                                            <div key={i} style={{fontSize: '0.85rem', marginBottom: '4px'}}>
+                                                                <b>{displayQty}</b>
                                                             </div>
                                                         )
                                                     })
@@ -402,13 +412,13 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                             <td style={{textAlign: 'right', color: '#10b981'}}>Rp {Number(row.profit).toLocaleString()}</td>
                                         </tr>
                                     )) : (
-                                        <tr><td colSpan="5" style={{textAlign: 'center'}}>Belum ada data penjualan</td></tr>
+                                        <tr><td colSpan="6" style={{textAlign: 'center'}}>Belum ada data penjualan</td></tr>
                                     )}
                                 </tbody>
                                 {detailData.length > 0 && (
                                     <tfoot style={{position: 'sticky', bottom: 0, background: 'var(--panel-bg)', zIndex: 1, borderTop: '2px solid var(--border-color)'}}>
                                         <tr>
-                                            <td colSpan="4" style={{textAlign: 'right', fontWeight: 'bold'}}>Total Keseluruhan:</td>
+                                            <td colSpan="5" style={{textAlign: 'right', fontWeight: 'bold'}}>Total Keseluruhan:</td>
                                             <td style={{textAlign: 'right', fontWeight: 'bold', color: 'var(--primary-color)'}}>
                                                 Rp {detailData.reduce((acc, row) => acc + Number(row.total_amount), 0).toLocaleString()}
                                             </td>
