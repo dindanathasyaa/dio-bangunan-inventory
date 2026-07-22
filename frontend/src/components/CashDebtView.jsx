@@ -115,7 +115,7 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
     };
 
     // Filter transactions by date
-    const filteredTransactions = transactions.filter(t => {
+    const filteredTransactions = (transactions || []).filter(t => {
         if (!cashFlowDate) return true;
         const d = new Date(t.created_at);
         const pad = n => n.toString().padStart(2, '0');
@@ -123,34 +123,35 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
         return rowDateStr === cashFlowDate;
     });
 
-    const kasMasuk = filteredTransactions.filter(t => t.type === 'Masuk');
-    const kasKeluar = filteredTransactions.filter(t => t.type === 'Keluar');
+    const kasMasuk = filteredTransactions.filter(t => t?.type === 'Masuk');
+    const kasKeluar = filteredTransactions.filter(t => t?.type === 'Keluar');
 
-    return (
-        <div style={{animation: 'fadeIn 0.5s ease-out'}}>
-            {renderDetailModal()}
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
-                <h1 style={{margin: 0}}>Kas, Piutang, Hutang</h1>
-            </div>
+    try {
+        return (
+            <div style={{animation: 'fadeIn 0.5s ease-out'}}>
+                {renderDetailModal()}
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
+                    <h1 style={{margin: 0}}>Kas, Piutang, Hutang</h1>
+                </div>
 
-            <div style={{display: 'flex', gap: '16px', marginBottom: '24px', borderBottom: '2px solid rgba(255,255,255,0.1)', paddingBottom: '16px'}}>
-                <button className={`btn ${view === 'CashFlow' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setView('CashFlow')}>Riwayat Transaksi Kas</button>
-                <button className={`btn ${view === 'Receivables' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setView('Receivables')}>Daftar Piutang Pembeli</button>
-                {user.role === 'OWNER' && (
-                    <button className={`btn ${view === 'Payables' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setView('Payables')}>Daftar Hutang (Supplier)</button>
-                )}
-            </div>
+                <div style={{display: 'flex', gap: '16px', marginBottom: '24px', borderBottom: '2px solid rgba(255,255,255,0.1)', paddingBottom: '16px'}}>
+                    <button className={`btn ${view === 'CashFlow' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setView('CashFlow')}>Riwayat Transaksi Kas</button>
+                    <button className={`btn ${view === 'Receivables' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setView('Receivables')}>Daftar Piutang Pembeli</button>
+                    {user?.role === 'OWNER' && (
+                        <button className={`btn ${view === 'Payables' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setView('Payables')}>Daftar Hutang (Supplier)</button>
+                    )}
+                </div>
 
             {view === 'CashFlow' && (
                 <div>
                     <div style={{display: 'flex', gap: '24px', marginBottom: '24px'}}>
                         <div className="glass-panel" style={{flex: 1, padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderTop: '4px solid var(--primary-color)'}}>
                             <span className="metric-label">Total Saldo Kas Saat Ini</span>
-                            <span className="metric-value" style={{color: 'var(--primary-color)'}}>Rp {Number(summary.cash).toLocaleString()}</span>
+                            <span className="metric-value" style={{color: 'var(--primary-color)'}}>Rp {Number(summary?.cash || 0).toLocaleString()}</span>
                         </div>
                         <div className="glass-panel" style={{flex: 1, padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderTop: '4px solid var(--primary-color)'}}>
                             <span className="metric-label">Total Keuntungan (Profit Kotor)</span>
-                            <span className="metric-value" style={{color: 'var(--primary-color)'}}>Rp {Number(summary.profit).toLocaleString()}</span>
+                            <span className="metric-value" style={{color: 'var(--primary-color)'}}>Rp {Number(summary?.profit || 0).toLocaleString()}</span>
                         </div>
                     </div>
 
@@ -240,8 +241,8 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {receivables.map(r => {
-                                const sisa = parseFloat(r.total_debt) - parseFloat(r.amount_paid);
+                            {(receivables || []).map(r => {
+                                const sisa = parseFloat(r.total_debt || 0) - parseFloat(r.amount_paid || 0);
                                 return (
                                 <tr key={r.id}>
                                     <td style={{fontWeight: 'bold'}}>{r.customer_name}</td>
@@ -281,8 +282,8 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {payables.map(p => {
-                                const sisa = parseFloat(p.total_debt) - parseFloat(p.amount_paid);
+                            {(payables || []).map(p => {
+                                const sisa = parseFloat(p.total_debt || 0) - parseFloat(p.amount_paid || 0);
                                 return (
                                 <tr key={p.id}>
                                     <td style={{fontWeight: 'bold'}}>{p.supplier_name}</td>
@@ -314,7 +315,10 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                 </div>
             )}
         </div>
-    );
+        );
+    } catch (error) {
+        return <div style={{padding: '32px', color: 'red'}}><h1>Crash in CashDebtView</h1><pre>{error.stack}</pre></div>;
+    }
 };
 
 export default CashDebtView;
