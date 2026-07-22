@@ -106,17 +106,27 @@ module.exports = function(app, pool) {
         const branch_id = req.query.branch_id;
         const date = req.query.date;
         try {
-            let query = 'SELECT * FROM sales WHERE 1=1';
+            let query = `
+                SELECT s.*, 
+                    (
+                        SELECT JSON_ARRAYAGG(JSON_OBJECT('name', p.name, 'unit', p.unit, 'qty', si.qty))
+                        FROM sale_items si
+                        JOIN products p ON si.product_id = p.id
+                        WHERE si.sale_id = s.id
+                    ) AS items
+                FROM sales s 
+                WHERE 1=1
+            `;
             const params = [];
             if (branch_id && branch_id !== 'all') {
-                query += ' AND branch_id = ?';
+                query += ' AND s.branch_id = ?';
                 params.push(branch_id);
             }
             if (date) {
-                query += ' AND DATE(created_at) = ?';
+                query += ' AND DATE(s.created_at) = ?';
                 params.push(date);
             }
-            query += ' ORDER BY created_at DESC LIMIT 50';
+            query += ' ORDER BY s.created_at DESC LIMIT 50';
             const [rows] = await pool.query(query, params);
             res.json(rows);
         } catch (error) {
