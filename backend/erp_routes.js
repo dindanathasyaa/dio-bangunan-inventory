@@ -427,6 +427,76 @@ module.exports = function(app, pool) {
         }
     });
 
+    app.get('/api/cash_flow/detail/:id', async (req, res) => {
+        try {
+            const [cf] = await pool.query('SELECT * FROM cash_flow WHERE id = ?', [req.params.id]);
+            if (cf.length === 0) return res.status(404).json({ error: 'Cash flow not found' });
+            
+            const cashFlow = cf[0];
+            const refId = cashFlow.reference_id;
+            let items = [];
+            let headerInfo = {};
+
+            if (!refId) return res.json({ cashFlow, items, headerInfo });
+
+            if (cashFlow.description.includes('Penjualan') || cashFlow.description.includes('Pesanan')) {
+                const [sales] = await pool.query('SELECT * FROM sales WHERE id = ?', [refId]);
+                if (sales.length > 0) headerInfo = sales[0];
+                const [saleItems] = await pool.query(`
+                    SELECT si.*, i.name as product_name, i.unit 
+                    FROM sale_items si 
+                    JOIN inventory i ON si.product_id = i.id 
+                    WHERE si.sale_id = ?
+                `, [refId]);
+                items = saleItems;
+            } 
+            else if (cashFlow.description.includes('Pembelian')) {
+                const [purch] = await pool.query('SELECT * FROM purchases WHERE id = ?', [refId]);
+                if (purch.length > 0) headerInfo = purch[0];
+                const [purchItems] = await pool.query(`
+                    SELECT pi.*, i.name as product_name, i.unit 
+                    FROM purchase_items pi 
+                    JOIN inventory i ON pi.product_id = i.id 
+                    WHERE pi.purchase_id = ?
+                `, [refId]);
+                items = purchItems;
+            }
+            else if (cashFlow.description.includes('Pembayaran Piutang')) {
+                const [recv] = await pool.query('SELECT * FROM receivables WHERE id = ?', [refId]);
+                if (recv.length > 0) {
+                    headerInfo = recv[0];
+                    const saleId = headerInfo.sale_id;
+                    const [saleItems] = await pool.query(`
+                        SELECT si.*, i.name as product_name, i.unit 
+                        FROM sale_items si 
+                        JOIN inventory i ON si.product_id = i.id 
+                        WHERE si.sale_id = ?
+                    `, [saleId]);
+                    items = saleItems;
+                }
+            }
+            else if (cashFlow.description.includes('Pembayaran Hutang')) {
+                const [pay] = await pool.query('SELECT * FROM payables WHERE id = ?', [refId]);
+                if (pay.length > 0) {
+                    headerInfo = pay[0];
+                    const purchId = headerInfo.purchase_id;
+                    const [purchItems] = await pool.query(`
+                        SELECT pi.*, i.name as product_name, i.unit 
+                        FROM purchase_items pi 
+                        JOIN inventory i ON pi.product_id = i.id 
+                        WHERE pi.purchase_id = ?
+                    `, [purchId]);
+                    items = purchItems;
+                }
+            }
+
+            res.json({ cashFlow, headerInfo, items });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    });
+
+
     // --- CASH & PROFIT ---
     app.get('/api/cash', async (req, res) => {
         const branch_id = req.query.branch_id;
