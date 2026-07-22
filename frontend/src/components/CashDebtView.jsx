@@ -221,12 +221,19 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                                     <td>
                                         <span className={`badge ${p.status === 'Lunas' ? 'good' : 'low'}`}>{p.status}</span>
                                     </td>
-                                    <td>
+                                    <td style={{display: 'flex', gap: '8px', alignItems: 'center'}}>
                                         {p.status !== 'Lunas' && (
-                                            <button className="btn btn-primary" onClick={() => {
-                                                const amt = prompt(`Masukkan nominal pembayaran ke ${p.supplier_name}:`);
-                                                if(amt && !isNaN(amt)) handlePayPayable(p.id, parseFloat(amt));
-                                            }}>Bayar Hutang (Ambil Kas)</button>
+                                            <>
+                                                <button className="btn btn-primary" onClick={() => {
+                                                    const amt = prompt(`Masukkan nominal pembayaran ke ${p.supplier_name}:`);
+                                                    if(amt && !isNaN(amt)) handlePayPayable(p.id, parseFloat(amt));
+                                                }}>Bayar (Ambil Kas)</button>
+                                                <button className="btn btn-secondary" onClick={() => {
+                                                    if(window.confirm(`Lunas otomatis sebesar Rp ${sisa.toLocaleString()} untuk ${p.supplier_name}?`)) {
+                                                        handlePayPayable(p.id, sisa);
+                                                    }
+                                                }}>Sudah Lunas</button>
+                                            </>
                                         )}
                                     </td>
                                 </tr>

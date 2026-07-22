@@ -345,6 +345,10 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
 
     const handleAddItem = async (e) => {
         e.preventDefault();
+        if (parseFloat(newItem.base_price) > parseFloat(newItem.price)) {
+            alert("Periksa Kembali Harga");
+            return;
+        }
         try {
             await axios.post('http://localhost:5000/api/inventory', { ...newItem, stock: lembar });
             setShowModal(false);
@@ -538,7 +542,24 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                 </div>
                             )}
                             <div className="form-group" style={{marginBottom: '16px'}}><label>Kode Barang</label><input type="text" className="input-field" value={newItem.sku} onChange={e => setNewItem({...newItem, sku: e.target.value})} required /></div>
-                            <div className="form-group" style={{marginBottom: '16px'}}><label>Nama Barang</label><input type="text" className="input-field" value={newItem.name} onChange={e => setNewItem({...newItem, name: e.target.value})} required /></div>
+                            <div className="form-group" style={{marginBottom: '16px'}}>
+                                <label>Nama Barang</label>
+                                <input 
+                                    type="text" 
+                                    className="input-field" 
+                                    value={newItem.name} 
+                                    onChange={e => {
+                                        const val = e.target.value;
+                                        const existing = inventory.find(item => item.name.toLowerCase() === val.toLowerCase());
+                                        if (existing) {
+                                            setNewItem({...newItem, name: val, price: existing.price, base_price: existing.base_price || 0, unit: existing.unit, category_id: dbCategories.find(c => c.name === existing.category)?.id || newItem.category_id});
+                                        } else {
+                                            setNewItem({...newItem, name: val});
+                                        }
+                                    }} 
+                                    required 
+                                />
+                            </div>
                             <div className="form-group" style={{marginBottom: '16px'}}>
                                 <label>Kategori</label>
                                 <div className="custom-dropdown-container" style={{position: 'relative', width: '100%', zIndex: isCategoryDropdownOpen ? 10 : 1}}>
