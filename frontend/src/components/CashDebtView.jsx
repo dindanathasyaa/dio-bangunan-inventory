@@ -10,6 +10,7 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
     const [receivables, setReceivables] = useState([]);
     const [payables, setPayables] = useState([]);
     const [summary, setSummary] = useState({ cash: 0, profit: 0 });
+    const [cashFlowDate, setCashFlowDate] = useState('');
 
     useEffect(() => {
         fetchData();
@@ -102,7 +103,14 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                     </div>
 
                     <div className="glass-panel table-container">
-                        <h2>Riwayat Transaksi Kas</h2>
+                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
+                            <h2>Riwayat Transaksi Kas</h2>
+                            <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                                <label style={{fontWeight: 'bold', color: 'var(--text-secondary)'}}>Pilih Tanggal:</label>
+                                <input type="date" className="input-field" value={cashFlowDate} onChange={e => setCashFlowDate(e.target.value)} />
+                                {cashFlowDate && <button className="btn btn-secondary" onClick={() => setCashFlowDate('')}>Tampilkan Semua</button>}
+                            </div>
+                        </div>
                         <table className="data-table">
                             <thead>
                                 <tr>
@@ -113,7 +121,7 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {transactions.map(t => (
+                                {transactions.filter(t => cashFlowDate ? new Date(t.created_at).toISOString().split('T')[0] === cashFlowDate : true).map(t => (
                                     <tr key={t.id}>
                                         <td>{new Date(t.created_at).toLocaleString()}</td>
                                         <td>{t.description}</td>
@@ -125,6 +133,9 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                                         <td style={{fontWeight: 'bold'}}>Rp {parseFloat(t.amount).toLocaleString()}</td>
                                     </tr>
                                 ))}
+                                {transactions.filter(t => cashFlowDate ? new Date(t.created_at).toISOString().split('T')[0] === cashFlowDate : true).length === 0 && (
+                                    <tr><td colSpan="4" style={{textAlign: 'center'}}>Tidak ada transaksi pada tanggal ini</td></tr>
+                                )}
                             </tbody>
                         </table>
                     </div>

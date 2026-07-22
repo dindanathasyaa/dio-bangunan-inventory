@@ -14,6 +14,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
     const [transactionDate, setTransactionDate] = useState('');
     const [showRecapModal, setShowRecapModal] = useState(false);
     const [recapData, setRecapData] = useState([]);
+    const [recapDate, setRecapDate] = useState('');
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [detailData, setDetailData] = useState([]);
     const [detailDate, setDetailDate] = useState('');
@@ -307,6 +308,11 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                             <h2>Rekap Penjualan Harian</h2>
                             <button className="btn-icon" onClick={() => setShowRecapModal(false)}>✕</button>
                         </div>
+                        <div style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px'}}>
+                            <label style={{fontWeight: 'bold', color: 'var(--text-secondary)'}}>Pilih Tanggal:</label>
+                            <input type="date" className="input-field" value={recapDate} onChange={e => setRecapDate(e.target.value)} />
+                            {recapDate && <button className="btn btn-secondary" onClick={() => setRecapDate('')}>Tampilkan Semua</button>}
+                        </div>
                         <div className="table-container" style={{maxHeight: '400px', overflowY: 'auto'}}>
                             <table className="data-table">
                                 <thead>
@@ -319,7 +325,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {recapData.length > 0 ? recapData.map((row, idx) => (
+                                    {recapData.filter(row => recapDate ? row.date === recapDate : true).length > 0 ? recapData.filter(row => recapDate ? row.date === recapDate : true).map((row, idx) => (
                                         <tr key={idx}>
                                             <td>{new Date(row.date).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}</td>
                                             <td style={{textAlign: 'center'}}>{row.total_transactions}</td>
@@ -330,7 +336,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                             </td>
                                         </tr>
                                     )) : (
-                                        <tr><td colSpan="5" style={{textAlign: 'center'}}>Belum ada data penjualan</td></tr>
+                                        <tr><td colSpan="5" style={{textAlign: 'center'}}>Tidak ada data penjualan pada tanggal ini</td></tr>
                                     )}
                                 </tbody>
                             </table>
