@@ -18,7 +18,7 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
     }, [activeBranch]);
 
     const fetchData = () => {
-        axios.get(`http://localhost:5000/api/cash?branch_id=${activeBranch}`).then(res => setTransactions(res.data)).catch(console.error);
+        axios.get(`http://localhost:5000/api/cash?branch_id=${activeBranch}`).then(res => setTransactions(res.data.transactions || [])).catch(console.error);
         axios.get(`http://localhost:5000/api/receivables?branch_id=${activeBranch}`).then(res => setReceivables(res.data)).catch(console.error);
         axios.get(`http://localhost:5000/api/payables?branch_id=${activeBranch}`).then(res => setPayables(res.data)).catch(console.error);
         axios.get(`http://localhost:5000/api/dashboard/summary?branch_id=${activeBranch}`).then(res => setSummary(res.data)).catch(console.error);
