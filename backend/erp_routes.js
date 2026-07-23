@@ -366,6 +366,20 @@ module.exports = function(app, pool) {
         }
     });
 
+    app.post('/api/receivables/new', async (req, res) => {
+        const { customer_name, total_debt } = req.body;
+        if (!customer_name || !total_debt) return res.status(400).json({ error: 'Nama dan nominal hutang diperlukan' });
+        try {
+            await pool.query(
+                `INSERT INTO receivables (sale_id, customer_name, total_debt, amount_paid, status) VALUES (0, ?, ?, 0, 'Belum Lunas')`,
+                [customer_name, total_debt]
+            );
+            res.json({ message: 'Piutang baru berhasil ditambahkan' });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    });
+
     app.get('/api/payables', async (req, res) => {
         try {
             const [rows] = await pool.query('SELECT * FROM payables ORDER BY created_at DESC');

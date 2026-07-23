@@ -17,6 +17,10 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
     const [paymentModalData, setPaymentModalData] = useState(null);
     const [paymentAmount, setPaymentAmount] = useState('');
 
+    // New Receivable Modal
+    const [showNewReceivableModal, setShowNewReceivableModal] = useState(false);
+    const [newReceivableForm, setNewReceivableForm] = useState({ customer_name: '', total_debt: '' });
+
     useEffect(() => {
         fetchData();
     }, [activeBranch]);
@@ -53,6 +57,19 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
         } catch (error) {
             console.error(error);
             alert("Gagal memproses pembayaran");
+        }
+    };
+
+    const handleCreateNewReceivable = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.post('http://localhost:5000/api/receivables/new', newReceivableForm);
+            setShowNewReceivableModal(false);
+            setNewReceivableForm({ customer_name: '', total_debt: '' });
+            fetchData();
+        } catch (error) {
+            console.error(error);
+            alert("Gagal menambahkan piutang baru");
         }
     };
 
@@ -180,6 +197,42 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
             <div style={{animation: 'fadeIn 0.5s ease-out'}}>
                 {renderDetailModal()}
                 {renderPaymentModal()}
+                {showNewReceivableModal && (
+                    <div className="modal-overlay" onClick={() => setShowNewReceivableModal(false)}>
+                        <div className="modal-content" onClick={e => e.stopPropagation()} style={{maxWidth: '400px', width: '90%'}}>
+                            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
+                                <h2>Tambah Piutang Lama</h2>
+                                <button className="btn-icon" onClick={() => setShowNewReceivableModal(false)}>✕</button>
+                            </div>
+                            <form onSubmit={handleCreateNewReceivable}>
+                                <div className="form-group" style={{marginBottom: '16px'}}>
+                                    <label>Nama Pembeli</label>
+                                    <input 
+                                        type="text" 
+                                        className="input-field" 
+                                        value={newReceivableForm.customer_name}
+                                        onChange={e => setNewReceivableForm({...newReceivableForm, customer_name: e.target.value})}
+                                        required 
+                                    />
+                                </div>
+                                <div className="form-group" style={{marginBottom: '24px'}}>
+                                    <label>Total Nominal Hutang</label>
+                                    <input 
+                                        type="number" 
+                                        className="input-field" 
+                                        value={newReceivableForm.total_debt}
+                                        onChange={e => setNewReceivableForm({...newReceivableForm, total_debt: e.target.value})}
+                                        required 
+                                    />
+                                </div>
+                                <div style={{display: 'flex', gap: '12px', justifyContent: 'flex-end'}}>
+                                    <button type="button" className="btn btn-secondary" onClick={() => setShowNewReceivableModal(false)}>Batal</button>
+                                    <button type="submit" className="btn btn-primary">Simpan</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
                     <h1 style={{margin: 0}}>Kas, Piutang, Hutang</h1>
                 </div>
@@ -278,7 +331,10 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
 
             {view === 'Receivables' && (
                 <div className="glass-panel table-container">
-                    <h2>Daftar Piutang (Orang Yang Berhutang ke Toko)</h2>
+                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
+                        <h2>Daftar Piutang Pembeli</h2>
+                        <button className="btn btn-primary" onClick={() => setShowNewReceivableModal(true)}>+ Tambah Piutang Lama</button>
+                    </div>
                     <table className="data-table">
                         <thead>
                             <tr>
