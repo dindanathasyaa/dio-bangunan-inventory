@@ -58,9 +58,6 @@ const StockAlertView = ({ type, activeBranch }) => {
                                     <td>{item.branch_name || item.from_branch_name}</td>
                                     <td>
                                         <span style={{fontWeight: 'bold'}}>{type === 'min' ? Number(item.current_stock) : (Number(item.current_stock) || item.suggested_qty)}</span>
-                                        <span style={{fontSize: '0.8rem', color: 'var(--text-secondary)', marginLeft: '8px'}}>
-                                            (Batas: {item.rop || 'Maksimal'})
-                                        </span>
                                     </td>
                                     <td style={{color: type === 'min' ? 'var(--danger-color)' : 'var(--secondary-color)'}}>{item.message}</td>
                                 </tr>
