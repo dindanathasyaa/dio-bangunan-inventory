@@ -12,6 +12,7 @@ const PurchaseView = ({ user, activeBranch, branches }) => {
     // Form for new item in cart
     const [selectedProductId, setSelectedProductId] = useState('');
     const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
+    const [productSearchTerm, setProductSearchTerm] = useState('');
     const [qty, setQty] = useState('');
     const [buyPrice, setBuyPrice] = useState('');
     
@@ -167,23 +168,37 @@ const PurchaseView = ({ user, activeBranch, branches }) => {
                         </div>
                         {isProductDropdownOpen && (
                             <div className="custom-dropdown-menu" style={{position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', background: '#ffffff', border: '1px solid var(--border-color)', borderRadius: '6px', zIndex: 1000, overflowY: 'auto', maxHeight: '300px'}}>
+                                <div style={{padding: '8px', borderBottom: '1px solid var(--border-color)', position: 'sticky', top: 0, background: '#ffffff'}}>
+                                    <input 
+                                        type="text" 
+                                        className="input-field" 
+                                        style={{marginBottom: 0, padding: '6px 12px', fontSize: '0.9rem'}}
+                                        placeholder="Ketik untuk mencari barang..."
+                                        value={productSearchTerm}
+                                        onChange={e => setProductSearchTerm(e.target.value)}
+                                        onClick={e => e.stopPropagation()}
+                                        autoFocus
+                                    />
+                                </div>
                                 <div 
                                     className={`custom-dropdown-item ${!selectedProductId ? 'selected' : ''}`}
                                     onClick={() => { 
                                         handleProductSelect({target: {value: ''}}); 
-                                        setIsProductDropdownOpen(false); 
+                                        setIsProductDropdownOpen(false);
+                                        setProductSearchTerm('');
                                     }}
                                     style={{padding: '10px 12px', cursor: 'pointer', borderBottom: '1px solid var(--border-color)'}}
                                 >
                                     -- Pilih Barang dari Inventory --
                                 </div>
-                                {inventory.map(p => (
+                                {inventory.filter(p => p.name.toLowerCase().includes(productSearchTerm.toLowerCase()) || p.sku.toLowerCase().includes(productSearchTerm.toLowerCase())).map(p => (
                                     <div 
                                         key={p.id}
                                         className={`custom-dropdown-item ${selectedProductId.toString() === p.id.toString() ? 'selected' : ''}`}
                                         onClick={() => { 
                                             handleProductSelect({target: {value: p.id}}); 
-                                            setIsProductDropdownOpen(false); 
+                                            setIsProductDropdownOpen(false);
+                                            setProductSearchTerm('');
                                         }}
                                         style={{padding: '10px 12px', cursor: 'pointer'}}
                                     >
