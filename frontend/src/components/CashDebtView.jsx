@@ -197,11 +197,11 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                     <div style={{display: 'flex', gap: '24px', marginBottom: '24px'}}>
                         <div className="glass-panel" style={{flex: 1, padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderTop: '4px solid var(--primary-color)'}}>
                             <span className="metric-label">Total Saldo Kas Saat Ini</span>
-                            <span className="metric-value" style={{color: 'var(--primary-color)'}}>Rp {Number(summary?.cash || 0).toLocaleString()}</span>
+                            <span className="metric-value" style={{color: 'var(--primary-color)'}}>Rp {Number(summary?.totalCash || 0).toLocaleString()}</span>
                         </div>
                         <div className="glass-panel" style={{flex: 1, padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderTop: '4px solid var(--primary-color)'}}>
                             <span className="metric-label">Total Keuntungan (Profit Kotor)</span>
-                            <span className="metric-value" style={{color: 'var(--primary-color)'}}>Rp {Number(summary?.profit || 0).toLocaleString()}</span>
+                            <span className="metric-value" style={{color: 'var(--primary-color)'}}>Rp {Number(summary?.totalProfit || 0).toLocaleString()}</span>
                         </div>
                     </div>
 
