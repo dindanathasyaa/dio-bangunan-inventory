@@ -13,6 +13,10 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
     const [detailData, setDetailData] = useState(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
 
+    // Payment Modal
+    const [paymentModalData, setPaymentModalData] = useState(null);
+    const [paymentAmount, setPaymentAmount] = useState('');
+
     useEffect(() => {
         fetchData();
     }, [activeBranch]);
@@ -126,10 +130,56 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
     const kasMasuk = filteredTransactions.filter(t => t?.type === 'Masuk');
     const kasKeluar = filteredTransactions.filter(t => t?.type === 'Keluar');
 
+    const renderPaymentModal = () => {
+        if (!paymentModalData) return null;
+        return (
+            <div className="modal-overlay" onClick={() => setPaymentModalData(null)}>
+                <div className="modal-content" onClick={e => e.stopPropagation()} style={{maxWidth: '400px', width: '90%'}}>
+                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
+                        <h2>{paymentModalData.type === 'Receivable' ? 'Terima Cicilan' : 'Bayar Hutang'}</h2>
+                        <button className="btn-icon" onClick={() => setPaymentModalData(null)}>✕</button>
+                    </div>
+                    
+                    <p style={{marginBottom: '16px'}}>
+                        Masukkan nominal pembayaran {paymentModalData.type === 'Receivable' ? 'untuk' : 'ke'} <strong>{paymentModalData.name}</strong>:
+                    </p>
+
+                    <input 
+                        type="number" 
+                        className="input-field" 
+                        value={paymentAmount}
+                        onChange={e => setPaymentAmount(e.target.value)}
+                        placeholder="Rp 0"
+                        autoFocus
+                    />
+
+                    <div style={{display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px'}}>
+                        <button className="btn btn-secondary" onClick={() => setPaymentModalData(null)}>Batal</button>
+                        <button className="btn btn-primary" onClick={() => {
+                            const amt = parseFloat(paymentAmount);
+                            if (amt && !isNaN(amt) && amt > 0) {
+                                if (paymentModalData.type === 'Receivable') {
+                                    handlePayReceivable(paymentModalData.id, amt);
+                                } else {
+                                    handlePayPayable(paymentModalData.id, amt);
+                                }
+                                setPaymentModalData(null);
+                                setPaymentAmount('');
+                            } else {
+                                alert("Nominal tidak valid");
+                            }
+                        }}>Simpan</button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     try {
         return (
             <div style={{animation: 'fadeIn 0.5s ease-out'}}>
                 {renderDetailModal()}
+                {renderPaymentModal()}
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
                     <h1 style={{margin: 0}}>Kas, Piutang, Hutang</h1>
                 </div>
@@ -255,8 +305,8 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                                     <td>
                                         {r.status !== 'Lunas' && (
                                             <button className="btn btn-secondary" onClick={() => {
-                                                const amt = prompt(`Masukkan nominal pembayaran untuk ${r.customer_name}:`);
-                                                if(amt && !isNaN(amt)) handlePayReceivable(r.id, parseFloat(amt));
+                                                setPaymentModalData({ type: 'Receivable', id: r.id, name: r.customer_name });
+                                                setPaymentAmount('');
                                             }}>Terima Cicilan/Pelunasan</button>
                                         )}
                                     </td>
@@ -297,8 +347,8 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                                         {p.status !== 'Lunas' && (
                                             <>
                                                 <button className="btn btn-primary" onClick={() => {
-                                                    const amt = prompt(`Masukkan nominal pembayaran ke ${p.supplier_name}:`);
-                                                    if(amt && !isNaN(amt)) handlePayPayable(p.id, parseFloat(amt));
+                                                    setPaymentModalData({ type: 'Payable', id: p.id, name: p.supplier_name });
+                                                    setPaymentAmount('');
                                                 }}>Bayar (Ambil Kas)</button>
                                                 <button className="btn btn-secondary" onClick={() => {
                                                     if(window.confirm(`Lunas otomatis sebesar Rp ${sisa.toLocaleString()} untuk ${p.supplier_name}?`)) {
