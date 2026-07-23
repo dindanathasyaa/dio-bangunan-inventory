@@ -11,6 +11,7 @@ const PurchaseView = ({ user, activeBranch, branches }) => {
     
     // Form for new item in cart
     const [selectedProductId, setSelectedProductId] = useState('');
+    const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
     const [qty, setQty] = useState('');
     const [buyPrice, setBuyPrice] = useState('');
     
@@ -147,14 +148,50 @@ const PurchaseView = ({ user, activeBranch, branches }) => {
             <div className="glass-panel" style={{marginBottom: '24px'}}>
                 <h2>Daftar Barang Dibeli</h2>
                 <div style={{display: 'flex', gap: '16px', alignItems: 'flex-end', marginBottom: '16px', flexWrap: 'wrap'}}>
-                    <div className="form-group" style={{flex: '2', minWidth: '200px', marginBottom: 0}}>
+                    <div className="form-group" style={{flex: '2', minWidth: '200px', marginBottom: 0, position: 'relative'}}>
                         <label>Pilih Barang</label>
-                        <select className="input-field" value={selectedProductId} onChange={handleProductSelect}>
-                            <option value="">-- Pilih Barang dari Inventory --</option>
-                            {inventory.map(p => (
-                                <option key={p.id} value={p.id}>{p.name} ({p.sku}) - Satuan: {p.unit}</option>
-                            ))}
-                        </select>
+                        <div 
+                            className={`input-field custom-select-3d ${isProductDropdownOpen ? 'active' : ''}`}
+                            onClick={() => setIsProductDropdownOpen(!isProductDropdownOpen)}
+                            style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', background: 'var(--panel-bg)', color: 'var(--text-primary)'}}
+                        >
+                            <span style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+                                {selectedProductId 
+                                    ? (() => {
+                                        const p = inventory.find(i => i.id.toString() === selectedProductId.toString());
+                                        return p ? `${p.name} (${p.sku}) - Satuan: ${p.unit}` : '-- Pilih Barang dari Inventory --';
+                                    })()
+                                    : '-- Pilih Barang dari Inventory --'}
+                            </span>
+                            <span style={{fontSize: '0.8rem', marginLeft: '8px'}}>▼</span>
+                        </div>
+                        {isProductDropdownOpen && (
+                            <div className="custom-dropdown-menu" style={{position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', background: 'var(--panel-bg)', border: '1px solid var(--border-color)', borderRadius: '6px', zIndex: 1000, overflowY: 'auto', maxHeight: '300px'}}>
+                                <div 
+                                    className={`custom-dropdown-item ${!selectedProductId ? 'selected' : ''}`}
+                                    onClick={() => { 
+                                        handleProductSelect({target: {value: ''}}); 
+                                        setIsProductDropdownOpen(false); 
+                                    }}
+                                    style={{padding: '10px 12px', cursor: 'pointer', borderBottom: '1px solid var(--border-color)'}}
+                                >
+                                    -- Pilih Barang dari Inventory --
+                                </div>
+                                {inventory.map(p => (
+                                    <div 
+                                        key={p.id}
+                                        className={`custom-dropdown-item ${selectedProductId.toString() === p.id.toString() ? 'selected' : ''}`}
+                                        onClick={() => { 
+                                            handleProductSelect({target: {value: p.id}}); 
+                                            setIsProductDropdownOpen(false); 
+                                        }}
+                                        style={{padding: '10px 12px', cursor: 'pointer'}}
+                                    >
+                                        {p.name} ({p.sku}) - Satuan: {p.unit}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                     <div className="form-group" style={{flex: '1', minWidth: '100px', marginBottom: 0}}>
                         <label>Jumlah</label>

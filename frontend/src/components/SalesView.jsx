@@ -19,6 +19,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
     const [detailData, setDetailData] = useState([]);
     const [detailDate, setDetailDate] = useState('');
     const [isBranchDropdownOpen, setIsBranchDropdownOpen] = useState(false);
+    const [isPaymentDropdownOpen, setIsPaymentDropdownOpen] = useState(false);
 
     useEffect(() => {
         fetchProducts();
@@ -230,12 +231,34 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                         <label>Nama Pelanggan (Opsional)</label>
                         <input type="text" className="input-field" value={customerName} onChange={e => setCustomerName(e.target.value)} placeholder="Umum" />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group" style={{position: 'relative'}}>
                         <label>Metode Pembayaran</label>
-                        <select className="input-field" value={paymentMethod} onChange={e => setPaymentMethod(e.target.value)}>
-                            <option value="Cash">Cash (Lunas)</option>
-                            <option value="Kredit">Kredit (Hutang)</option>
-                        </select>
+                        <div 
+                            className={`input-field custom-select-3d ${isPaymentDropdownOpen ? 'active' : ''}`}
+                            onClick={() => setIsPaymentDropdownOpen(!isPaymentDropdownOpen)}
+                            style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', background: 'var(--panel-bg)', color: 'var(--text-primary)'}}
+                        >
+                            <span>{paymentMethod === 'Cash' ? 'Cash (Lunas)' : 'Kredit (Hutang)'}</span>
+                            <span style={{fontSize: '0.8rem'}}>▼</span>
+                        </div>
+                        {isPaymentDropdownOpen && (
+                            <div className="custom-dropdown-menu" style={{position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', background: 'var(--panel-bg)', border: '1px solid var(--border-color)', borderRadius: '6px', zIndex: 1000, overflow: 'hidden'}}>
+                                <div 
+                                    className={`custom-dropdown-item ${paymentMethod === 'Cash' ? 'selected' : ''}`}
+                                    onClick={() => { setPaymentMethod('Cash'); setIsPaymentDropdownOpen(false); }}
+                                    style={{padding: '10px 12px', cursor: 'pointer'}}
+                                >
+                                    Cash (Lunas)
+                                </div>
+                                <div 
+                                    className={`custom-dropdown-item ${paymentMethod === 'Kredit' ? 'selected' : ''}`}
+                                    onClick={() => { setPaymentMethod('Kredit'); setIsPaymentDropdownOpen(false); }}
+                                    style={{padding: '10px 12px', cursor: 'pointer'}}
+                                >
+                                    Kredit (Hutang)
+                                </div>
+                            </div>
+                        )}
                     </div>
                     {user.role === 'OWNER' && (
                         <div className="form-group" style={{marginTop: '16px', marginBottom: '24px'}}>
