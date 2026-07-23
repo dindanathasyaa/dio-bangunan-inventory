@@ -43,20 +43,20 @@ const StockAlertView = ({ type, activeBranch }) => {
                     <table className="data-table">
                         <thead>
                             <tr>
-                                <th>Kode Barang</th>
-                                <th>Nama Barang</th>
-                                <th>Cabang</th>
-                                <th>{type === 'min' ? 'Stok (Batas Min)' : 'Stok (Batas Max)'}</th>
-                                <th>Saran / Keterangan</th>
+                                <th style={{ whiteSpace: 'nowrap', width: '15%' }}>Kode Barang</th>
+                                <th style={{ width: '25%' }}>Nama Barang</th>
+                                <th style={{ whiteSpace: 'nowrap', width: '15%' }}>Cabang</th>
+                                <th style={{ whiteSpace: 'nowrap', textAlign: 'center', width: '15%' }}>{type === 'min' ? 'Stok (Batas Min)' : 'Stok (Batas Max)'}</th>
+                                <th style={{ width: '30%' }}>Saran / Keterangan</th>
                             </tr>
                         </thead>
                         <tbody>
                             {alerts.map((item, idx) => (
                                 <tr key={idx}>
-                                    <td>{item.sku}</td>
+                                    <td style={{ whiteSpace: 'nowrap' }}>{item.sku}</td>
                                     <td>{item.product_name}</td>
-                                    <td>{item.branch_name || item.from_branch_name}</td>
-                                    <td>
+                                    <td style={{ whiteSpace: 'nowrap' }}>{item.branch_name || item.from_branch_name}</td>
+                                    <td style={{ textAlign: 'center' }}>
                                         <span style={{fontWeight: 'bold'}}>{type === 'min' ? Number(item.current_stock) : (Number(item.current_stock) || item.suggested_qty)}</span>
                                     </td>
                                     <td style={{color: type === 'min' ? 'var(--danger-color)' : 'var(--secondary-color)'}}>{item.message}</td>
