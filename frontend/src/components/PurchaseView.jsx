@@ -11,8 +11,8 @@ const PurchaseView = ({ user, activeBranch, branches }) => {
     
     // Form for new item in cart
     const [selectedProductId, setSelectedProductId] = useState('');
-    const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
     const [productSearchTerm, setProductSearchTerm] = useState('');
+    const [showSuggestions, setShowSuggestions] = useState(false);
     const [qty, setQty] = useState('');
     const [buyPrice, setBuyPrice] = useState('');
     
@@ -150,61 +150,39 @@ const PurchaseView = ({ user, activeBranch, branches }) => {
                 <h2>Daftar Barang Dibeli</h2>
                 <div style={{display: 'flex', gap: '16px', alignItems: 'flex-end', marginBottom: '16px', flexWrap: 'wrap'}}>
                     <div className="form-group" style={{flex: '2', minWidth: '200px', marginBottom: 0, position: 'relative'}}>
-                        <label>Pilih Barang</label>
-                        <div 
-                            className={`input-field custom-select-3d ${isProductDropdownOpen ? 'active' : ''}`}
-                            onClick={() => setIsProductDropdownOpen(!isProductDropdownOpen)}
-                            style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', background: 'var(--panel-bg)', color: 'var(--text-primary)'}}
-                        >
-                            <span style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
-                                {selectedProductId 
-                                    ? (() => {
-                                        const p = inventory.find(i => i.id.toString() === selectedProductId.toString());
-                                        return p ? `${p.name} (${p.sku}) - Satuan: ${p.unit}` : '-- Pilih Barang dari Inventory --';
-                                    })()
-                                    : '-- Pilih Barang dari Inventory --'}
-                            </span>
-                            <span style={{fontSize: '0.8rem', marginLeft: '8px'}}>▼</span>
-                        </div>
-                        {isProductDropdownOpen && (
+                        <label>Cari Barang</label>
+                        <input 
+                            type="text" 
+                            className="input-field" 
+                            placeholder="Ketik nama atau kode barang..."
+                            value={productSearchTerm}
+                            onChange={e => {
+                                setProductSearchTerm(e.target.value);
+                                setSelectedProductId(''); // Reset selection if user types
+                                setShowSuggestions(true);
+                            }}
+                            onFocus={() => setShowSuggestions(true)}
+                        />
+                        {showSuggestions && productSearchTerm && (
                             <div className="custom-dropdown-menu" style={{position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', background: '#ffffff', border: '1px solid var(--border-color)', borderRadius: '6px', zIndex: 1000, overflowY: 'auto', maxHeight: '300px'}}>
-                                <div style={{padding: '8px', borderBottom: '1px solid var(--border-color)', position: 'sticky', top: 0, background: '#ffffff'}}>
-                                    <input 
-                                        type="text" 
-                                        className="input-field" 
-                                        style={{marginBottom: 0, padding: '6px 12px', fontSize: '0.9rem'}}
-                                        placeholder="Ketik untuk mencari barang..."
-                                        value={productSearchTerm}
-                                        onChange={e => setProductSearchTerm(e.target.value)}
-                                        onClick={e => e.stopPropagation()}
-                                        autoFocus
-                                    />
-                                </div>
-                                <div 
-                                    className={`custom-dropdown-item ${!selectedProductId ? 'selected' : ''}`}
-                                    onClick={() => { 
-                                        handleProductSelect({target: {value: ''}}); 
-                                        setIsProductDropdownOpen(false);
-                                        setProductSearchTerm('');
-                                    }}
-                                    style={{padding: '10px 12px', cursor: 'pointer', borderBottom: '1px solid var(--border-color)'}}
-                                >
-                                    -- Pilih Barang dari Inventory --
-                                </div>
-                                {inventory.filter(p => p.name.toLowerCase().includes(productSearchTerm.toLowerCase()) || p.sku.toLowerCase().includes(productSearchTerm.toLowerCase())).map(p => (
-                                    <div 
-                                        key={p.id}
-                                        className={`custom-dropdown-item ${selectedProductId.toString() === p.id.toString() ? 'selected' : ''}`}
-                                        onClick={() => { 
-                                            handleProductSelect({target: {value: p.id}}); 
-                                            setIsProductDropdownOpen(false);
-                                            setProductSearchTerm('');
-                                        }}
-                                        style={{padding: '10px 12px', cursor: 'pointer'}}
-                                    >
-                                        {p.name} ({p.sku}) - Satuan: {p.unit}
-                                    </div>
-                                ))}
+                                {inventory.filter(p => p.name.toLowerCase().includes(productSearchTerm.toLowerCase()) || p.sku.toLowerCase().includes(productSearchTerm.toLowerCase())).length > 0 ? (
+                                    inventory.filter(p => p.name.toLowerCase().includes(productSearchTerm.toLowerCase()) || p.sku.toLowerCase().includes(productSearchTerm.toLowerCase())).map(p => (
+                                        <div 
+                                            key={p.id}
+                                            className="custom-dropdown-item"
+                                            onClick={() => { 
+                                                setSelectedProductId(p.id);
+                                                setProductSearchTerm(`${p.name} (${p.sku})`);
+                                                setShowSuggestions(false); 
+                                            }}
+                                            style={{padding: '10px 12px', cursor: 'pointer', borderBottom: '1px solid #f0f0f0'}}
+                                        >
+                                            {p.name} ({p.sku}) - Satuan: {p.unit}
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div style={{padding: '10px 12px', color: 'var(--text-secondary)'}}>Barang tidak ditemukan...</div>
+                                )}
                             </div>
                         )}
                     </div>
