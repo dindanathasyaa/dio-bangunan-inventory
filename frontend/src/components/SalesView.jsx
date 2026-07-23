@@ -242,7 +242,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                             <span style={{fontSize: '0.8rem'}}>▼</span>
                         </div>
                         {isPaymentDropdownOpen && (
-                            <div className="custom-dropdown-menu" style={{position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', background: 'var(--panel-bg)', border: '1px solid var(--border-color)', borderRadius: '6px', zIndex: 1000, overflow: 'hidden'}}>
+                            <div className="custom-dropdown-menu" style={{position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', background: '#ffffff', border: '1px solid var(--border-color)', borderRadius: '6px', zIndex: 1000, overflow: 'hidden'}}>
                                 <div 
                                     className={`custom-dropdown-item ${paymentMethod === 'Cash' ? 'selected' : ''}`}
                                     onClick={() => { setPaymentMethod('Cash'); setIsPaymentDropdownOpen(false); }}
