@@ -43,7 +43,7 @@ const StockAlertView = ({ type, activeBranch }) => {
                     <table className="data-table">
                         <thead>
                             <tr>
-                                <th>SKU</th>
+                                <th>Kode Barang</th>
                                 <th>Nama Barang</th>
                                 <th>Cabang</th>
                                 <th>{type === 'min' ? 'Stok (Batas Min)' : 'Stok (Batas Max)'}</th>
@@ -57,7 +57,7 @@ const StockAlertView = ({ type, activeBranch }) => {
                                     <td>{item.product_name}</td>
                                     <td>{item.branch_name || item.from_branch_name}</td>
                                     <td>
-                                        <span style={{fontWeight: 'bold'}}>{type === 'min' ? item.current_stock : (item.current_stock || item.suggested_qty)}</span>
+                                        <span style={{fontWeight: 'bold'}}>{type === 'min' ? Number(item.current_stock) : (Number(item.current_stock) || item.suggested_qty)}</span>
                                         <span style={{fontSize: '0.8rem', color: 'var(--text-secondary)', marginLeft: '8px'}}>
                                             (Batas: {item.rop || 'Maksimal'})
                                         </span>

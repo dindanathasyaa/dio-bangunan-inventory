@@ -311,7 +311,7 @@ app.get('/api/dss/recommendations', async (req, res) => {
                     branch_name: item.branch_name,
                     current_stock: item.stock,
                     rop: item.min_stock,
-                    message: `Stok mau habis! Tersisa ${item.stock}, batas minimum adalah ${item.min_stock}. Segera pesan lagi.`
+                    message: `Stok mau habis! Tersisa ${Number(item.stock)}, batas minimum adalah ${item.min_stock}. Segera pesan lagi.`
                 });
             }
 
@@ -324,7 +324,7 @@ app.get('/api/dss/recommendations', async (req, res) => {
                     from_branch: item.branch_id,
                     from_branch_name: item.branch_name,
                     suggested_qty: item.stock - item.max_stock,
-                    message: `Gudang kepenuhan! Terdapat ${item.stock} stok, melampaui batas maksimal (${item.max_stock}). Kurangi order atau adakan promo.`
+                    message: `Gudang kepenuhan! Terdapat ${Number(item.stock)} stok, melampaui batas maksimal (${item.max_stock}). Kurangi order atau adakan promo.`
                 });
             }
         }

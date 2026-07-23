@@ -443,9 +443,9 @@ module.exports = function(app, pool) {
                 const [sales] = await pool.query('SELECT * FROM sales WHERE id = ?', [refId]);
                 if (sales.length > 0) headerInfo = sales[0];
                 const [saleItems] = await pool.query(`
-                    SELECT si.*, i.name as product_name, i.unit 
+                    SELECT si.*, p.name as product_name, p.unit 
                     FROM sale_items si 
-                    JOIN inventory i ON si.product_id = i.id 
+                    JOIN products p ON si.product_id = p.id 
                     WHERE si.sale_id = ?
                 `, [refId]);
                 items = saleItems;
@@ -454,9 +454,9 @@ module.exports = function(app, pool) {
                 const [purch] = await pool.query('SELECT * FROM purchases WHERE id = ?', [refId]);
                 if (purch.length > 0) headerInfo = purch[0];
                 const [purchItems] = await pool.query(`
-                    SELECT pi.*, i.name as product_name, i.unit 
+                    SELECT pi.*, p.name as product_name, p.unit 
                     FROM purchase_items pi 
-                    JOIN inventory i ON pi.product_id = i.id 
+                    JOIN products p ON pi.product_id = p.id 
                     WHERE pi.purchase_id = ?
                 `, [refId]);
                 items = purchItems;
@@ -467,9 +467,9 @@ module.exports = function(app, pool) {
                     headerInfo = recv[0];
                     const saleId = headerInfo.sale_id;
                     const [saleItems] = await pool.query(`
-                        SELECT si.*, i.name as product_name, i.unit 
+                        SELECT si.*, p.name as product_name, p.unit 
                         FROM sale_items si 
-                        JOIN inventory i ON si.product_id = i.id 
+                        JOIN products p ON si.product_id = p.id 
                         WHERE si.sale_id = ?
                     `, [saleId]);
                     items = saleItems;
@@ -481,9 +481,9 @@ module.exports = function(app, pool) {
                     headerInfo = pay[0];
                     const purchId = headerInfo.purchase_id;
                     const [purchItems] = await pool.query(`
-                        SELECT pi.*, i.name as product_name, i.unit 
+                        SELECT pi.*, p.name as product_name, p.unit 
                         FROM purchase_items pi 
-                        JOIN inventory i ON pi.product_id = i.id 
+                        JOIN products p ON pi.product_id = p.id 
                         WHERE pi.purchase_id = ?
                     `, [purchId]);
                     items = purchItems;
