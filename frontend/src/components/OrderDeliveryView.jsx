@@ -86,28 +86,62 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
             </div>
 
             {view === 'NewOrder' && (
-                <div style={{width: '100%'}}>
-                    <div className="glass-panel">
-                        <h2 style={{marginBottom: '24px'}}>Input Orderan & Pengantaran</h2>
+                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: '16px'}}>
+                    <div className="modal-content" style={{width: '100%', maxWidth: '520px'}} onClick={e => e.stopPropagation()}>
+                        <h2 style={{marginBottom: '8px', color: 'var(--text-primary)'}}>📦 Input Orderan &amp; Pengantaran</h2>
+                        <p style={{color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '24px'}}>Isi data pelanggan dan detail pengantaran di bawah ini.</p>
                         <form onSubmit={submitOrder}>
                             <div className="form-group" style={{marginBottom: '16px'}}>
                                 <label>Nama Pelanggan</label>
-                                <input type="text" className="input-field" value={customerName} onChange={e => setCustomerName(e.target.value)} placeholder="Contoh: Bpk. Budi" required />
+                                <input
+                                    type="text"
+                                    className="input-field"
+                                    value={customerName}
+                                    onChange={e => setCustomerName(e.target.value)}
+                                    placeholder="Contoh: Bpk. Budi"
+                                    required
+                                />
                             </div>
                             <div className="form-group" style={{marginBottom: '16px'}}>
-                                <label>No Telepon (Opsional)</label>
-                                <input type="text" className="input-field" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Contoh: 08123456789" />
+                                <label>No Telepon <span style={{color: 'var(--text-secondary)', fontWeight: 'normal'}}>(Opsional)</span></label>
+                                <input
+                                    type="text"
+                                    className="input-field"
+                                    value={phone}
+                                    onChange={e => setPhone(e.target.value)}
+                                    placeholder="Contoh: 08123456789"
+                                />
                             </div>
                             <div className="form-group" style={{marginBottom: '16px'}}>
                                 <label>Alamat Pengantaran</label>
-                                <textarea className="input-field" rows="3" value={address} onChange={e => setAddress(e.target.value)} placeholder="Contoh: Jl. Merdeka No. 10" required></textarea>
+                                <textarea
+                                    className="input-field"
+                                    rows="3"
+                                    value={address}
+                                    onChange={e => setAddress(e.target.value)}
+                                    placeholder="Contoh: Jl. Merdeka No. 10"
+                                    required
+                                    style={{resize: 'vertical'}}
+                                ></textarea>
                             </div>
-                            <div className="form-group" style={{marginBottom: '24px'}}>
+                            <div className="form-group" style={{marginBottom: '28px'}}>
                                 <label>Total Tagihan (Rp)</label>
-                                <input type="number" className="input-field" value={totalAmount} onChange={e => setTotalAmount(e.target.value)} placeholder="Contoh: 1500000" required />
+                                <input
+                                    type="number"
+                                    className="input-field"
+                                    value={totalAmount}
+                                    onChange={e => setTotalAmount(e.target.value)}
+                                    placeholder="Contoh: 1500000"
+                                    required
+                                />
                             </div>
-                            <button className="btn btn-primary" style={{width: '100%', padding: '16px', fontSize: '1.1rem'}} type="submit" disabled={loading}>
-                                {loading ? 'Memproses...' : 'Buat Orderan & Jadwalkan Kirim'}
+                            <button
+                                className="btn btn-primary"
+                                style={{width: '100%', padding: '14px', fontSize: '1rem', fontWeight: 'bold'}}
+                                type="submit"
+                                disabled={loading}
+                            >
+                                {loading ? '⏳ Memproses...' : '🚚 Buat Orderan & Jadwalkan Kirim'}
                             </button>
                         </form>
                     </div>
