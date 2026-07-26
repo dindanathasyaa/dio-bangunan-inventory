@@ -210,7 +210,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                     <input 
                                         type="number" 
                                         min="1"
-                                        value={qtys[p.id] || 1} 
+                                        value={qtys[p.id] !== undefined ? qtys[p.id] : 1} 
                                         onChange={e => setQtys({...qtys, [p.id]: e.target.value})}
                                         style={{width: '60px', padding: '0 8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-color)', color: 'var(--text-primary)', textAlign: 'center', boxSizing: 'border-box', height: '100%', outline: 'none'}}
                                     />
