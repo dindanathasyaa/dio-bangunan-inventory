@@ -671,44 +671,44 @@ p {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
-@ m e d i a   p r i n t   { 
-     b o d y   { 
-         b a c k g r o u n d :   w h i t e ; 
-         m a r g i n :   0 ; 
-         p a d d i n g :   0 ; 
-     } 
-     # r o o t   >   d i v   >   * : n o t ( . m o d a l - o v e r l a y )   { 
-         d i s p l a y :   n o n e   ! i m p o r t a n t ; 
-     } 
-     . m o d a l - o v e r l a y   { 
-         p o s i t i o n :   a b s o l u t e   ! i m p o r t a n t ; 
-         l e f t :   0 ; 
-         t o p :   0 ; 
-         b a c k g r o u n d :   w h i t e   ! i m p o r t a n t ; 
-         p a d d i n g :   0   ! i m p o r t a n t ; 
-         d i s p l a y :   b l o c k   ! i m p o r t a n t ; 
-         w i d t h :   1 0 0 % ; 
-         h e i g h t :   1 0 0 % ; 
-         a l i g n - i t e m s :   f l e x - s t a r t   ! i m p o r t a n t ; 
-         j u s t i f y - c o n t e n t :   f l e x - s t a r t   ! i m p o r t a n t ; 
-     } 
-     . i n v o i c e - m o d a l   { 
-         b o x - s h a d o w :   n o n e   ! i m p o r t a n t ; 
-         b o r d e r :   n o n e   ! i m p o r t a n t ; 
-         m a r g i n :   0   ! i m p o r t a n t ; 
-         p a d d i n g :   0   ! i m p o r t a n t ; 
-         m a x - w i d t h :   1 0 0 %   ! i m p o r t a n t ; 
-         w i d t h :   8 0 m m   ! i m p o r t a n t ;   / *   8 0 m m   T h e r m a l   w i d t h   * / 
-     } 
-     . i n v o i c e - c o n t a i n e r   { 
-         c o l o r :   b l a c k   ! i m p o r t a n t ; 
-     } 
-     . n o - p r i n t   { 
-         d i s p l a y :   n o n e   ! i m p o r t a n t ; 
-     } 
-     @ p a g e   { 
-         m a r g i n :   0 ; 
-         s i z e :   8 0 m m   a u t o ; 
-     } 
- }  
- 
+
+@media print {
+  body {
+    background: white;
+    margin: 0;
+    padding: 0;
+  }
+  #root > div > *:not(.modal-overlay) {
+    display: none !important;
+  }
+  .modal-overlay {
+    position: absolute !important;
+    left: 0;
+    top: 0;
+    background: white !important;
+    padding: 0 !important;
+    display: block !important;
+    width: 100%;
+    height: 100%;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+  }
+  .invoice-modal {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+    width: 80mm !important; /* 80mm Thermal width */
+  }
+  .invoice-container {
+    color: black !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  @page {
+    margin: 0;
+    size: 80mm auto;
+  }
+}
