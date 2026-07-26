@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Barcode from 'react-barcode';
-import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Link, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import CategorySettings from './CategorySettings';
 import Scanner from './Scanner';
 
