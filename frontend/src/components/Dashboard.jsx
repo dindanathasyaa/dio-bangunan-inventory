@@ -649,25 +649,25 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                     {isUnitDropdownOpen && (
                                         <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000, overflow: 'hidden', padding: 0}}>
                                             <div 
-                                                className={`custom-dropdown-item ${unitType === 'Satuan Majemuk' ? 'selected' : ''}`}
-                                                onClick={() => { setUnitType('Satuan Majemuk'); setIsUnitDropdownOpen(false); }}
+                                                className={`custom-dropdown-item ${unitType === 'Konversi' ? 'selected' : ''}`}
+                                                onClick={() => { setUnitType('Konversi'); setIsUnitDropdownOpen(false); }}
                                                 style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
                                             >
-                                                Satuan Majemuk
+                                                Konversi
                                             </div>
                                             <div 
-                                                className={`custom-dropdown-item ${unitType === 'Tunggal' ? 'selected' : ''}`}
-                                                onClick={() => { setUnitType('Tunggal'); setIsUnitDropdownOpen(false); }}
+                                                className={`custom-dropdown-item ${unitType === 'Tidak Dapat Dikonversi' ? 'selected' : ''}`}
+                                                onClick={() => { setUnitType('Tidak Dapat Dikonversi'); setIsUnitDropdownOpen(false); }}
                                                 style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
                                             >
-                                                Satuan Tunggal
+                                                Tidak Dapat Dikonversi
                                             </div>
                                         </div>
                                     )}
                                 </div>
                             </div>
                             
-                            {unitType === 'Satuan Majemuk' ? (
+                            {unitType === 'Konversi' ? (
                                 <div style={{background: 'var(--item-bg)', padding: '16px', borderRadius: '8px', marginBottom: '16px'}}>
                                     <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
                                         <div className="form-group" style={{flex: 1, marginBottom: 0}}>
