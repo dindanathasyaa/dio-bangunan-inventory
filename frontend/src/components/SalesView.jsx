@@ -138,9 +138,9 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
     const filtered = products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.sku.includes(search));
 
     return (
-        <div style={{animation: 'fadeIn 0.5s ease-out', display: 'flex', gap: '24px', height: '100%'}}>
+        <div style={{animation: 'fadeIn 0.5s ease-out', display: 'flex', gap: '24px', height: '100%', overflowX: 'hidden'}}>
             {/* Kiri: Daftar Produk */}
-            <div className="glass-panel" style={{flex: 2, display: 'flex', flexDirection: 'column'}}>
+            <div className="glass-panel" style={{flex: 2, display: 'flex', flexDirection: 'column', overflow: 'hidden'}}>
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
                     <h2 style={{margin: 0}}>Katalog Penjualan</h2>
                     
@@ -196,7 +196,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                     onChange={e => setSearch(e.target.value)}
                     style={{marginBottom: '16px'}}
                 />
-                <div style={{overflowY: 'auto', flex: 1, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px'}}>
+                <div style={{overflowY: 'auto', overflowX: 'hidden', flex: 1, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px'}}>
                     {filtered.map(p => (
                         <div key={p.id} style={{background: 'var(--item-bg)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column'}}>
                             <div style={{fontWeight: 'bold', marginBottom: '4px'}}>{p.name}</div>
