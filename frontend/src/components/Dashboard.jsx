@@ -456,7 +456,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
         <div style={{animation: 'fadeIn 0.5s ease-out'}}>
             {messageModal && (
                 <div style={{
-                    position: 'fixed', top: '20px', left: '50%', transform: 'translateX(-50%)',
+                    position: 'fixed', top: '20px', left: '0', right: '0', margin: '0 auto', width: 'max-content',
                     background: '#4caf50', color: 'white', padding: '16px 32px', borderRadius: '8px',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 9999, fontWeight: 'bold', fontSize: '1.1rem',
                     display: 'flex', alignItems: 'center', gap: '12px', animation: 'slideDown 0.3s ease-out'
