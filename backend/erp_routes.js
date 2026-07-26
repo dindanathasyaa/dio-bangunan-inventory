@@ -154,14 +154,33 @@ module.exports = function(app, pool) {
             const purchase_id = purchRes.insertId;
 
             for (let item of items) {
+                let currentProductId = item.product_id;
+                
+                // If it's a new product or we don't have product_id, try finding it by SKU or insert
+                if (!currentProductId) {
+                    const [existing] = await connection.query('SELECT id FROM products WHERE sku = ?', [item.sku]);
+                    if (existing.length > 0) {
+                        currentProductId = existing[0].id;
+                    } else {
+                        // Insert new product
+                        const [insertRes] = await connection.query(
+                            'INSERT INTO products (sku, name, category_id, unit, price, base_price) VALUES (?, ?, ?, ?, ?, ?)',
+                            [item.sku, item.name, item.category_id || 1, item.unit || 'Buah', item.price || item.buy_price || 0, item.buy_price || 0]
+                        );
+                        currentProductId = insertRes.insertId;
+                    }
+                }
+
                 await connection.query(
                     `INSERT INTO purchase_items (purchase_id, product_id, qty, buy_price) VALUES (?, ?, ?, ?)`,
-                    [purchase_id, item.product_id, item.qty, item.buy_price]
+                    [purchase_id, currentProductId, item.qty, item.buy_price]
                 );
-                // Add stock
+                // Add stock using INSERT ... ON DUPLICATE KEY UPDATE to handle new items and branches safely
                 await connection.query(
-                    `UPDATE inventory SET stock = stock + ? WHERE product_id = ? AND branch_id = ?`,
-                    [item.qty, item.product_id, branch_id]
+                    `INSERT INTO inventory (product_id, branch_id, stock, min_stock, max_stock) 
+                     VALUES (?, ?, ?, 5, 50) 
+                     ON DUPLICATE KEY UPDATE stock = stock + ?`,
+                    [currentProductId, branch_id, item.qty, item.qty]
                 );
             }
 
