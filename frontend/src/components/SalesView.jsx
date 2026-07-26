@@ -284,7 +284,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                         )}
                     </div>
                     {user.role === 'OWNER' && (
-                        <div className="form-group" style={{marginTop: '16px', marginBottom: '24px'}}>
+                        <div className="form-group" style={{marginTop: '16px'}}>
                             <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: 'var(--text-secondary)'}}>
                                 <input type="checkbox" checked={isIndirectSale} onChange={e => setIsIndirectSale(e.target.checked)} />
                                 Penjualan Terdahulu (Tanggal Lalu)
@@ -294,7 +294,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                             )}
                         </div>
                     )}
-                    <button className="btn btn-primary" style={{width: '100%', padding: '16px', fontSize: '1.1rem'}} onClick={checkout} disabled={loading || cart.length === 0}>
+                    <button className="btn btn-primary" style={{width: '100%', padding: '16px', fontSize: '1.1rem', marginTop: '24px'}} onClick={checkout} disabled={loading || cart.length === 0}>
                         {loading ? 'Memproses...' : 'Selesaikan Pembayaran'}
                     </button>
                 </div>
