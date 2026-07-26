@@ -10,7 +10,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
     const [showZeroStockWarning, setShowZeroStockWarning] = useState(false);
-    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [invoiceData, setInvoiceData] = useState(null);
     const [isIndirectSale, setIsIndirectSale] = useState(false);
     const [transactionDate, setTransactionDate] = useState('');
     const [showRecapModal, setShowRecapModal] = useState(false);
@@ -111,7 +111,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 base_price: item.base_price || 10000
             }));
 
-            await axios.post('http://localhost:5000/api/sales', {
+            const res = await axios.post('http://localhost:5000/api/sales', {
                 branch_id: user.role === 'ADMIN' ? user.branch_id : activeBranch,
                 customer_name: customerName,
                 payment_method: paymentMethod,
@@ -119,7 +119,15 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 transaction_date: isIndirectSale && transactionDate ? transactionDate : null
             });
 
-            setShowSuccessModal(true);
+            setInvoiceData({
+                sale_id: res.data.sale_id,
+                customer_name: customerName,
+                payment_method: paymentMethod,
+                items: [...cart],
+                total_amount: totalAmount,
+                transaction_date: isIndirectSale && transactionDate ? transactionDate : new Date().toISOString()
+            });
+
             setCart([]);
             setCustomerName('');
             setIsIndirectSale(false);
@@ -323,25 +331,57 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 </div>
             )}
 
-            {/* Modal Sukses Transaksi */}
-            {showSuccessModal && (
-                <div className="modal-overlay" onClick={() => setShowSuccessModal(false)}>
-                    <div className="modal-content" style={{position: 'relative', maxWidth: '400px', textAlign: 'center'}} onClick={e => e.stopPropagation()}>
-                        <button 
-                            style={{position: 'absolute', top: '8px', right: '8px', background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-secondary)', padding: '4px 8px'}}
-                            onClick={() => setShowSuccessModal(false)}
-                            title="Tutup"
-                        >
-                            ✕
-                        </button>
-                        <div style={{fontSize: '3rem', marginBottom: '16px', color: '#10b981'}}>✅</div>
-                        <h2 style={{color: '#10b981', marginBottom: '16px'}}>Transaksi Berhasil!</h2>
-                        <p style={{fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '24px'}}>
-                            Transaksi penjualan telah berhasil dicatat.
-                        </p>
-                        <button className="btn" style={{width: '100%', background: '#10b981', boxShadow: '0 4px 15px rgba(16, 185, 129, 0.4)'}} onClick={() => setShowSuccessModal(false)}>
-                            Lanjutkan
-                        </button>
+                 {/* Modal Cetak Faktur */}
+            {invoiceData && (
+                <div className="modal-overlay" onClick={() => setInvoiceData(null)}>
+                    <div className="modal-content invoice-modal" style={{position: 'relative', maxWidth: '350px', padding: '24px'}} onClick={e => e.stopPropagation()}>
+                        <div className="invoice-container">
+                            <h2 style={{textAlign: 'center', margin: '0 0 4px 0', fontSize: '1.4rem'}}>DIO BANGUNAN</h2>
+                            <p style={{textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0 0 16px 0'}}>Toko Bahan Bangunan</p>
+                            
+                            <div style={{fontSize: '0.85rem', marginBottom: '16px', borderBottom: '1px dashed var(--border-color)', paddingBottom: '12px'}}>
+                                <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>No. Faktur:</span> <span style={{fontWeight: 'bold'}}>#{invoiceData.sale_id}</span></div>
+                                <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>Tanggal:</span> <span>{new Date(invoiceData.transaction_date).toLocaleString('id-ID', {dateStyle: 'short', timeStyle: 'short'})}</span></div>
+                                <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>Kasir:</span> <span>{user.username}</span></div>
+                                <div style={{display: 'flex', justifyContent: 'space-between'}}><span>Pelanggan:</span> <span>{invoiceData.customer_name || 'Umum'}</span></div>
+                            </div>
+                            
+                            <div style={{marginBottom: '16px', borderBottom: '1px dashed var(--border-color)', paddingBottom: '8px'}}>
+                                {invoiceData.items.map((item, idx) => (
+                                    <div key={idx} style={{marginBottom: '8px', fontSize: '0.85rem'}}>
+                                        <div style={{fontWeight: 'bold', marginBottom: '4px'}}>{item.name}</div>
+                                        <div style={{display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)'}}>
+                                            <span>{item.qty} x {item.price.toLocaleString()}</span>
+                                            <span style={{color: 'var(--text-primary)', fontWeight: 'bold'}}>{(item.qty * item.price).toLocaleString()}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            
+                            <div style={{fontSize: '0.9rem', marginBottom: '24px'}}>
+                                <div style={{display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '8px'}}>
+                                    <span>TOTAL</span>
+                                    <span>Rp {invoiceData.total_amount.toLocaleString()}</span>
+                                </div>
+                                <div style={{display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)'}}>
+                                    <span>Pembayaran</span>
+                                    <span>{invoiceData.payment_method === 'Cash' ? 'TUNAI' : 'KREDIT'}</span>
+                                </div>
+                            </div>
+                            
+                            <div style={{textAlign: 'center', fontSize: '0.85rem'}}>
+                                <p style={{margin: 0, fontStyle: 'italic'}}>Terima kasih atas kunjungan Anda!</p>
+                            </div>
+                        </div>
+                        
+                        <div className="no-print" style={{display: 'flex', gap: '12px', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-color)'}}>
+                            <button className="btn btn-secondary" style={{flex: 1, padding: '12px'}} onClick={() => setInvoiceData(null)}>
+                                Tutup
+                            </button>
+                            <button className="btn btn-primary" style={{flex: 1, padding: '12px'}} onClick={() => window.print()}>
+                                🖨️ Cetak
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
