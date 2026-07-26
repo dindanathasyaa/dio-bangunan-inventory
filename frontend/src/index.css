@@ -688,17 +688,17 @@ p {
     margin: 0 !important;
     background: white !important;
     padding: 0 !important;
-    display: block !important;
+    display: flex !important;
     width: 100%;
     align-items: flex-start !important;
-    justify-content: flex-start !important;
+    justify-content: center !important;
   }
   .print-thermal {
     box-shadow: none !important;
     border: none !important;
-    margin: 0 !important;
-    padding: 24px !important;
-    max-width: none !important;
+    margin: 0 auto !important;
+    padding: 12px !important;
+    max-width: 80mm !important;
     width: 100% !important;
     box-sizing: border-box !important;
   }
