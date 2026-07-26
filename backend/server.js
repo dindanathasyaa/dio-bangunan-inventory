@@ -34,6 +34,21 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+// Change Password Route
+app.post('/api/change-password', async (req, res) => {
+    const { user_id, old_password, new_password } = req.body;
+    try {
+        const [rows] = await pool.query('SELECT * FROM users WHERE id = ? AND password = ?', [user_id, old_password]);
+        if (rows.length === 0) {
+            return res.status(401).json({ error: 'Password lama tidak sesuai' });
+        }
+        await pool.query('UPDATE users SET password = ? WHERE id = ?', [new_password, user_id]);
+        res.json({ message: 'Password berhasil diubah' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Branches Route
 app.get('/api/branches', async (req, res) => {
     try {

@@ -19,6 +19,10 @@ const Dashboard = ({ user, setUser }) => {
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [showSettingsModal, setShowSettingsModal] = useState(false);
+    const [oldPassword, setOldPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [passwordMsg, setPasswordMsg] = useState(null);
     
     // Multi-Branch State
     const [activeBranch, setActiveBranch] = useState(user.role === 'OWNER' ? 'all' : user.branch_id);
@@ -116,7 +120,7 @@ const Dashboard = ({ user, setUser }) => {
             </main>
 
             {showSettingsModal && (
-                <div className="modal-overlay" onClick={() => setShowSettingsModal(false)}>
+                <div className="modal-overlay" onClick={() => { setShowSettingsModal(false); setPasswordMsg(null); setOldPassword(''); setNewPassword(''); setConfirmPassword(''); }}>
                     <div className="modal-content" onClick={e => e.stopPropagation()}>
                         <h2 style={{marginBottom: '24px', color: 'var(--text-primary)'}}>Pengaturan Akun</h2>
                         <div style={{background: 'var(--item-bg)', padding: '20px', borderRadius: '12px', marginBottom: '24px'}}>
@@ -131,12 +135,97 @@ const Dashboard = ({ user, setUser }) => {
                             {user.role === 'ADMIN' && (
                                 <div>
                                     <span style={{color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'block'}}>Lokasi Cabang</span>
-                                    <strong style={{color: 'var(--text-primary)', fontSize: '1.1rem'}}>Toko {user.branch_id}</strong>
+                                    <strong style={{color: 'var(--text-primary)', fontSize: '1.1rem'}}>
+                                        {branches.find(b => b.id === user.branch_id)?.name || `Toko ${user.branch_id}`}
+                                    </strong>
                                 </div>
                             )}
                         </div>
+
+                        {/* Ganti Password */}
+                        <div style={{background: 'var(--item-bg)', padding: '20px', borderRadius: '12px', marginBottom: '24px'}}>
+                            <h3 style={{marginBottom: '16px', fontSize: '1rem', color: 'var(--text-primary)'}}>🔒 Ganti Password</h3>
+                            <div style={{marginBottom: '12px'}}>
+                                <label style={{color: 'var(--text-secondary)', fontSize: '0.85rem', display: 'block', marginBottom: '4px'}}>Password Lama</label>
+                                <input
+                                    type="password"
+                                    className="input-field"
+                                    placeholder="Masukkan password lama"
+                                    value={oldPassword}
+                                    onChange={e => setOldPassword(e.target.value)}
+                                    style={{width: '100%'}}
+                                />
+                            </div>
+                            <div style={{marginBottom: '12px'}}>
+                                <label style={{color: 'var(--text-secondary)', fontSize: '0.85rem', display: 'block', marginBottom: '4px'}}>Password Baru</label>
+                                <input
+                                    type="password"
+                                    className="input-field"
+                                    placeholder="Masukkan password baru"
+                                    value={newPassword}
+                                    onChange={e => setNewPassword(e.target.value)}
+                                    style={{width: '100%'}}
+                                />
+                            </div>
+                            <div style={{marginBottom: '16px'}}>
+                                <label style={{color: 'var(--text-secondary)', fontSize: '0.85rem', display: 'block', marginBottom: '4px'}}>Konfirmasi Password Baru</label>
+                                <input
+                                    type="password"
+                                    className="input-field"
+                                    placeholder="Ulangi password baru"
+                                    value={confirmPassword}
+                                    onChange={e => setConfirmPassword(e.target.value)}
+                                    style={{width: '100%'}}
+                                />
+                            </div>
+                            {passwordMsg && (
+                                <div style={{
+                                    padding: '10px 14px',
+                                    borderRadius: '8px',
+                                    marginBottom: '12px',
+                                    fontSize: '0.9rem',
+                                    background: passwordMsg.type === 'success' ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)',
+                                    color: passwordMsg.type === 'success' ? 'var(--success-color)' : 'var(--danger-color)',
+                                    border: `1px solid ${passwordMsg.type === 'success' ? 'var(--success-color)' : 'var(--danger-color)'}`
+                                }}>
+                                    {passwordMsg.text}
+                                </div>
+                            )}
+                            <button
+                                className="btn btn-primary"
+                                style={{width: '100%'}}
+                                onClick={async () => {
+                                    if (!oldPassword || !newPassword || !confirmPassword) {
+                                        setPasswordMsg({ type: 'error', text: 'Semua kolom wajib diisi!' });
+                                        return;
+                                    }
+                                    if (newPassword !== confirmPassword) {
+                                        setPasswordMsg({ type: 'error', text: 'Password baru tidak cocok!' });
+                                        return;
+                                    }
+                                    if (newPassword.length < 4) {
+                                        setPasswordMsg({ type: 'error', text: 'Password minimal 4 karakter!' });
+                                        return;
+                                    }
+                                    try {
+                                        await axios.post('http://localhost:5000/api/change-password', {
+                                            user_id: user.id,
+                                            old_password: oldPassword,
+                                            new_password: newPassword
+                                        });
+                                        setPasswordMsg({ type: 'success', text: '✅ Password berhasil diubah!' });
+                                        setOldPassword(''); setNewPassword(''); setConfirmPassword('');
+                                    } catch (err) {
+                                        setPasswordMsg({ type: 'error', text: err.response?.data?.error || 'Gagal mengubah password' });
+                                    }
+                                }}
+                            >
+                                Simpan Password Baru
+                            </button>
+                        </div>
+
                         <div style={{display: 'flex', gap: '12px', justifyContent: 'flex-end'}}>
-                            <button className="btn btn-outline" onClick={() => setShowSettingsModal(false)}>Tutup</button>
+                            <button className="btn btn-outline" onClick={() => { setShowSettingsModal(false); setPasswordMsg(null); setOldPassword(''); setNewPassword(''); setConfirmPassword(''); }}>Tutup</button>
                         </div>
                     </div>
                 </div>
