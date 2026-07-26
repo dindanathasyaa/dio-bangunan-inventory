@@ -230,17 +230,20 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
                                                         className="input-field"
                                                         value={item.qty}
                                                         min="1"
+                                                        step="1"
                                                         onChange={e => updateItemQty(item.product_id, e.target.value)}
                                                         style={{ margin: 0, padding: '6px 10px', width: '100%' }}
                                                     />
                                                 </td>
                                                 <td>
                                                     <input
-                                                        type="number"
+                                                        type="text"
                                                         className="input-field"
-                                                        value={item.price}
-                                                        min="0"
-                                                        onChange={e => updateItemPrice(item.product_id, e.target.value)}
+                                                        value={Number(item.price).toLocaleString('en-US')}
+                                                        onChange={e => {
+                                                            const raw = e.target.value.replace(/,/g, '');
+                                                            if (!isNaN(raw)) updateItemPrice(item.product_id, raw);
+                                                        }}
                                                         style={{ margin: 0, padding: '6px 10px', width: '100%' }}
                                                     />
                                                 </td>
