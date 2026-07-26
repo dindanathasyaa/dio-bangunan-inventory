@@ -41,6 +41,13 @@ const PurchaseView = ({ user, activeBranch, branches, refreshData }) => {
         {name: 'Set', options: [1]},
         {name: 'Bal', options: [10, 20]}
     ];
+
+    useEffect(() => {
+        if (messageModal) {
+            const timer = setTimeout(() => setMessageModal(''), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [messageModal]);
     
     useEffect(() => {
         const fetchCategories = async () => {
@@ -155,12 +162,14 @@ const PurchaseView = ({ user, activeBranch, branches, refreshData }) => {
     return (
         <div style={{animation: 'fadeIn 0.5s ease-out', width: '100%', padding: '24px'}}>
             {messageModal && (
-                <div className="modal-overlay" onClick={() => setMessageModal('')} style={{zIndex: 9999}}>
-                    <div className="modal-content" onClick={e => e.stopPropagation()} style={{textAlign: 'center', maxWidth: '400px'}}>
-                        <div style={{fontSize: '3rem', color: '#4caf50', marginBottom: '16px'}}>✓</div>
-                        <p style={{fontSize: '1.2rem', marginBottom: '24px', color: '#4caf50', fontWeight: 'bold'}}>{messageModal}</p>
-                        <button className="btn" onClick={() => setMessageModal('')} style={{width: '100%', background: '#4caf50', borderColor: '#4caf50'}}>Tutup</button>
-                    </div>
+                <div style={{
+                    position: 'fixed', top: '20px', left: '50%', transform: 'translateX(-50%)',
+                    background: '#4caf50', color: 'white', padding: '16px 32px', borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 9999, fontWeight: 'bold', fontSize: '1.1rem',
+                    display: 'flex', alignItems: 'center', gap: '12px', animation: 'slideDown 0.3s ease-out'
+                }}>
+                    <span>✓</span>
+                    <span>{messageModal}</span>
                 </div>
             )}
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
