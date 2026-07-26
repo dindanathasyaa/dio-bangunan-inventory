@@ -347,7 +347,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                             <style>{`@media print { @page { margin: 0; } body { background: white; } }`}</style>
                             <div className="invoice-container">
                                 <div style={{display: 'flex', justifyContent: 'center', marginBottom: '8px'}}>
-                                    <img src="/logo-transparent.png" alt="Dio Bangunan Logo" style={{maxWidth: '140px', width: '100%'}} />
+                                    <img src="/logo-transparent.png" alt="Dio Bangunan Logo" style={{maxWidth: '140px', width: '100%', mixBlendMode: 'multiply'}} />
                                 </div>
                                 <h2 style={{textAlign: 'center', margin: '0 0 4px 0', fontSize: '1.4rem'}}>DIO BANGUNAN</h2>
                                 <p style={{textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0 0 16px 0'}}>Toko Bahan Bangunan</p>
@@ -431,7 +431,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                             <div className="invoice-container">
                                 <div style={{textAlign: 'center', marginBottom: '40px'}}>
                                     <div style={{display: 'flex', justifyContent: 'center', marginBottom: '16px'}}>
-                                        <img src="/logo-transparent.png" alt="Dio Bangunan Logo" style={{maxWidth: '250px', width: '100%'}} />
+                                        <img src="/logo-transparent.png" alt="Dio Bangunan Logo" style={{maxWidth: '250px', width: '100%', mixBlendMode: 'multiply'}} />
                                     </div>
                                     <h1 style={{margin: '0 0 8px 0', fontSize: '24px', color: 'var(--primary-color)'}}>DIO BANGUNAN</h1>
                                     <div style={{fontSize: '12px', lineHeight: '1.5'}}>

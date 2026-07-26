@@ -64,7 +64,7 @@ const Dashboard = ({ user, setUser }) => {
                     <button className="sidebar-toggle" onClick={toggleSidebar} style={{ position: 'absolute', top: '16px', right: '16px', width: '36px', height: '36px', borderRadius: '8px', zIndex: 10 }}>❮</button>
                 )}
                 <div className="logo-container" style={{paddingBottom: '0', display: 'flex', justifyContent: 'center', marginTop: '32px'}}>
-                    <img src="/logo-transparent.png" alt="Dio Bangunan Logo" className="logo-img" style={{width: '100%'}} />
+                    <img src="/logo-transparent.png" alt="Dio Bangunan Logo" className="logo-img" style={{width: '100%', mixBlendMode: 'multiply'}} />
                 </div>
                 
                 <nav style={{display: 'flex', flexDirection: 'column', marginTop: '10px', flex: 1, overflowY: 'auto'}}>
