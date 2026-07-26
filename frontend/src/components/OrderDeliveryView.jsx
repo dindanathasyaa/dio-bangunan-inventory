@@ -86,12 +86,12 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
             </div>
 
             {view === 'NewOrder' && (
-                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: '16px'}}>
-                    <div className="modal-content" style={{width: '100%', maxWidth: '520px'}} onClick={e => e.stopPropagation()}>
-                        <h2 style={{marginBottom: '8px', color: 'var(--text-primary)'}}>📦 Input Orderan &amp; Pengantaran</h2>
-                        <p style={{color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '24px'}}>Isi data pelanggan dan detail pengantaran di bawah ini.</p>
-                        <form onSubmit={submitOrder}>
-                            <div className="form-group" style={{marginBottom: '16px'}}>
+                <div className="glass-panel" style={{width: '100%', boxSizing: 'border-box'}}>
+                    <h2 style={{marginBottom: '8px', color: 'var(--text-primary)'}}>📦 Input Orderan &amp; Pengantaran</h2>
+                    <p style={{color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '24px'}}>Isi data pelanggan dan detail pengantaran di bawah ini.</p>
+                    <form onSubmit={submitOrder}>
+                        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px'}}>
+                            <div className="form-group" style={{marginBottom: 0}}>
                                 <label>Nama Pelanggan</label>
                                 <input
                                     type="text"
@@ -102,7 +102,7 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
                                     required
                                 />
                             </div>
-                            <div className="form-group" style={{marginBottom: '16px'}}>
+                            <div className="form-group" style={{marginBottom: 0}}>
                                 <label>No Telepon <span style={{color: 'var(--text-secondary)', fontWeight: 'normal'}}>(Opsional)</span></label>
                                 <input
                                     type="text"
@@ -112,19 +112,21 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
                                     placeholder="Contoh: 08123456789"
                                 />
                             </div>
-                            <div className="form-group" style={{marginBottom: '16px'}}>
+                        </div>
+                        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '28px'}}>
+                            <div className="form-group" style={{marginBottom: 0}}>
                                 <label>Alamat Pengantaran</label>
                                 <textarea
                                     className="input-field"
-                                    rows="3"
+                                    rows="4"
                                     value={address}
                                     onChange={e => setAddress(e.target.value)}
                                     placeholder="Contoh: Jl. Merdeka No. 10"
                                     required
-                                    style={{resize: 'vertical'}}
+                                    style={{resize: 'vertical', width: '100%'}}
                                 ></textarea>
                             </div>
-                            <div className="form-group" style={{marginBottom: '28px'}}>
+                            <div className="form-group" style={{marginBottom: 0}}>
                                 <label>Total Tagihan (Rp)</label>
                                 <input
                                     type="number"
@@ -135,16 +137,16 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
                                     required
                                 />
                             </div>
-                            <button
-                                className="btn btn-primary"
-                                style={{width: '100%', padding: '14px', fontSize: '1rem', fontWeight: 'bold'}}
-                                type="submit"
-                                disabled={loading}
-                            >
-                                {loading ? '⏳ Memproses...' : '🚚 Buat Orderan & Jadwalkan Kirim'}
-                            </button>
-                        </form>
-                    </div>
+                        </div>
+                        <button
+                            className="btn btn-primary"
+                            style={{width: '100%', padding: '14px', fontSize: '1rem', fontWeight: 'bold'}}
+                            type="submit"
+                            disabled={loading}
+                        >
+                            {loading ? '⏳ Memproses...' : '🚚 Buat Orderan & Jadwalkan Kirim'}
+                        </button>
+                    </form>
                 </div>
             )}
 
