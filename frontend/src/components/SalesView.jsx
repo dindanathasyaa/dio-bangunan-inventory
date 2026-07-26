@@ -9,6 +9,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
     const [paymentMethod, setPaymentMethod] = useState('Cash');
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showZeroStockWarning, setShowZeroStockWarning] = useState(false);
     const [transactionSuccessData, setTransactionSuccessData] = useState(null);
     const [printMode, setPrintMode] = useState('menu'); // menu, struk, invoice, surat_jalan
     const [isIndirectSale, setIsIndirectSale] = useState(false);
