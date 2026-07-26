@@ -335,7 +335,11 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
 
                  {/* Modal Aksi Transaksi Sukses */}
             {transactionSuccessData && (
-                <div className={`modal-overlay ${printMode === 'struk' ? 'print-thermal' : (printMode === 'invoice' || printMode === 'surat_jalan' ? 'print-a4' : '')}`} onClick={() => { if (printMode === 'menu') setTransactionSuccessData(null); }}>
+                <div 
+                    className={`modal-overlay ${printMode === 'struk' ? 'print-thermal' : (printMode === 'invoice' || printMode === 'surat_jalan' ? 'print-a4' : '')}`} 
+                    style={printMode === 'menu' ? { gap: '24px', flexWrap: 'wrap' } : {}}
+                    onClick={() => { if (printMode === 'menu') setTransactionSuccessData(null); }}
+                >
                     
                     {/* Menu Pilihan Aksi */}
                     {printMode === 'menu' && (
@@ -352,7 +356,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                     )}
 
                     {/* Layout Struk Thermal (Detail & Cetak) */}
-                    {printMode === 'struk' && (
+                    {(printMode === 'struk' || printMode === 'menu') && (
                         <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '24px'}} onClick={e => e.stopPropagation()}>
                             <style>{`@media print { @page { size: 80mm auto; margin: 0; } body { background: white; } }`}</style>
                             <div className="invoice-container">
@@ -394,14 +398,16 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                 </div>
                             </div>
                             
-                            <div className="no-print" style={{display: 'flex', gap: '12px', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-color)'}}>
-                                <button className="btn btn-secondary" style={{flex: 1, padding: '12px'}} onClick={() => setPrintMode('menu')}>
-                                    Kembali
-                                </button>
-                                <button className="btn btn-primary" style={{flex: 1, padding: '12px'}} onClick={() => window.print()}>
-                                    🖨️ Cetak
-                                </button>
-                            </div>
+                            {printMode === 'struk' && (
+                                <div className="no-print" style={{display: 'flex', gap: '12px', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-color)'}}>
+                                    <button className="btn btn-secondary" style={{flex: 1, padding: '12px'}} onClick={() => setPrintMode('menu')}>
+                                        Kembali
+                                    </button>
+                                    <button className="btn btn-primary" style={{flex: 1, padding: '12px'}} onClick={() => window.print()}>
+                                        🖨️ Cetak
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     )}
 
