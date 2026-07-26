@@ -205,7 +205,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                 Rp {parseFloat(p.price || 0).toLocaleString()}
                             </div>
                             <div style={{marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                                <span style={{color: 'var(--text-secondary)', fontWeight: 'bold'}}>Stok: {Number(p.stock)}</span>
+                                <span style={{color: 'var(--text-secondary)', fontWeight: 'bold'}}>Stok: {Math.max(0, Number(p.stock))}</span>
                                 <div style={{display: 'flex', alignItems: 'stretch', gap: '8px', height: '36px'}}>
                                     <input 
                                         type="number" 
