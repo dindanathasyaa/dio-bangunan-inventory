@@ -665,7 +665,7 @@ p {
   color: white;
 }
 .branch-dropdown-item:hover, .branch-dropdown-item.selected {
-  background: var(--secondary-color) !important;
+  background: var(--primary-color) !important;
 }
 @keyframes slideDown {
   from { opacity: 0; transform: translateY(-10px); }
