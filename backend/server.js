@@ -80,7 +80,7 @@ app.post('/api/inventory', async (req, res) => {
         } else {
             const [result] = await pool.query(
                 'INSERT INTO products (sku, name, category_id, unit, price, base_price) VALUES (?, ?, ?, ?, ?, ?)',
-                [sku, name, category_id, unit, price || 0, base_price || 0]
+                [sku, name, category_id || 1, unit, price || 0, base_price || 0]
             );
             product_id = result.insertId;
         }

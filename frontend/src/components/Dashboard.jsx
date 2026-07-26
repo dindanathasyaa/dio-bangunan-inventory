@@ -384,15 +384,28 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
             setMessageModal("Periksa Kembali Harga");
             return;
         }
+
+        let finalUnit = newItem.unit;
+        if (unitType === 'Konversi') {
+            if (!majemukType || !majemukMultiplier) {
+                alert('Pilih Satuan Besar dan Pengali!');
+                return;
+            }
+            finalUnit = `${majemukType} (${majemukMultiplier} ${newItem.unit})`;
+        }
+
         try {
-            await axios.post('http://localhost:5000/api/inventory', { ...newItem, stock: lembar });
+            await axios.post('http://localhost:5000/api/inventory', { ...newItem, unit: finalUnit, stock: lembar });
             setShowModal(false);
             setNewItem({ sku: '', name: '', category_id: '', unit: 'Lembar', price: '', stock: 0, min_stock: 5, max_stock: 50, branch_id: user.role === 'MANAGER' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : 1) });
+            setUnitType('');
+            setMajemukType('');
+            setMajemukMultiplier(20);
             setKodi(0); setLembar(0);
             refreshData();
         } catch (err) {
             console.error(err);
-            alert("Gagal menambahkan barang. SKU mungkin sudah ada.");
+            alert("Gagal menambahkan barang. SKU mungkin sudah ada atau data tidak lengkap.");
         }
     };
 
