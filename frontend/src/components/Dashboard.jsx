@@ -219,7 +219,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
             
             <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px'}}>
                 {/* Row 1: Stock Alerts */}
-                <div className="glass-panel" style={{borderTop: '4px solid var(--danger-color)', cursor: 'pointer', transition: 'transform 0.2s'}} onClick={() => navigate('/alert-min')} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
+                <div className="glass-panel" style={{borderTop: '4px solid var(--danger-color)', cursor: 'pointer', transition: 'transform 0.2s', height: 'fit-content'}} onClick={() => navigate('/alert-min')} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                         <div>
                             <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Stok Mau Habis</div>
@@ -228,6 +228,22 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                         <div style={{fontSize: '2rem'}}>📦</div>
                     </div>
                     <div style={{color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '12px'}}>Klik untuk melihat daftar beli.</div>
+                    
+                    {summary.aprioriLowStock && summary.aprioriLowStock.length > 0 && (
+                        <div style={{marginTop: '16px', borderTop: '1px solid var(--border-color)', paddingTop: '12px'}}>
+                            <div style={{fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--danger-color)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em'}}>10 Prioritas (Paling Laku)</div>
+                            <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
+                                {summary.aprioriLowStock.map((item, idx) => (
+                                    <li key={idx} style={{fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                        <span style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '75%'}}>
+                                            <span style={{color: 'var(--primary-color)', marginRight: '4px'}}>#{idx + 1}</span> {item.name}
+                                        </span>
+                                        <span style={{fontWeight: 'bold', color: 'var(--text-primary)', background: 'var(--danger-color)', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem'}}>Stok: {item.stock}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                 </div>
 
                 <div className="glass-panel" style={{borderTop: '4px solid var(--secondary-color)', cursor: 'pointer', transition: 'transform 0.2s'}} onClick={() => navigate('/alert-max')} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>

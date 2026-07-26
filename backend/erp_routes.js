@@ -601,7 +601,21 @@ module.exports = function(app, pool) {
             const totalCash = (cashIn[0].c || 0) - (cashOut[0].c || 0);
             
             const [prof] = await pool.query(profitQuery, params);
-            const totalProfit = prof[0].p || 0;
+            const profit = prof[0].p || 0;
+
+            // Apriori Low Stock (Top 10 best selling items that are low in stock)
+            let aprioriQuery = `
+                SELECT i.id, i.name, i.stock, i.min_stock, COALESCE(SUM(si.qty), 0) as total_sold 
+                FROM inventory i 
+                LEFT JOIN sale_items si ON i.id = si.product_id 
+                WHERE i.stock <= i.min_stock 
+            `;
+            if (branch_id && branch_id !== 'all') {
+                aprioriQuery += ` AND i.branch_id = ? `;
+            }
+            aprioriQuery += ` GROUP BY i.id ORDER BY total_sold DESC LIMIT 10`;
+            
+            const [aprioriLowStock] = await pool.query(aprioriQuery, params);
 
             res.json({
                 lowStockCount,
@@ -609,8 +623,9 @@ module.exports = function(app, pool) {
                 pendingDeliveries,
                 totalReceivables,
                 totalPayables,
-                totalCash,
-                totalProfit
+                totalCash: (cashIn[0].c || 0) - (cashOut[0].c || 0),
+                totalProfit: profit,
+                aprioriLowStock
             });
         } catch (error) {
             res.status(500).json({ error: error.message });
