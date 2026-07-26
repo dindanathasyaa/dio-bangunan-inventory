@@ -215,7 +215,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                         style={{width: '70px', padding: '0 8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-color)', color: 'var(--text-primary)', textAlign: 'center', boxSizing: 'border-box', height: '100%', outline: 'none'}}
                                     />
                                     <button 
-                                        style={{background: 'rgba(234, 88, 12, 0.1)', color: 'var(--primary-color)', padding: '0 16px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', boxSizing: 'border-box', whiteSpace: 'nowrap', flex: 1}} 
+                                        style={{background: 'var(--primary-color)', color: '#ffffff', padding: '0 16px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', boxSizing: 'border-box', whiteSpace: 'nowrap', flex: 1}} 
                                         onClick={() => addToCart(p, qtys[p.id] || 1)}
                                     >
                                         + Tambah
