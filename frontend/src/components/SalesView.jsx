@@ -204,18 +204,18 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                             <div style={{fontWeight: 'bold', color: 'var(--primary-color)', fontSize: '1.1rem', marginBottom: '16px'}}>
                                 Rp {parseFloat(p.price || 0).toLocaleString()}
                             </div>
-                            <div style={{marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                            <div style={{marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '12px'}}>
                                 <span style={{color: 'var(--text-secondary)', fontWeight: 'bold'}}>Stok: {Math.max(0, Number(p.stock))}</span>
-                                <div style={{display: 'flex', alignItems: 'stretch', gap: '8px', height: '36px'}}>
+                                <div style={{display: 'flex', alignItems: 'stretch', gap: '8px', height: '36px', width: '100%'}}>
                                     <input 
                                         type="number" 
                                         min="1"
                                         value={qtys[p.id] !== undefined ? qtys[p.id] : 1} 
                                         onChange={e => setQtys({...qtys, [p.id]: e.target.value})}
-                                        style={{width: '60px', padding: '0 8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-color)', color: 'var(--text-primary)', textAlign: 'center', boxSizing: 'border-box', height: '100%', outline: 'none'}}
+                                        style={{width: '70px', padding: '0 8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-color)', color: 'var(--text-primary)', textAlign: 'center', boxSizing: 'border-box', height: '100%', outline: 'none'}}
                                     />
                                     <button 
-                                        style={{background: 'rgba(234, 88, 12, 0.1)', color: 'var(--primary-color)', padding: '0 16px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', boxSizing: 'border-box', whiteSpace: 'nowrap'}} 
+                                        style={{background: 'rgba(234, 88, 12, 0.1)', color: 'var(--primary-color)', padding: '0 16px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', boxSizing: 'border-box', whiteSpace: 'nowrap', flex: 1}} 
                                         onClick={() => addToCart(p, qtys[p.id] || 1)}
                                     >
                                         + Tambah
