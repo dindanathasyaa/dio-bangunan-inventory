@@ -407,7 +407,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
 
                     {/* Layout A4 (Invoice & Surat Jalan) */}
                     {(printMode === 'invoice' || printMode === 'surat_jalan') && (
-                        <div className="modal-content a4-container" style={{position: 'relative', width: '210mm', minHeight: '297mm', padding: '40px', background: 'white', color: 'black', margin: '20px auto', fontFamily: 'sans-serif'}} onClick={e => e.stopPropagation()}>
+                        <div className="modal-content a4-container" style={{position: 'relative', width: '210mm', padding: '40px', background: 'white', color: 'black', margin: '20px auto', fontFamily: 'sans-serif'}} onClick={e => e.stopPropagation()}>
                             <style>{`@media print { @page { size: A4 portrait; margin: 0; } body { background: white; } }`}</style>
                             
                             <div className="no-print" style={{display: 'flex', justifyContent: 'flex-end', gap: '12px', marginBottom: '32px', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px'}}>
