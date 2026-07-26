@@ -45,6 +45,21 @@ app.get('/api/branches', async (req, res) => {
 });
 
 // Inventory Routes
+app.get('/api/next-sku', async (req, res) => {
+    try {
+        const [rows] = await pool.query("SELECT sku FROM products WHERE sku LIKE 'BRG-%' ORDER BY CAST(SUBSTRING(sku, 5) AS UNSIGNED) DESC LIMIT 1");
+        if (rows.length > 0) {
+            const lastNumber = parseInt(rows[0].sku.substring(4), 10);
+            const nextNumber = lastNumber + 1;
+            res.json({ sku: 'BRG-' + String(nextNumber).padStart(3, '0') });
+        } else {
+            res.json({ sku: 'BRG-001' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.get('/api/inventory', async (req, res) => {
     const branch_id = req.query.branch_id;
     let query = `

@@ -371,6 +371,14 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
         }).catch(err => console.error(err));
     }, []);
 
+    useEffect(() => {
+        if (showModal && !newItem.sku) {
+            axios.get('http://localhost:5000/api/next-sku')
+                .then(res => setNewItem(prev => ({...prev, sku: res.data.sku})))
+                .catch(console.error);
+        }
+    }, [showModal]);
+
     const categories = ['Kategori', ...new Set(inventory.map(item => item.category))];
     const filteredInventory = inventory.filter(item => {
         const matchesCategory = selectedCategory === 'Kategori' || item.category === selectedCategory;
