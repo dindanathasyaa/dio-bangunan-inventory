@@ -237,7 +237,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                                         <span style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '75%'}}>
                                             <span style={{color: 'var(--primary-color)', marginRight: '4px'}}>#{idx + 1}</span> {item.name}
                                         </span>
-                                        <span style={{fontWeight: 'bold', color: 'white', background: 'var(--danger-color)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem'}}>Stok: {Math.floor(item.stock)}</span>
+                                        <span style={{fontWeight: 'bold', color: 'white', background: 'var(--danger-color)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem'}}>Stok: {Math.max(0, Math.floor(item.stock))}</span>
                                     </li>
                                 ))}
                             </ul>
