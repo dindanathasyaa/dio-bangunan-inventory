@@ -346,11 +346,9 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                         <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '24px', flexShrink: 0, maxHeight: printMode === 'menu' ? '45vh' : '90vh', overflowY: 'auto'}} onClick={e => e.stopPropagation()}>
                             <style>{`@media print { @page { margin: 0; } body { background: white; } }`}</style>
                             <div className="invoice-container">
-                                <div style={{display: 'flex', justifyContent: 'center', marginBottom: '8px'}}>
+                                <div style={{display: 'flex', justifyContent: 'center', marginBottom: '16px'}}>
                                     <img src="/logo-transparent.png" alt="Dio Bangunan Logo" style={{maxWidth: '140px', width: '100%', mixBlendMode: 'multiply'}} />
                                 </div>
-                                <h2 style={{textAlign: 'center', margin: '0 0 4px 0', fontSize: '1.4rem'}}>DIO BANGUNAN</h2>
-                                <p style={{textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0 0 16px 0'}}>Toko Bahan Bangunan</p>
                                 
                                 <div style={{fontSize: '0.85rem', marginBottom: '16px', borderBottom: '1px dashed var(--border-color)', paddingBottom: '12px'}}>
                                     <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>No. Faktur:</span> <span style={{fontWeight: 'bold'}}>#{transactionSuccessData.sale_id}</span></div>
@@ -433,7 +431,6 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                     <div style={{display: 'flex', justifyContent: 'center', marginBottom: '16px'}}>
                                         <img src="/logo-transparent.png" alt="Dio Bangunan Logo" style={{maxWidth: '250px', width: '100%', mixBlendMode: 'multiply'}} />
                                     </div>
-                                    <h1 style={{margin: '0 0 8px 0', fontSize: '24px', color: 'var(--primary-color)'}}>DIO BANGUNAN</h1>
                                     <div style={{fontSize: '12px', lineHeight: '1.5'}}>
                                         <div>MENJUAL ALAT BANGUNAN & LISTRIK</div>
                                         <div>ALAMAT : PASAR TARAM</div>
