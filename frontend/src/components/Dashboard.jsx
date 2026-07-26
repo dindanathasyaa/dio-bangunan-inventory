@@ -403,6 +403,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
             setMajemukMultiplier(20);
             setKodi(0); setLembar(0);
             refreshData();
+            setMessageModal("Barang berhasil ditambahkan ke Data Inventory!");
         } catch (err) {
             console.error(err);
             alert("Gagal menambahkan barang. SKU mungkin sudah ada atau data tidak lengkap.");
