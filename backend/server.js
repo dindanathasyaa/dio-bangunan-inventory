@@ -311,7 +311,7 @@ app.get('/api/dss/recommendations', async (req, res) => {
                     branch_name: item.branch_name,
                     current_stock: item.stock,
                     rop: item.min_stock,
-                    message: `Stok mau habis! Tersisa ${Number(item.stock)}, batas minimum adalah ${item.min_stock}. Segera pesan lagi.`
+                    message: `Stok mau habis! Tersisa ${Math.max(0, Number(item.stock))}, batas minimum adalah ${item.min_stock}. Segera pesan lagi.`
                 });
             }
 

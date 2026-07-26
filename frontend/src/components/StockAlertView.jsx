@@ -16,9 +16,9 @@ const StockAlertView = ({ type, activeBranch }) => {
         try {
             const dssRes = await axios.get(`http://localhost:5000/api/dss/recommendations?branch_id=${activeBranch}`);
             if (type === 'min') {
-                setAlerts(dssRes.data.ropAlerts);
+                setAlerts(dssRes.data.ropAlerts.sort((a, b) => a.current_stock - b.current_stock));
             } else if (type === 'max') {
-                setAlerts(dssRes.data.transferSuggestions);
+                setAlerts(dssRes.data.transferSuggestions.sort((a, b) => b.current_stock - a.current_stock));
             }
         } catch (error) {
             console.error(error);
@@ -57,7 +57,7 @@ const StockAlertView = ({ type, activeBranch }) => {
                                     <td>{item.product_name}</td>
                                     <td style={{ whiteSpace: 'nowrap' }}>{item.branch_name || item.from_branch_name}</td>
                                     <td style={{ textAlign: 'center' }}>
-                                        <span style={{fontWeight: 'bold'}}>{type === 'min' ? Number(item.current_stock) : (Number(item.current_stock) || item.suggested_qty)}</span>
+                                        <span style={{fontWeight: 'bold'}}>{type === 'min' ? Math.max(0, Number(item.current_stock)) : (Number(item.current_stock) || item.suggested_qty)}</span>
                                     </td>
                                     <td style={{color: type === 'min' ? 'var(--danger-color)' : 'var(--secondary-color)'}}>{item.message}</td>
                                 </tr>
