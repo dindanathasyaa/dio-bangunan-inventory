@@ -508,7 +508,9 @@ p {
   backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  padding: 40px 20px;
+  overflow-y: auto;
   z-index: 100;
 }
 .modal-content {
