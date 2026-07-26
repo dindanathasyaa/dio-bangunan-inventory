@@ -25,8 +25,8 @@ const Login = ({ setUser }) => {
     return (
         <div className="login-container">
             <div className="glass-panel login-form" style={{background: 'rgba(255, 255, 255, 0.15)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 8px 32px rgba(0,0,0,0.2)'}}>
-                <div className="logo-container" style={{marginBottom: '0.5rem', display: 'flex', justifyContent: 'center'}}>
-                    <img src="/logo-transparent.png" alt="Dio Bangunan Logo" className="logo-img" style={{width: '100%'}} />
+                <div className="logo-container" style={{marginBottom: '1rem', display: 'flex', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.95)', padding: '16px 24px', borderRadius: '16px', boxShadow: 'inset 0 0 10px rgba(0,0,0,0.1)'}}>
+                    <img src="/logo-transparent.png" alt="Dio Bangunan Logo" className="logo-img" style={{width: '100%', maxWidth: '280px'}} />
                 </div>
                 
                 {error && <div style={{color: 'var(--danger-color)', marginBottom: '16px', background: 'rgba(239, 68, 68, 0.1)', padding: '10px', borderRadius: '8px'}}>{error}</div>}
