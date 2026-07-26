@@ -703,6 +703,8 @@ p {
     max-width: 100% !important;
     width: 100% !important;
     box-sizing: border-box !important;
+    max-height: none !important;
+    overflow: visible !important;
   }
   .print-a4 {
     box-shadow: none !important;

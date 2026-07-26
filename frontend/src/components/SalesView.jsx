@@ -343,7 +343,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                     
                     {/* Layout Struk Thermal (Detail & Cetak) */}
                     {(printMode === 'struk' || printMode === 'menu') && (
-                        <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '24px', flexShrink: 0}} onClick={e => e.stopPropagation()}>
+                        <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '24px', flexShrink: 0, maxHeight: printMode === 'menu' ? '45vh' : '90vh', overflowY: 'auto'}} onClick={e => e.stopPropagation()}>
                             <style>{`@media print { @page { margin: 0; } body { background: white; } }`}</style>
                             <div className="invoice-container">
                                 <h2 style={{textAlign: 'center', margin: '0 0 4px 0', fontSize: '1.4rem'}}>DIO BANGUNAN</h2>
