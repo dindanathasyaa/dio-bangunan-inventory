@@ -725,3 +725,7 @@ p {
     margin: 0;
   }
 }
+
+.logo-img { filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.8)) drop-shadow(0px 0px 15px rgba(255, 255, 255, 0.4)); }
+[data-theme='light'] .logo-img { filter: none; }
+
