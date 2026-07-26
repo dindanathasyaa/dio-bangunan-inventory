@@ -691,13 +691,21 @@ p {
     align-items: flex-start !important;
     justify-content: flex-start !important;
   }
-  .invoice-modal {
+  .print-thermal {
     box-shadow: none !important;
     border: none !important;
     margin: 0 !important;
     padding: 0 !important;
     max-width: 100% !important;
-    width: 80mm !important; /* 80mm Thermal width */
+    width: 80mm !important;
+  }
+  .print-a4 {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+    width: 210mm !important;
   }
   .invoice-container {
     color: black !important;
@@ -708,6 +716,5 @@ p {
   }
   @page {
     margin: 0;
-    size: 80mm auto;
   }
 }

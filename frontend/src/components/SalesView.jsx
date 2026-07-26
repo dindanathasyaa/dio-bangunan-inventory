@@ -9,8 +9,8 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
     const [paymentMethod, setPaymentMethod] = useState('Cash');
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
-    const [showZeroStockWarning, setShowZeroStockWarning] = useState(false);
-    const [invoiceData, setInvoiceData] = useState(null);
+    const [transactionSuccessData, setTransactionSuccessData] = useState(null);
+    const [printMode, setPrintMode] = useState('menu'); // menu, struk, invoice, surat_jalan
     const [isIndirectSale, setIsIndirectSale] = useState(false);
     const [transactionDate, setTransactionDate] = useState('');
     const [showRecapModal, setShowRecapModal] = useState(false);
@@ -119,7 +119,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 transaction_date: isIndirectSale && transactionDate ? transactionDate : null
             });
 
-            setInvoiceData({
+            setTransactionSuccessData({
                 sale_id: res.data.sale_id,
                 customer_name: customerName,
                 payment_method: paymentMethod,
@@ -127,6 +127,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 total_amount: totalAmount,
                 transaction_date: isIndirectSale && transactionDate ? transactionDate : new Date().toISOString()
             });
+            setPrintMode('menu');
 
             setCart([]);
             setCustomerName('');
@@ -331,58 +332,189 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 </div>
             )}
 
-                 {/* Modal Cetak Faktur */}
-            {invoiceData && (
-                <div className="modal-overlay" onClick={() => setInvoiceData(null)}>
-                    <div className="modal-content invoice-modal" style={{position: 'relative', maxWidth: '350px', padding: '24px'}} onClick={e => e.stopPropagation()}>
-                        <div className="invoice-container">
-                            <h2 style={{textAlign: 'center', margin: '0 0 4px 0', fontSize: '1.4rem'}}>DIO BANGUNAN</h2>
-                            <p style={{textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0 0 16px 0'}}>Toko Bahan Bangunan</p>
-                            
-                            <div style={{fontSize: '0.85rem', marginBottom: '16px', borderBottom: '1px dashed var(--border-color)', paddingBottom: '12px'}}>
-                                <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>No. Faktur:</span> <span style={{fontWeight: 'bold'}}>#{invoiceData.sale_id}</span></div>
-                                <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>Tanggal:</span> <span>{new Date(invoiceData.transaction_date).toLocaleString('id-ID', {dateStyle: 'short', timeStyle: 'short'})}</span></div>
-                                <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>Kasir:</span> <span>{user.username}</span></div>
-                                <div style={{display: 'flex', justifyContent: 'space-between'}}><span>Pelanggan:</span> <span>{invoiceData.customer_name || 'Umum'}</span></div>
+                 {/* Modal Aksi Transaksi Sukses */}
+            {transactionSuccessData && (
+                <div className={`modal-overlay ${printMode === 'struk' ? 'print-thermal' : (printMode === 'invoice' || printMode === 'surat_jalan' ? 'print-a4' : '')}`} onClick={() => { if (printMode === 'menu') setTransactionSuccessData(null); }}>
+                    
+                    {/* Menu Pilihan Aksi */}
+                    {printMode === 'menu' && (
+                        <div className="modal-content no-print" style={{maxWidth: '300px', padding: 0, borderRadius: '12px', overflow: 'hidden'}} onClick={e => e.stopPropagation()}>
+                            <div style={{background: 'var(--primary-color)', color: 'white', padding: '16px', textAlign: 'center', fontWeight: 'bold', fontSize: '1.2rem'}}>Transaksi Berhasil!</div>
+                            <div style={{display: 'flex', flexDirection: 'column'}}>
+                                <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => setPrintMode('struk')}>Detail</button>
+                                <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('struk'); setTimeout(() => window.print(), 300); }}>Cetak</button>
+                                <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('invoice'); setTimeout(() => window.print(), 300); }}>Invoice</button>
+                                <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('surat_jalan'); setTimeout(() => window.print(), 300); }}>Surat Jalan</button>
+                                <button style={{padding: '16px', border: 'none', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => setTransactionSuccessData(null)}>Close</button>
                             </div>
-                            
-                            <div style={{marginBottom: '16px', borderBottom: '1px dashed var(--border-color)', paddingBottom: '8px'}}>
-                                {invoiceData.items.map((item, idx) => (
-                                    <div key={idx} style={{marginBottom: '8px', fontSize: '0.85rem'}}>
-                                        <div style={{fontWeight: 'bold', marginBottom: '4px'}}>{item.name}</div>
-                                        <div style={{display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)'}}>
-                                            <span>{item.qty} x {item.price.toLocaleString()}</span>
-                                            <span style={{color: 'var(--text-primary)', fontWeight: 'bold'}}>{(item.qty * item.price).toLocaleString()}</span>
+                        </div>
+                    )}
+
+                    {/* Layout Struk Thermal (Detail & Cetak) */}
+                    {printMode === 'struk' && (
+                        <div className="modal-content" style={{position: 'relative', maxWidth: '350px', padding: '24px'}} onClick={e => e.stopPropagation()}>
+                            <style>{`@media print { @page { size: 80mm auto; margin: 0; } }`}</style>
+                            <div className="invoice-container">
+                                <h2 style={{textAlign: 'center', margin: '0 0 4px 0', fontSize: '1.4rem'}}>DIO BANGUNAN</h2>
+                                <p style={{textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0 0 16px 0'}}>Toko Bahan Bangunan</p>
+                                
+                                <div style={{fontSize: '0.85rem', marginBottom: '16px', borderBottom: '1px dashed var(--border-color)', paddingBottom: '12px'}}>
+                                    <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>No. Faktur:</span> <span style={{fontWeight: 'bold'}}>#{transactionSuccessData.sale_id}</span></div>
+                                    <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>Tanggal:</span> <span>{new Date(transactionSuccessData.transaction_date).toLocaleString('id-ID', {dateStyle: 'short', timeStyle: 'short'})}</span></div>
+                                    <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>Kasir:</span> <span>{user.username}</span></div>
+                                    <div style={{display: 'flex', justifyContent: 'space-between'}}><span>Pelanggan:</span> <span>{transactionSuccessData.customer_name || 'Umum'}</span></div>
+                                </div>
+                                
+                                <div style={{marginBottom: '16px', borderBottom: '1px dashed var(--border-color)', paddingBottom: '8px'}}>
+                                    {transactionSuccessData.items.map((item, idx) => (
+                                        <div key={idx} style={{marginBottom: '8px', fontSize: '0.85rem'}}>
+                                            <div style={{fontWeight: 'bold', marginBottom: '4px'}}>{item.name}</div>
+                                            <div style={{display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)'}}>
+                                                <span>{item.qty} x {item.price.toLocaleString()}</span>
+                                                <span style={{color: 'var(--text-primary)', fontWeight: 'bold'}}>{(item.qty * item.price).toLocaleString()}</span>
+                                            </div>
                                         </div>
+                                    ))}
+                                </div>
+                                
+                                <div style={{fontSize: '0.9rem', marginBottom: '24px'}}>
+                                    <div style={{display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '8px'}}>
+                                        <span>TOTAL</span>
+                                        <span>Rp {transactionSuccessData.total_amount.toLocaleString()}</span>
                                     </div>
-                                ))}
-                            </div>
-                            
-                            <div style={{fontSize: '0.9rem', marginBottom: '24px'}}>
-                                <div style={{display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '8px'}}>
-                                    <span>TOTAL</span>
-                                    <span>Rp {invoiceData.total_amount.toLocaleString()}</span>
+                                    <div style={{display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)'}}>
+                                        <span>Pembayaran</span>
+                                        <span>{transactionSuccessData.payment_method === 'Cash' ? 'TUNAI' : 'KREDIT'}</span>
+                                    </div>
                                 </div>
-                                <div style={{display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)'}}>
-                                    <span>Pembayaran</span>
-                                    <span>{invoiceData.payment_method === 'Cash' ? 'TUNAI' : 'KREDIT'}</span>
+                                
+                                <div style={{textAlign: 'center', fontSize: '0.85rem'}}>
+                                    <p style={{margin: 0, fontStyle: 'italic'}}>Terima kasih atas kunjungan Anda!</p>
                                 </div>
                             </div>
                             
-                            <div style={{textAlign: 'center', fontSize: '0.85rem'}}>
-                                <p style={{margin: 0, fontStyle: 'italic'}}>Terima kasih atas kunjungan Anda!</p>
+                            <div className="no-print" style={{display: 'flex', gap: '12px', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-color)'}}>
+                                <button className="btn btn-secondary" style={{flex: 1, padding: '12px'}} onClick={() => setPrintMode('menu')}>
+                                    Kembali
+                                </button>
+                                <button className="btn btn-primary" style={{flex: 1, padding: '12px'}} onClick={() => window.print()}>
+                                    🖨️ Cetak
+                                </button>
                             </div>
                         </div>
-                        
-                        <div className="no-print" style={{display: 'flex', gap: '12px', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-color)'}}>
-                            <button className="btn btn-secondary" style={{flex: 1, padding: '12px'}} onClick={() => setInvoiceData(null)}>
-                                Tutup
-                            </button>
-                            <button className="btn btn-primary" style={{flex: 1, padding: '12px'}} onClick={() => window.print()}>
-                                🖨️ Cetak
-                            </button>
+                    )}
+
+                    {/* Layout A4 (Invoice & Surat Jalan) */}
+                    {(printMode === 'invoice' || printMode === 'surat_jalan') && (
+                        <div className="modal-content a4-container" style={{position: 'relative', width: '210mm', minHeight: '297mm', padding: '40px', background: 'white', color: 'black', margin: '20px auto', fontFamily: 'sans-serif'}} onClick={e => e.stopPropagation()}>
+                            <style>{`@media print { @page { size: A4 portrait; margin: 0; } body { background: white; } }`}</style>
+                            <div className="invoice-container">
+                                <div style={{textAlign: 'center', marginBottom: '40px'}}>
+                                    <h1 style={{margin: '0 0 8px 0', fontSize: '24px', color: 'var(--primary-color)'}}>DIO BANGUNAN</h1>
+                                    <div style={{fontSize: '12px', lineHeight: '1.5'}}>
+                                        <div>MENJUAL ALAT BANGUNAN & LISTRIK</div>
+                                        <div>ALAMAT : PASAR TARAM</div>
+                                        <div>HP/WA : 0812 7786 7616</div>
+                                        <div>0853 1407 8967</div>
+                                    </div>
+                                </div>
+
+                                <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '32px', fontSize: '13px'}}>
+                                    <div>
+                                        <table style={{borderCollapse: 'collapse'}}>
+                                            <tbody>
+                                                <tr><td style={{paddingRight: '16px'}}>Pembayaran</td><td>: {transactionSuccessData.payment_method === 'Cash' ? 'Lunas' : 'Belum Bayar'}</td></tr>
+                                                <tr><td style={{paddingRight: '16px'}}>Tanggal</td><td>: {new Date(transactionSuccessData.transaction_date).toLocaleString('id-ID', {dateStyle: 'short', timeStyle: 'short'})}</td></tr>
+                                                <tr><td style={{paddingRight: '16px'}}>Nomor</td><td>: SR{transactionSuccessData.sale_id}</td></tr>
+                                                <tr><td style={{paddingRight: '16px'}}>Kasir</td><td>: {user.username}</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div>
+                                        <table style={{borderCollapse: 'collapse'}}>
+                                            <tbody>
+                                                <tr><td style={{paddingRight: '16px'}}>Pembeli</td><td>: {transactionSuccessData.customer_name || 'Umum'}</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <table style={{width: '100%', borderCollapse: 'collapse', fontSize: '13px', marginBottom: '24px'}}>
+                                    <thead>
+                                        <tr style={{borderTop: '2px solid black', borderBottom: '1px solid black'}}>
+                                            <th style={{padding: '8px 4px', textAlign: 'left', width: '5%'}}>No</th>
+                                            <th style={{padding: '8px 4px', textAlign: 'left', width: '45%'}}>Produk</th>
+                                            {printMode === 'invoice' && <th style={{padding: '8px 4px', textAlign: 'right', width: '20%'}}>Harga</th>}
+                                            <th style={{padding: '8px 4px', textAlign: 'center', width: '10%'}}>Jumlah</th>
+                                            {printMode === 'invoice' && <th style={{padding: '8px 4px', textAlign: 'right', width: '20%'}}>Total</th>}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {transactionSuccessData.items.map((item, idx) => (
+                                            <tr key={idx}>
+                                                <td style={{padding: '6px 4px'}}>{idx + 1}</td>
+                                                <td style={{padding: '6px 4px'}}>{item.name}</td>
+                                                {printMode === 'invoice' && <td style={{padding: '6px 4px', textAlign: 'right'}}>{item.price.toLocaleString()}</td>}
+                                                <td style={{padding: '6px 4px', textAlign: 'center'}}>{item.qty}</td>
+                                                {printMode === 'invoice' && <td style={{padding: '6px 4px', textAlign: 'right'}}>{(item.qty * item.price).toLocaleString()}</td>}
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr style={{borderTop: '1px solid black'}}>
+                                            <td colSpan="5" style={{padding: '4px'}}></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+
+                                {printMode === 'invoice' && (
+                                    <div style={{display: 'flex', justifyContent: 'flex-end', fontSize: '13px', marginBottom: '48px'}}>
+                                        <table style={{width: '300px', borderCollapse: 'collapse'}}>
+                                            <tbody>
+                                                <tr>
+                                                    <td style={{padding: '4px 0'}}>TOTAL {transactionSuccessData.items.reduce((sum, i) => sum + Number(i.qty), 0)} QTY</td>
+                                                    <td style={{padding: '4px 0', textAlign: 'right'}}>{transactionSuccessData.total_amount.toLocaleString()}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{padding: '4px 0'}}>Bayar</td>
+                                                    <td style={{padding: '4px 0', textAlign: 'right'}}>{transactionSuccessData.payment_method === 'Cash' ? transactionSuccessData.total_amount.toLocaleString() : '0'}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{padding: '4px 0'}}>Kurang</td>
+                                                    <td style={{padding: '4px 0', textAlign: 'right'}}>{transactionSuccessData.payment_method === 'Cash' ? '0' : transactionSuccessData.total_amount.toLocaleString()}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                )}
+
+                                <div style={{display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginTop: printMode === 'surat_jalan' ? '64px' : '0'}}>
+                                    <div style={{textAlign: 'center'}}>
+                                        <div style={{marginBottom: '80px'}}>Hormat Kami</div>
+                                        <div>{user.username}</div>
+                                    </div>
+                                    <div style={{textAlign: 'center'}}>
+                                        <div style={{marginBottom: '80px'}}>Pembeli</div>
+                                        <div>{transactionSuccessData.customer_name || '....................'}</div>
+                                    </div>
+                                </div>
+
+                                <div style={{marginTop: '64px', fontSize: '12px'}}>
+                                    <div>TERIMA KASIH</div>
+                                    <div>KAMI SIAP MENYEDIAKAN KEBUTUHAN ANDA</div>
+                                </div>
+                            </div>
+                            
+                            <div className="no-print" style={{position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '12px'}}>
+                                <button className="btn btn-secondary" onClick={() => setPrintMode('menu')}>
+                                    Kembali
+                                </button>
+                                <button className="btn btn-primary" onClick={() => window.print()}>
+                                    🖨️ Cetak
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             )}
 
