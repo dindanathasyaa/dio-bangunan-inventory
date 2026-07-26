@@ -4,6 +4,7 @@ import axios from 'axios';
 const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
     const [products, setProducts] = useState([]);
     const [cart, setCart] = useState([]);
+    const [qtys, setQtys] = useState({});
     const [customerName, setCustomerName] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('Cash');
     const [search, setSearch] = useState('');
@@ -60,23 +61,28 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
         }
     };
 
-    const addToCart = (product) => {
+    const addToCart = (product, qtyToAdd = 1) => {
+        qtyToAdd = parseInt(qtyToAdd) || 1;
         const exist = cart.find(x => x.id === product.id);
         if (exist) {
-            if (exist.qty >= product.stock) {
+            if (exist.qty + qtyToAdd > product.stock) {
                 alert('Stok tidak mencukupi!');
                 return;
             }
-            setCart(cart.map(x => x.id === product.id ? { ...exist, qty: exist.qty + 1 } : x));
+            setCart(cart.map(x => x.id === product.id ? { ...exist, qty: exist.qty + qtyToAdd } : x));
         } else {
+            if (product.stock < qtyToAdd) {
+                alert('Stok tidak mencukupi!');
+                return;
+            }
             if (product.stock <= 0) {
                 setShowZeroStockWarning(true);
                 return;
             }
-            // we assume a base_price for profit calculation, but API might not expose it. We'll use 80% of price as mock base_price if not available from inventory endpoint.
-            const base_price = product.price ? product.price * 0.8 : 0; 
-            setCart([...cart, { ...product, qty: 1, base_price }]);
+            const base_price = product.base_price || (product.price ? product.price * 0.8 : 0); 
+            setCart([...cart, { ...product, qty: qtyToAdd, base_price }]);
         }
+        setQtys(prev => ({...prev, [product.id]: 1}));
     };
 
     const updateQty = (id, val) => {
@@ -190,14 +196,26 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                     onChange={e => setSearch(e.target.value)}
                     style={{marginBottom: '16px'}}
                 />
-                <div style={{overflowY: 'auto', flex: 1, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px'}}>
+                <div style={{overflowY: 'auto', flex: 1, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px'}}>
                     {filtered.map(p => (
-                        <div key={p.id} style={{background: 'var(--item-bg)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', cursor: 'pointer'}} onClick={() => addToCart(p)}>
-                            <div style={{fontWeight: 'bold', marginBottom: '8px'}}>{p.name}</div>
+                        <div key={p.id} style={{background: 'var(--item-bg)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column'}}>
+                            <div style={{fontWeight: 'bold', marginBottom: '4px'}}>{p.name}</div>
                             <div style={{fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '8px'}}>[{p.sku}]</div>
+                            <div style={{fontWeight: 'bold', color: 'var(--primary-color)', fontSize: '1.1rem', marginBottom: '16px'}}>
+                                Rp {parseFloat(p.price || 0).toLocaleString()}
+                            </div>
                             <div style={{marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                                <span style={{color: 'var(--primary-color)', fontWeight: 'bold'}}>Stok: {Number(p.stock)}</span>
-                                <span style={{background: 'rgba(234, 88, 12, 0.1)', padding: '4px 8px', borderRadius: '4px'}}>+ Tambah</span>
+                                <span style={{color: 'var(--text-secondary)', fontWeight: 'bold'}}>Stok: {Number(p.stock)}</span>
+                                <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                                    <input 
+                                        type="number" 
+                                        min="1"
+                                        value={qtys[p.id] || 1} 
+                                        onChange={e => setQtys({...qtys, [p.id]: e.target.value})}
+                                        style={{width: '50px', padding: '4px', borderRadius: '4px', border: '1px solid var(--border-color)', background: 'var(--bg-color)', color: 'var(--text-primary)', textAlign: 'center'}}
+                                    />
+                                    <span style={{background: 'rgba(234, 88, 12, 0.1)', color: 'var(--primary-color)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold'}} onClick={() => addToCart(p, qtys[p.id] || 1)}>+ Tambah</span>
+                                </div>
                             </div>
                         </div>
                     ))}
