@@ -157,9 +157,9 @@ const PurchaseView = ({ user, activeBranch, branches, refreshData }) => {
             {messageModal && (
                 <div className="modal-overlay" onClick={() => setMessageModal('')} style={{zIndex: 9999}}>
                     <div className="modal-content" onClick={e => e.stopPropagation()} style={{textAlign: 'center', maxWidth: '400px'}}>
-                        <h2 style={{color: 'var(--primary-color)', marginBottom: '16px'}}>Pemberitahuan</h2>
-                        <p style={{fontSize: '1.1rem', marginBottom: '24px'}}>{messageModal}</p>
-                        <button className="btn btn-primary" onClick={() => setMessageModal('')} style={{width: '100%'}}>Tutup</button>
+                        <div style={{fontSize: '3rem', color: '#4caf50', marginBottom: '16px'}}>✓</div>
+                        <p style={{fontSize: '1.2rem', marginBottom: '24px', color: '#4caf50', fontWeight: 'bold'}}>{messageModal}</p>
+                        <button className="btn" onClick={() => setMessageModal('')} style={{width: '100%', background: '#4caf50', borderColor: '#4caf50'}}>Tutup</button>
                     </div>
                 </div>
             )}
