@@ -154,21 +154,19 @@ module.exports = function(app, pool) {
             const purchase_id = purchRes.insertId;
 
             for (let item of items) {
-                let currentProductId = item.product_id;
+                let currentProductId = null;
                 
-                // If it's a new product or we don't have product_id, try finding it by SKU or insert
-                if (!currentProductId) {
-                    const [existing] = await connection.query('SELECT id FROM products WHERE sku = ?', [item.sku]);
-                    if (existing.length > 0) {
-                        currentProductId = existing[0].id;
-                    } else {
-                        // Insert new product
-                        const [insertRes] = await connection.query(
-                            'INSERT INTO products (sku, name, category_id, unit, price, base_price) VALUES (?, ?, ?, ?, ?, ?)',
-                            [item.sku, item.name, item.category_id || 1, item.unit || 'Buah', item.price || item.buy_price || 0, item.buy_price || 0]
-                        );
-                        currentProductId = insertRes.insertId;
-                    }
+                // Always look up by SKU because the frontend might send the inventory ID by mistake
+                const [existing] = await connection.query('SELECT id FROM products WHERE sku = ?', [item.sku]);
+                if (existing.length > 0) {
+                    currentProductId = existing[0].id;
+                } else {
+                    // Insert new product
+                    const [insertRes] = await connection.query(
+                        'INSERT INTO products (sku, name, category_id, unit, price, base_price) VALUES (?, ?, ?, ?, ?, ?)',
+                        [item.sku, item.name, item.category_id || 1, item.unit || 'Buah', item.price || item.buy_price || 0, item.buy_price || 0]
+                    );
+                    currentProductId = insertRes.insertId;
                 }
 
                 await connection.query(
