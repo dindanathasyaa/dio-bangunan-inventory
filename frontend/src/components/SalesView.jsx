@@ -409,6 +409,16 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                     {(printMode === 'invoice' || printMode === 'surat_jalan') && (
                         <div className="modal-content a4-container" style={{position: 'relative', width: '210mm', minHeight: '297mm', padding: '40px', background: 'white', color: 'black', margin: '20px auto', fontFamily: 'sans-serif'}} onClick={e => e.stopPropagation()}>
                             <style>{`@media print { @page { size: A4 portrait; margin: 0; } body { background: white; } }`}</style>
+                            
+                            <div className="no-print" style={{display: 'flex', justifyContent: 'flex-end', gap: '12px', marginBottom: '32px', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px'}}>
+                                <button className="btn btn-secondary" onClick={() => setPrintMode('menu')}>
+                                    Kembali
+                                </button>
+                                <button className="btn btn-primary" onClick={() => window.print()}>
+                                    🖨️ Cetak
+                                </button>
+                            </div>
+
                             <div className="invoice-container">
                                 <div style={{textAlign: 'center', marginBottom: '40px'}}>
                                     <h1 style={{margin: '0 0 8px 0', fontSize: '24px', color: 'var(--primary-color)'}}>DIO BANGUNAN</h1>
@@ -504,15 +514,6 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                     <div>TERIMA KASIH</div>
                                     <div>KAMI SIAP MENYEDIAKAN KEBUTUHAN ANDA</div>
                                 </div>
-                            </div>
-                            
-                            <div className="no-print" style={{position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '12px'}}>
-                                <button className="btn btn-secondary" onClick={() => setPrintMode('menu')}>
-                                    Kembali
-                                </button>
-                                <button className="btn btn-primary" onClick={() => window.print()}>
-                                    🖨️ Cetak
-                                </button>
                             </div>
                         </div>
                     )}
