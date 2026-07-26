@@ -37,7 +37,7 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
             await axios.post('http://localhost:5000/api/receivables/pay', {
                 receivable_id: id,
                 amount,
-                branch_id: user.role === 'MANAGER' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : 1)
+                branch_id: user.role === 'ADMIN' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : 1)
             });
             fetchData();
         } catch (error) {
@@ -51,7 +51,7 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
             await axios.post('http://localhost:5000/api/payables/pay', {
                 payable_id: id,
                 amount,
-                branch_id: user.role === 'MANAGER' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : 1)
+                branch_id: user.role === 'ADMIN' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : 1)
             });
             fetchData();
         } catch (error) {

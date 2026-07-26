@@ -112,7 +112,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
             }));
 
             await axios.post('http://localhost:5000/api/sales', {
-                branch_id: user.role === 'MANAGER' ? user.branch_id : activeBranch,
+                branch_id: user.role === 'ADMIN' ? user.branch_id : activeBranch,
                 customer_name: customerName,
                 payment_method: paymentMethod,
                 items,

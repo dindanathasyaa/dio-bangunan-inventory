@@ -65,7 +65,7 @@ const PurchaseView = ({ user, activeBranch, branches, refreshData }) => {
     }, [selectedBranch, activeBranch]);
 
     const fetchInventory = async () => {
-        const branchToFetch = user.role === 'MANAGER' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : selectedBranch);
+        const branchToFetch = user.role === 'ADMIN' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : selectedBranch);
         try {
             const res = await axios.get(`http://localhost:5000/api/inventory?branch_id=${branchToFetch}`);
             setInventory(res.data);
@@ -133,7 +133,7 @@ const PurchaseView = ({ user, activeBranch, branches, refreshData }) => {
         
         setLoading(true);
         try {
-            const branchId = user.role === 'MANAGER' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : selectedBranch);
+            const branchId = user.role === 'ADMIN' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : selectedBranch);
             await axios.post('http://localhost:5000/api/purchases', {
                 branch_id: branchId,
                 supplier_name: supplierName,

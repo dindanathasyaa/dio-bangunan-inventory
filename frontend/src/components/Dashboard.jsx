@@ -69,8 +69,8 @@ const Dashboard = ({ user, setUser }) => {
                 
                 <nav style={{display: 'flex', flexDirection: 'column', marginTop: '10px', flex: 1, overflowY: 'auto'}}>
                     <div style={{fontSize: '0.8rem', color: 'var(--text-secondary)', padding: '12px 20px', fontWeight: 'bold', letterSpacing: '1px'}}>MAIN MENU</div>
-                    <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>Control Center</Link>
-                    <Link to="/inventory" className={`nav-link ${location.pathname === '/inventory' ? 'active' : ''}`}>Data Inventory</Link>
+                    {user.role !== 'ADMIN' && <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>Control Center</Link>}
+                    {user.role !== 'ADMIN' && <Link to="/inventory" className={`nav-link ${location.pathname === '/inventory' ? 'active' : ''}`}>Data Inventory</Link>}
                     <Link to="/sales" className={`nav-link ${location.pathname === '/sales' ? 'active' : ''}`}>Penjualan (Kasir)</Link>
                     <Link to="/orders" className={`nav-link ${location.pathname === '/orders' ? 'active' : ''}`}>Order & Pengantaran</Link>
                     
@@ -98,12 +98,10 @@ const Dashboard = ({ user, setUser }) => {
                     <button className="sidebar-toggle" onClick={toggleSidebar} style={{ position: 'absolute', top: '24px', left: '24px', width: '40px', height: '40px', borderRadius: '8px', zIndex: 100 }}>☰</button>
                 )}
                 
-                {/* Branch selector moved to ControlCenter */}
-
                 <div style={{height: '100%', padding: '0 24px', paddingTop: '16px'}}>
                     <Routes>
-                        <Route path="/" element={<ControlCenter user={user} activeBranch={activeBranch} setActiveBranch={setActiveBranch} branches={branches} />} />
-                        <Route path="/inventory" element={<InventoryView inventory={inventory} refreshData={fetchData} user={user} activeBranch={activeBranch} branches={branches} />} />
+                        <Route path="/" element={user.role === 'ADMIN' ? <Navigate to="/sales" replace /> : <ControlCenter user={user} activeBranch={activeBranch} setActiveBranch={setActiveBranch} branches={branches} />} />
+                        <Route path="/inventory" element={user.role === 'ADMIN' ? <Navigate to="/sales" replace /> : <InventoryView inventory={inventory} refreshData={fetchData} user={user} activeBranch={activeBranch} branches={branches} />} />
                         <Route path="/sales" element={<SalesView user={user} activeBranch={activeBranch} setActiveBranch={setActiveBranch} branches={branches} />} />
                         <Route path="/orders" element={<OrderDeliveryView user={user} activeBranch={activeBranch} />} />
                         <Route path="/purchases" element={<PurchaseView user={user} activeBranch={activeBranch} branches={branches} refreshData={fetchData} />} />
@@ -130,7 +128,7 @@ const Dashboard = ({ user, setUser }) => {
                                 <span style={{color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'block'}}>Peran / Hak Akses</span>
                                 <strong style={{color: 'var(--text-primary)', fontSize: '1.1rem'}}>{user.role === 'OWNER' ? 'Pemilik Toko' : 'Manajer Toko'}</strong>
                             </div>
-                            {user.role === 'MANAGER' && (
+                            {user.role === 'ADMIN' && (
                                 <div>
                                     <span style={{color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'block'}}>Lokasi Cabang</span>
                                     <strong style={{color: 'var(--text-primary)', fontSize: '1.1rem'}}>Toko {user.branch_id}</strong>
@@ -360,7 +358,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
         stock: 0,
         min_stock: 5,
         max_stock: 50,
-        branch_id: user.role === 'MANAGER' ? user.branch_id : 1
+        branch_id: user.role === 'ADMIN' ? user.branch_id : 1
     });
 
     useEffect(() => {
@@ -412,7 +410,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
         try {
             await axios.post('http://localhost:5000/api/inventory', { ...newItem, unit: finalUnit, stock: lembar });
             setShowModal(false);
-            setNewItem({ sku: '', name: '', category_id: '', unit: 'Lembar', price: '', stock: 0, min_stock: 5, max_stock: 50, branch_id: user.role === 'MANAGER' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : 1) });
+            setNewItem({ sku: '', name: '', category_id: '', unit: 'Lembar', price: '', stock: 0, min_stock: 5, max_stock: 50, branch_id: user.role === 'ADMIN' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : 1) });
             setUnitType('');
             setMajemukType('');
             setMajemukMultiplier(20);
