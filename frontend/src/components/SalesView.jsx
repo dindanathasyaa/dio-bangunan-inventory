@@ -335,15 +335,14 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
 
                  {/* Modal Aksi Transaksi Sukses */}
             {transactionSuccessData && (
-                <div 
-                    className={`modal-overlay ${printMode === 'struk' ? 'print-thermal' : (printMode === 'invoice' || printMode === 'surat_jalan' ? 'print-a4' : '')}`} 
-                    style={printMode === 'menu' ? { gap: '24px', flexDirection: 'column', alignItems: 'center' } : {}}
-                    onClick={() => { if (printMode === 'menu') setTransactionSuccessData(null); }}
+                <div                      className={`modal-overlay ${printMode === 'struk' ? 'print-thermal' : (printMode === 'invoice' || printMode === 'surat_jalan' ? 'print-a4' : '')}`} 
+                      style={printMode === 'menu' ? { gap: '24px', flexDirection: 'column', alignItems: 'flex-start', paddingTop: '40px' } : {}}
+                      onClick={() => { if (printMode === 'menu') setTransactionSuccessData(null); }}
                 >
                     
                     {/* Layout Struk Thermal (Detail & Cetak) */}
                     {(printMode === 'struk' || printMode === 'menu') && (
-                        <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '24px', flexShrink: 0, maxHeight: printMode === 'menu' ? '45vh' : '90vh', overflowY: 'auto'}} onClick={e => e.stopPropagation()}>
+                        <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '24px', flexShrink: 0}} onClick={e => e.stopPropagation()}>
                             <style>{`@media print { @page { margin: 0; } body { background: white; } }`}</style>
                             <div className="invoice-container">
                                 <div style={{display: 'flex', justifyContent: 'center', marginBottom: '16px'}}>
