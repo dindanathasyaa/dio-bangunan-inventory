@@ -696,10 +696,10 @@ p {
   .print-thermal {
     box-shadow: none !important;
     border: none !important;
-    margin: 0 !important;
+    margin: 0 auto !important;
     padding: 12px !important;
-    max-width: none !important;
-    width: auto !important;
+    max-width: 80mm !important;
+    width: 100% !important;
     box-sizing: border-box !important;
   }
   .print-a4 {
