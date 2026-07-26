@@ -206,15 +206,20 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                             </div>
                             <div style={{marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                                 <span style={{color: 'var(--text-secondary)', fontWeight: 'bold'}}>Stok: {Number(p.stock)}</span>
-                                <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                                <div style={{display: 'flex', alignItems: 'stretch', gap: '8px', height: '36px'}}>
                                     <input 
                                         type="number" 
                                         min="1"
                                         value={qtys[p.id] || 1} 
                                         onChange={e => setQtys({...qtys, [p.id]: e.target.value})}
-                                        style={{width: '50px', padding: '4px', borderRadius: '4px', border: '1px solid var(--border-color)', background: 'var(--bg-color)', color: 'var(--text-primary)', textAlign: 'center'}}
+                                        style={{width: '60px', padding: '0 8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-color)', color: 'var(--text-primary)', textAlign: 'center', boxSizing: 'border-box', height: '100%', outline: 'none'}}
                                     />
-                                    <span style={{background: 'rgba(234, 88, 12, 0.1)', color: 'var(--primary-color)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold'}} onClick={() => addToCart(p, qtys[p.id] || 1)}>+ Tambah</span>
+                                    <button 
+                                        style={{background: 'rgba(234, 88, 12, 0.1)', color: 'var(--primary-color)', padding: '0 16px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', boxSizing: 'border-box', whiteSpace: 'nowrap'}} 
+                                        onClick={() => addToCart(p, qtys[p.id] || 1)}
+                                    >
+                                        + Tambah
+                                    </button>
                                 </div>
                             </div>
                         </div>
