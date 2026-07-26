@@ -216,8 +216,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                 </div>
             </div>
             <p style={{color: 'var(--text-secondary)', marginBottom: '32px'}}>Ringkasan Cepat & Pintasan Navigasi</p>
-            
-            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px', marginBottom: '24px'}}>
+            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px'}}>
                 {/* Row 1: Stock Alerts */}
                 <div className="glass-panel" style={{borderTop: '4px solid var(--danger-color)', cursor: 'pointer', transition: 'transform 0.2s', height: 'fit-content'}} onClick={() => navigate('/alert-min')} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -272,7 +271,9 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                         </div>
                     )}
                 </div>
+            </div>
 
+            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px'}}>
                 {user.role === 'OWNER' && (
                     <>
                         <div className="glass-panel" style={{borderTop: '4px solid #10b981', cursor: 'pointer', transition: 'transform 0.2s', height: 'fit-content'}} onClick={() => navigate('/cash', { state: { view: 'Receivables' } })} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
@@ -298,10 +299,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                         </div>
                     </>
                 )}
-            </div>
 
-            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px'}}>
-                {/* Row 2: Deliveries & Debt */}
                 <div className="glass-panel" style={{borderTop: '4px solid #f59e0b', cursor: 'pointer', transition: 'transform 0.2s', height: 'fit-content'}} onClick={() => navigate('/orders', { state: { view: 'DeliveryBoard' } })} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                         <div>
@@ -314,18 +312,16 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                 </div>
 
                 {user.role === 'OWNER' && (
-                    <>
-                        <div className="glass-panel" style={{borderTop: '4px solid var(--primary-color)', cursor: 'pointer', transition: 'transform 0.2s', gridColumn: '1 / -1', background: 'linear-gradient(to right, rgba(234, 88, 12, 0.1), transparent)'}} onClick={() => navigate('/cash', { state: { view: 'CashFlow' } })}>
-                            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                                <div>
-                                    <div style={{color: 'var(--text-secondary)', fontSize: '1rem', marginBottom: '8px'}}>Saldo Kas Tunai Saat Ini</div>
-                                    <div style={{fontSize: '3rem', fontWeight: 'bold', color: 'var(--primary-color)'}}>Rp {Number(summary.totalCash).toLocaleString()}</div>
-                                    <div style={{color: 'var(--text-primary)', fontSize: '1rem', marginTop: '8px'}}>Total Profit Kotor: <span style={{fontWeight: 'bold'}}>Rp {Number(summary.totalProfit).toLocaleString()}</span></div>
-                                </div>
-                                <div style={{fontSize: '4rem', opacity: 0.8}}>💰</div>
+                    <div className="glass-panel" style={{borderTop: '4px solid var(--primary-color)', cursor: 'pointer', transition: 'transform 0.2s', gridColumn: '1 / -1', background: 'linear-gradient(to right, rgba(234, 88, 12, 0.1), transparent)'}} onClick={() => navigate('/cash', { state: { view: 'CashFlow' } })}>
+                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                            <div>
+                                <div style={{color: 'var(--text-secondary)', fontSize: '1rem', marginBottom: '8px'}}>Saldo Kas Tunai Saat Ini</div>
+                                <div style={{fontSize: '3rem', fontWeight: 'bold', color: 'var(--primary-color)'}}>Rp {Number(summary.totalCash).toLocaleString()}</div>
+                                <div style={{color: 'var(--text-primary)', fontSize: '1rem', marginTop: '8px'}}>Total Profit Kotor: <span style={{fontWeight: 'bold'}}>Rp {Number(summary.totalProfit).toLocaleString()}</span></div>
                             </div>
+                            <div style={{fontSize: '4rem', opacity: 0.8}}>💰</div>
                         </div>
-                    </>
+                    </div>
                 )}
             </div>
         </div>
