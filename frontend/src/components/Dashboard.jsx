@@ -90,9 +90,11 @@ const Dashboard = ({ user, setUser }) => {
                 </nav>
                 
                 <div style={{marginTop: 'auto'}}>
-                    <div style={{display: 'flex', justifyContent: 'center', marginBottom: '16px'}}>
-                        <button className="role-badge" onClick={() => setShowSettingsModal(true)} style={{width: '100%', border: 'none', cursor: 'pointer', gap: '8px'}}>Setting</button>
-                    </div>
+                    {user.role === 'OWNER' && (
+                        <div style={{display: 'flex', justifyContent: 'center', marginBottom: '16px'}}>
+                            <button className="role-badge" onClick={() => setShowSettingsModal(true)} style={{width: '100%', border: 'none', cursor: 'pointer', gap: '8px'}}>Setting</button>
+                        </div>
+                    )}
                     <button className="btn btn-danger" style={{width: '100%'}} onClick={handleLogout}>Logout</button>
                 </div>
             </aside>
