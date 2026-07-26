@@ -325,7 +325,7 @@ app.get('/api/dss/recommendations', async (req, res) => {
                     from_branch_name: item.branch_name,
                     current_stock: item.stock,
                     suggested_qty: item.stock - item.max_stock,
-                    message: `Gudang kepenuhan! Terdapat ${Number(item.stock)} stok, melampaui batas maksimal (${item.max_stock}). Kurangi order atau adakan promo.`
+                    message: `Gudang kepenuhan! Terdapat ${Math.floor(Number(item.stock))} stok, melampaui batas maksimal (${Math.floor(item.max_stock)}). Kurangi order atau adakan promo.`
                 });
             }
         }
