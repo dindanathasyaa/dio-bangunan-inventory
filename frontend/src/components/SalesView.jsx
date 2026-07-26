@@ -353,8 +353,8 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
 
                     {/* Layout Struk Thermal (Detail & Cetak) */}
                     {printMode === 'struk' && (
-                        <div className="modal-content" style={{position: 'relative', maxWidth: '350px', padding: '24px'}} onClick={e => e.stopPropagation()}>
-                            <style>{`@media print { @page { size: 80mm auto; margin: 0; } }`}</style>
+                        <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '24px'}} onClick={e => e.stopPropagation()}>
+                            <style>{`@media print { @page { size: 80mm auto; margin: 0; } body { background: white; } }`}</style>
                             <div className="invoice-container">
                                 <h2 style={{textAlign: 'center', margin: '0 0 4px 0', fontSize: '1.4rem'}}>DIO BANGUNAN</h2>
                                 <p style={{textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0 0 16px 0'}}>Toko Bahan Bangunan</p>
@@ -407,7 +407,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
 
                     {/* Layout A4 (Invoice & Surat Jalan) */}
                     {(printMode === 'invoice' || printMode === 'surat_jalan') && (
-                        <div className="modal-content a4-container" style={{position: 'relative', width: '210mm', padding: '40px', background: 'white', color: 'black', margin: '20px auto', fontFamily: 'sans-serif'}} onClick={e => e.stopPropagation()}>
+                        <div className="modal-content a4-container print-a4" style={{position: 'relative', width: '210mm', padding: '40px', background: 'white', color: 'black', margin: '20px auto', fontFamily: 'sans-serif'}} onClick={e => e.stopPropagation()}>
                             <style>{`@media print { @page { size: A4 portrait; margin: 0; } body { background: white; } }`}</style>
                             
                             <div className="no-print" style={{display: 'flex', justifyContent: 'flex-end', gap: '12px', marginBottom: '32px', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px'}}>
