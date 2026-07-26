@@ -337,13 +337,28 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
             {transactionSuccessData && (
                 <div 
                     className={`modal-overlay ${printMode === 'struk' ? 'print-thermal' : (printMode === 'invoice' || printMode === 'surat_jalan' ? 'print-a4' : '')}`} 
-                    style={printMode === 'menu' ? { gap: '24px', flexWrap: 'wrap' } : {}}
+                    style={printMode === 'menu' ? { gap: '24px', flexDirection: 'column', alignItems: 'center' } : {}}
                     onClick={() => { if (printMode === 'menu') setTransactionSuccessData(null); }}
                 >
                     
+                    {/* Layout Struk Thermal (Detail & Cetak) */}
+                    {(printMode === 'struk' || printMode === 'menu') && (
+                        <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '24px'}} onClick={e => e.stopPropagation()}>
+                            <style>{`@media print { @page { size: 80mm auto; margin: 0; } body { background: white; } }`}</style>
+                            <div style={{background: 'var(--primary-color)', color: 'white', padding: '16px', textAlign: 'center', fontWeight: 'bold', fontSize: '1.2rem'}}>Transaksi Berhasil!</div>
+                            <div style={{display: 'flex', flexDirection: 'column'}}>
+                                <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => setPrintMode('struk')}>Detail</button>
+                                <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('struk'); setTimeout(() => window.print(), 300); }}>Cetak</button>
+                                <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('invoice'); setTimeout(() => window.print(), 300); }}>Invoice</button>
+                                <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('surat_jalan'); setTimeout(() => window.print(), 300); }}>Surat Jalan</button>
+                                <button style={{padding: '16px', border: 'none', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => setTransactionSuccessData(null)}>Close</button>
+                            )}
+                        </div>
+                    )}
+
                     {/* Menu Pilihan Aksi */}
                     {printMode === 'menu' && (
-                        <div className="modal-content no-print" style={{maxWidth: '300px', padding: 0, borderRadius: '12px', overflow: 'hidden'}} onClick={e => e.stopPropagation()}>
+                        <div className="modal-content no-print" style={{maxWidth: '300px', width: '100%', padding: 0, borderRadius: '12px', overflow: 'hidden'}} onClick={e => e.stopPropagation()}>
                             <div style={{background: 'var(--primary-color)', color: 'white', padding: '16px', textAlign: 'center', fontWeight: 'bold', fontSize: '1.2rem'}}>Transaksi Berhasil!</div>
                             <div style={{display: 'flex', flexDirection: 'column'}}>
                                 <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => setPrintMode('struk')}>Detail</button>
@@ -355,10 +370,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                         </div>
                     )}
 
-                    {/* Layout Struk Thermal (Detail & Cetak) */}
-                    {(printMode === 'struk' || printMode === 'menu') && (
-                        <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '24px'}} onClick={e => e.stopPropagation()}>
-                            <style>{`@media print { @page { size: 80mm auto; margin: 0; } body { background: white; } }`}</style>
+                    {/* Layout A4 (Invoice & Surat Jalan) */}
                             <div className="invoice-container">
                                 <h2 style={{textAlign: 'center', margin: '0 0 4px 0', fontSize: '1.4rem'}}>DIO BANGUNAN</h2>
                                 <p style={{textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0 0 16px 0'}}>Toko Bahan Bangunan</p>
