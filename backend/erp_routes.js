@@ -605,15 +605,16 @@ module.exports = function(app, pool) {
 
             // Apriori Low Stock (Top 10 best selling items that are low in stock)
             let aprioriQuery = `
-                SELECT i.id, i.name, i.stock, i.min_stock, COALESCE(SUM(si.qty), 0) as total_sold 
+                SELECT i.id, p.name, i.stock, i.min_stock, COALESCE(SUM(si.qty), 0) as total_sold 
                 FROM inventory i 
-                LEFT JOIN sale_items si ON i.id = si.product_id 
+                JOIN products p ON i.product_id = p.id
+                LEFT JOIN sale_items si ON i.product_id = si.product_id 
                 WHERE i.stock <= i.min_stock 
             `;
             if (branch_id && branch_id !== 'all') {
                 aprioriQuery += ` AND i.branch_id = ? `;
             }
-            aprioriQuery += ` GROUP BY i.id ORDER BY total_sold DESC LIMIT 10`;
+            aprioriQuery += ` GROUP BY i.id, p.name, i.stock, i.min_stock ORDER BY total_sold DESC LIMIT 10`;
             
             const [aprioriLowStock] = await pool.query(aprioriQuery, params);
 
