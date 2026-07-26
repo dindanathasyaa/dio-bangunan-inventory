@@ -726,3 +726,6 @@ p {
   }
 }
 
+
+.logo-img { mix-blend-mode: multiply; }
+
