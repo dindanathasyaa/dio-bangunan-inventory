@@ -161,7 +161,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
     if (!summary) return <div style={{padding: '32px', textAlign: 'center'}}>Memuat Control Center...</div>;
 
     return (
-        <div style={{animation: 'fadeIn 0.5s ease-out'}}>
+        <div style={{animation: 'fadeIn 0.5s ease-out', paddingBottom: '40px'}}>
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
                 <h1 style={{margin: 0}}>Control Center</h1>
                 
@@ -316,8 +316,8 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                             <div>
                                 <div style={{color: 'var(--text-secondary)', fontSize: '1rem', marginBottom: '8px'}}>Saldo Kas Tunai Saat Ini</div>
-                                <div style={{fontSize: '3rem', fontWeight: 'bold', color: 'var(--primary-color)'}}>Rp {Number(summary.totalCash).toLocaleString()}</div>
-                                <div style={{color: 'var(--text-primary)', fontSize: '1rem', marginTop: '8px'}}>Total Profit Kotor: <span style={{fontWeight: 'bold'}}>Rp {Number(summary.totalProfit).toLocaleString()}</span></div>
+                                <div style={{fontSize: '3rem', fontWeight: 'bold', color: 'var(--primary-color)'}}>Rp {Math.floor(Number(summary.totalCash)).toLocaleString()}</div>
+                                <div style={{color: 'var(--text-primary)', fontSize: '1rem', marginTop: '8px'}}>Total Profit Kotor: <span style={{fontWeight: 'bold'}}>Rp {Math.floor(Number(summary.totalProfit)).toLocaleString()}</span></div>
                             </div>
                             <div style={{fontSize: '4rem', opacity: 0.8}}>💰</div>
                         </div>
