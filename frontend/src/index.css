@@ -697,9 +697,10 @@ p {
     box-shadow: none !important;
     border: none !important;
     margin: 0 !important;
-    padding: 0 !important;
-    max-width: 100% !important;
-    width: 100% !important;
+    padding: 12px !important;
+    max-width: none !important;
+    width: auto !important;
+    box-sizing: border-box !important;
   }
   .print-a4 {
     box-shadow: none !important;
