@@ -697,8 +697,8 @@ p {
     box-shadow: none !important;
     border: none !important;
     margin: 0 auto !important;
-    padding: 12px !important;
-    max-width: 80mm !important;
+    padding: 24px !important;
+    max-width: 100% !important;
     width: 100% !important;
     box-sizing: border-box !important;
   }
