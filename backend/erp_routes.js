@@ -618,6 +618,20 @@ module.exports = function(app, pool) {
             
             const [aprioriLowStock] = await pool.query(aprioriQuery, params);
 
+            // Over Stock List (Top 10 highest surplus items)
+            let overStockQuery = `
+                SELECT i.id, p.name, i.stock, i.max_stock, (i.stock - i.max_stock) as surplus 
+                FROM inventory i 
+                JOIN products p ON i.product_id = p.id
+                WHERE i.stock > i.max_stock
+            `;
+            if (branch_id && branch_id !== 'all') {
+                overStockQuery += ` AND i.branch_id = ? `;
+            }
+            overStockQuery += ` ORDER BY surplus DESC LIMIT 10`;
+            
+            const [overStockList] = await pool.query(overStockQuery, params);
+
             res.json({
                 lowStockCount,
                 overStockCount,
@@ -626,7 +640,8 @@ module.exports = function(app, pool) {
                 totalPayables,
                 totalCash: (cashIn[0].c || 0) - (cashOut[0].c || 0),
                 totalProfit: profit,
-                aprioriLowStock
+                aprioriLowStock,
+                overStockList
             });
         } catch (error) {
             res.status(500).json({ error: error.message });

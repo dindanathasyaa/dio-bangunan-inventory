@@ -217,13 +217,13 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
             </div>
             <p style={{color: 'var(--text-secondary)', marginBottom: '32px'}}>Ringkasan Cepat & Pintasan Navigasi</p>
             
-            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px'}}>
+            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px', marginBottom: '24px'}}>
                 {/* Row 1: Stock Alerts */}
                 <div className="glass-panel" style={{borderTop: '4px solid var(--danger-color)', cursor: 'pointer', transition: 'transform 0.2s', height: 'fit-content'}} onClick={() => navigate('/alert-min')} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                         <div>
-                            <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Stok Mau Habis</div>
-                            <div style={{fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--danger-color)'}}>{summary.lowStockCount}</div>
+                            <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Stok Akan Habis</div>
+                            <div style={{fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--danger-color)'}}>{Math.floor(summary.lowStockCount)}</div>
                         </div>
                         <div style={{fontSize: '2rem'}}>📦</div>
                     </div>
@@ -238,7 +238,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                                         <span style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '75%'}}>
                                             <span style={{color: 'var(--primary-color)', marginRight: '4px'}}>#{idx + 1}</span> {item.name}
                                         </span>
-                                        <span style={{fontWeight: 'bold', color: 'var(--text-primary)', background: 'var(--danger-color)', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem'}}>Stok: {item.stock}</span>
+                                        <span style={{fontWeight: 'bold', color: 'white', background: 'var(--danger-color)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem'}}>Stok: {Math.floor(item.stock)}</span>
                                     </li>
                                 ))}
                             </ul>
@@ -246,32 +246,36 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                     )}
                 </div>
 
-                <div className="glass-panel" style={{borderTop: '4px solid var(--secondary-color)', cursor: 'pointer', transition: 'transform 0.2s'}} onClick={() => navigate('/alert-max')} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
+                <div className="glass-panel" style={{borderTop: '4px solid var(--secondary-color)', cursor: 'pointer', transition: 'transform 0.2s', height: 'fit-content'}} onClick={() => navigate('/alert-max')} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                         <div>
-                            <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Barang Overstock</div>
-                            <div style={{fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--secondary-color)'}}>{summary.overStockCount}</div>
+                            <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Stok Terlalu Banyak</div>
+                            <div style={{fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--secondary-color)'}}>{Math.floor(summary.overStockCount)}</div>
                         </div>
                         <div style={{fontSize: '2rem'}}>⚠️</div>
                     </div>
                     <div style={{color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '12px'}}>Klik untuk daftar promo diskon.</div>
-                </div>
-
-                {/* Row 2: Deliveries & Debt */}
-                <div className="glass-panel" style={{borderTop: '4px solid #f59e0b', cursor: 'pointer', transition: 'transform 0.2s'}} onClick={() => navigate('/orders', { state: { view: 'DeliveryBoard' } })} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
-                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                        <div>
-                            <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Jadwal Pengantaran</div>
-                            <div style={{fontSize: '2.5rem', fontWeight: 'bold', color: '#f59e0b'}}>{summary.pendingDeliveries}</div>
+                    
+                    {summary.overStockList && summary.overStockList.length > 0 && (
+                        <div style={{marginTop: '16px', borderTop: '1px solid var(--border-color)', paddingTop: '12px'}}>
+                            <div style={{fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--secondary-color)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em'}}>10 Terbanyak (Surplus)</div>
+                            <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
+                                {summary.overStockList.map((item, idx) => (
+                                    <li key={idx} style={{fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                        <span style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '75%'}}>
+                                            <span style={{color: 'var(--primary-color)', marginRight: '4px'}}>#{idx + 1}</span> {item.name}
+                                        </span>
+                                        <span style={{fontWeight: 'bold', color: 'white', background: 'var(--secondary-color)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem'}}>Sisa: {Math.floor(item.stock)}</span>
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
-                        <div style={{fontSize: '2rem'}}>🚚</div>
-                    </div>
-                    <div style={{color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '12px'}}>Menunggu diantar.</div>
+                    )}
                 </div>
 
                 {user.role === 'OWNER' && (
                     <>
-                        <div className="glass-panel" style={{borderTop: '4px solid #10b981', cursor: 'pointer', transition: 'transform 0.2s'}} onClick={() => navigate('/cash', { state: { view: 'Receivables' } })} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
+                        <div className="glass-panel" style={{borderTop: '4px solid #10b981', cursor: 'pointer', transition: 'transform 0.2s', height: 'fit-content'}} onClick={() => navigate('/cash', { state: { view: 'Receivables' } })} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
                             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                                 <div>
                                     <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Piutang (Pembeli Ngutang)</div>
@@ -282,7 +286,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                             <div style={{color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '12px'}}>Uang tertahan di pelanggan.</div>
                         </div>
 
-                        <div className="glass-panel" style={{borderTop: '4px solid #ef4444', cursor: 'pointer', transition: 'transform 0.2s'}} onClick={() => navigate('/cash', { state: { view: 'Payables' } })} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
+                        <div className="glass-panel" style={{borderTop: '4px solid #ef4444', cursor: 'pointer', transition: 'transform 0.2s', height: 'fit-content'}} onClick={() => navigate('/cash', { state: { view: 'Payables' } })} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
                             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                                 <div>
                                     <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Hutang Toko (Ke Supplier)</div>
@@ -292,7 +296,25 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                             </div>
                             <div style={{color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '12px'}}>Uang yang harus dibayar.</div>
                         </div>
+                    </>
+                )}
+            </div>
 
+            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px'}}>
+                {/* Row 2: Deliveries & Debt */}
+                <div className="glass-panel" style={{borderTop: '4px solid #f59e0b', cursor: 'pointer', transition: 'transform 0.2s', height: 'fit-content'}} onClick={() => navigate('/orders', { state: { view: 'DeliveryBoard' } })} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
+                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                        <div>
+                            <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Jadwal Pengantaran</div>
+                            <div style={{fontSize: '2.5rem', fontWeight: 'bold', color: '#f59e0b'}}>{summary.pendingDeliveries?.toLocaleString()}</div>
+                        </div>
+                        <div style={{fontSize: '2rem'}}>🚚</div>
+                    </div>
+                    <div style={{color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '12px'}}>Menunggu diantar.</div>
+                </div>
+
+                {user.role === 'OWNER' && (
+                    <>
                         <div className="glass-panel" style={{borderTop: '4px solid var(--primary-color)', cursor: 'pointer', transition: 'transform 0.2s', gridColumn: '1 / -1', background: 'linear-gradient(to right, rgba(234, 88, 12, 0.1), transparent)'}} onClick={() => navigate('/cash', { state: { view: 'CashFlow' } })}>
                             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                                 <div>
