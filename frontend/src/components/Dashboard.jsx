@@ -232,7 +232,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                         <div style={{marginTop: '16px', borderTop: '1px solid var(--border-color)', paddingTop: '12px'}}>
                             <div style={{fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--danger-color)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em'}}>10 Prioritas (Paling Laku)</div>
                             <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
-                                {summary.aprioriLowStock.map((item, idx) => (
+                                {[...summary.aprioriLowStock].sort((a, b) => a.stock - b.stock).map((item, idx) => (
                                     <li key={idx} style={{fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                                         <span style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '75%'}}>
                                             <span style={{color: 'var(--primary-color)', marginRight: '4px'}}>#{idx + 1}</span> {item.name}
