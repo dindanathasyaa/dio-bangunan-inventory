@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const PurchaseView = ({ user, activeBranch, branches }) => {
+const PurchaseView = ({ user, activeBranch, branches, refreshData }) => {
     const navigate = useNavigate();
     const [selectedBranch, setSelectedBranch] = useState(activeBranch !== 'all' ? activeBranch : 1);
     const [supplierName, setSupplierName] = useState('');
@@ -85,7 +85,7 @@ const PurchaseView = ({ user, activeBranch, branches }) => {
     };
 
     const addItemToCart = () => {
-        if (!newItem.sku || !newItem.name || !newItem.category_id || !unitType || !newItem.buy_price || !newItem.qty) {
+        if (!newItem.sku || !newItem.name || !newItem.category_id || !newItem.buy_price || !newItem.qty || (!unitType && !newItem.unit)) {
             return setMessageModal('Harap isi semua data barang dengan lengkap.');
         }
 
@@ -137,6 +137,7 @@ const PurchaseView = ({ user, activeBranch, branches }) => {
             setMessageModal(paymentMethod === 'Cash' ? 'Data Pembelian Tunai Berhasil Dicatat!' : 'Catatan Hutang Berhasil Disimpan!');
             setSupplierName('');
             setCart([]);
+            if (refreshData) refreshData();
         } catch (error) {
             console.error(error);
             setMessageModal('Terjadi kesalahan saat menyimpan pembelian.');
