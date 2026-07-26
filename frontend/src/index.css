@@ -124,8 +124,7 @@ p {
   flex-direction: column;
   transition: all 0.3s ease;
   height: 100vh;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   flex-shrink: 0;
 }
 
