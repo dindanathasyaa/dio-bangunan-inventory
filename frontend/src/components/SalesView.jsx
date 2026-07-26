@@ -343,7 +343,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                     
                     {/* Layout Struk Thermal (Detail & Cetak) */}
                     {(printMode === 'struk' || printMode === 'menu') && (
-                        <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '24px'}} onClick={e => e.stopPropagation()}>
+                        <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '24px', flexShrink: 0}} onClick={e => e.stopPropagation()}>
                             <style>{`@media print { @page { margin: 0; } body { background: white; } }`}</style>
                             <div className="invoice-container">
                                 <h2 style={{textAlign: 'center', margin: '0 0 4px 0', fontSize: '1.4rem'}}>DIO BANGUNAN</h2>
@@ -399,7 +399,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
 
                     {/* Menu Pilihan Aksi */}
                     {printMode === 'menu' && (
-                        <div className="modal-content no-print" style={{maxWidth: '300px', width: '100%', padding: 0, borderRadius: '12px', overflow: 'hidden'}} onClick={e => e.stopPropagation()}>
+                        <div className="modal-content no-print" style={{maxWidth: '300px', width: '100%', padding: 0, borderRadius: '12px', overflow: 'hidden', flexShrink: 0}} onClick={e => e.stopPropagation()}>
                             <div style={{background: 'var(--primary-color)', color: 'white', padding: '16px', textAlign: 'center', fontWeight: 'bold', fontSize: '1.2rem'}}>Transaksi Berhasil!</div>
                             <div style={{display: 'flex', flexDirection: 'column'}}>
                                 <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => setPrintMode('struk')}>Detail</button>
