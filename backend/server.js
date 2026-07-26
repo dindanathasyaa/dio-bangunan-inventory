@@ -63,7 +63,7 @@ app.get('/api/next-sku', async (req, res) => {
 app.get('/api/inventory', async (req, res) => {
     const branch_id = req.query.branch_id;
     let query = `
-        SELECT i.id, p.name, p.sku, c.name as category, p.unit, i.stock, i.min_stock, i.max_stock, i.branch_id, b.name as branch_name 
+        SELECT i.id, p.id as product_id, p.name, p.sku, c.name as category, p.unit, p.price, p.base_price, i.stock, i.min_stock, i.max_stock, i.branch_id, b.name as branch_name 
         FROM inventory i
         JOIN products p ON i.product_id = p.id
         LEFT JOIN categories c ON p.category_id = c.id
