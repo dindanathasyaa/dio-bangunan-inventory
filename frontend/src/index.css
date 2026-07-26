@@ -699,7 +699,7 @@ p {
     margin: 0 !important;
     padding: 0 !important;
     max-width: 100% !important;
-    width: 80mm !important;
+    width: 100% !important;
   }
   .print-a4 {
     box-shadow: none !important;
