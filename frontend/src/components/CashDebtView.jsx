@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const CashDebtView = ({ user, activeBranch, branches }) => {
+const CashDebtView = ({ user, activeBranch, setActiveBranch, branches }) => {
+    const [isBranchDropdownOpen, setIsBranchDropdownOpen] = useState(false);
     const [view, setView] = useState('CashFlow'); // CashFlow, Receivables, Payables
     const [transactions, setTransactions] = useState([]);
     const [receivables, setReceivables] = useState([]);
@@ -374,6 +375,43 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                 )}
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
                     <h1 style={{margin: 0}}>Kas, Piutang, Hutang</h1>
+                    
+                    {user?.role === 'OWNER' && user?.branch_id === null && (
+                        <div style={{display: 'flex', alignItems: 'center'}}>
+                            <span style={{fontWeight: 'bold', color: 'var(--text-secondary)', marginRight: '12px'}}>Pilih Toko:</span>
+                            <div className="custom-dropdown-container" style={{position: 'relative'}}>
+                                <div 
+                                    className={`custom-select-3d ${isBranchDropdownOpen ? 'active' : ''}`}
+                                    onClick={() => setIsBranchDropdownOpen(!isBranchDropdownOpen)}
+                                    style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', minWidth: '220px', background: 'var(--item-bg)', border: '2px solid var(--border-color)', borderRadius: '8px', padding: '10px 16px', cursor: 'pointer', color: 'var(--text-primary)'}}
+                                >
+                                    <span style={{fontWeight: 'bold'}}>{activeBranch === 'all' ? 'Semua Toko (Gabungan)' : branches.find(b => b.id.toString() === activeBranch.toString())?.name}</span>
+                                    <span style={{fontSize: '0.8rem', marginLeft: '16px'}}>▼</span>
+                                </div>
+                                {isBranchDropdownOpen && (
+                                    <div className="custom-dropdown-menu" style={{right: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000}}>
+                                        <div 
+                                            className={`custom-dropdown-item branch-dropdown-item ${activeBranch === 'all' ? 'selected' : ''}`}
+                                            onClick={() => { setActiveBranch('all'); setIsBranchDropdownOpen(false); }}
+                                            style={{fontWeight: '500'}}
+                                        >
+                                            Semua Toko (Gabungan)
+                                        </div>
+                                        {branches.map(b => (
+                                            <div 
+                                                key={b.id} 
+                                                className={`custom-dropdown-item branch-dropdown-item ${activeBranch.toString() === b.id.toString() ? 'selected' : ''}`}
+                                                onClick={() => { setActiveBranch(b.id); setIsBranchDropdownOpen(false); }}
+                                                style={{fontWeight: '500'}}
+                                            >
+                                                {b.name}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <div style={{display: 'flex', gap: '16px', marginBottom: '24px', borderBottom: '2px solid rgba(255,255,255,0.1)', paddingBottom: '16px'}}>
