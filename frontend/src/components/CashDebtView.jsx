@@ -20,6 +20,7 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
     // New Receivable Modal
     const [showNewReceivableModal, setShowNewReceivableModal] = useState(false);
     const [newReceivableForm, setNewReceivableForm] = useState({ customer_name: '', total_debt: '' });
+    const [printDebtData, setPrintDebtData] = useState(null);
 
     // Custom Toast Alert State
     const [toast, setToast] = useState({ show: false, message: '', type: 'info' });
@@ -215,6 +216,63 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
         );
     };
 
+    const renderPrintModal = () => {
+        if (!printDebtData) return null;
+        
+        const sisa = parseFloat(printDebtData.total_debt || 0) - parseFloat(printDebtData.amount_paid || 0);
+
+        return (
+            <div className="modal-overlay print-thermal" onClick={() => setPrintDebtData(null)} style={{ alignItems: 'center' }}>
+                <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '24px', flexShrink: 0}} onClick={e => e.stopPropagation()}>
+                    <style>{`@media print { @page { margin: 0; } body { background: white; } }`}</style>
+                    <div className="invoice-container">
+                        <div style={{display: 'flex', justifyContent: 'center', marginBottom: '16px'}}>
+                            <img src="/logo-transparent.png" alt="Dio Bangunan Logo" style={{maxWidth: '140px', width: '100%', mixBlendMode: 'multiply'}} />
+                        </div>
+                        
+                        <div style={{fontSize: '0.85rem', marginBottom: '16px', borderBottom: '1px dashed var(--border-color)', paddingBottom: '12px', textAlign: 'center', fontWeight: 'bold'}}>
+                            INFO TAGIHAN PIUTANG
+                        </div>
+
+                        <div style={{fontSize: '0.85rem', marginBottom: '16px', borderBottom: '1px dashed var(--border-color)', paddingBottom: '12px'}}>
+                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>Tanggal:</span> <span>{new Date().toLocaleString('id-ID', {dateStyle: 'short', timeStyle: 'short'})}</span></div>
+                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>Petugas:</span> <span>{user.username}</span></div>
+                            <div style={{display: 'flex', justifyContent: 'space-between'}}><span>Pelanggan:</span> <span style={{fontWeight: 'bold'}}>{printDebtData.customer_name}</span></div>
+                        </div>
+                        
+                        <div style={{marginBottom: '16px', borderBottom: '1px dashed var(--border-color)', paddingBottom: '8px', fontSize: '0.85rem'}}>
+                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}>
+                                <span>Total Hutang:</span>
+                                <span>Rp {parseFloat(printDebtData.total_debt).toLocaleString()}</span>
+                            </div>
+                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}>
+                                <span>Sudah Dibayar:</span>
+                                <span>Rp {parseFloat(printDebtData.amount_paid).toLocaleString()}</span>
+                            </div>
+                        </div>
+                        
+                        <div style={{fontSize: '0.9rem', marginBottom: '24px'}}>
+                            <div style={{display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.1rem'}}>
+                                <span>SISA TAGIHAN</span>
+                                <span>Rp {sisa.toLocaleString()}</span>
+                            </div>
+                        </div>
+                        
+                        <div style={{textAlign: 'center', fontSize: '0.85rem'}}>
+                            <p style={{margin: 0, fontStyle: 'italic'}}>Harap simpan struk ini sebagai bukti.</p>
+                            <p style={{margin: 0, fontStyle: 'italic', marginTop: '4px'}}>Terima kasih!</p>
+                        </div>
+                    </div>
+                    
+                    <div className="no-print" style={{display: 'flex', gap: '12px', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-color)'}}>
+                        <button className="btn btn-secondary" style={{flex: 1, padding: '12px'}} onClick={() => setPrintDebtData(null)}>Tutup</button>
+                        <button className="btn btn-primary" style={{flex: 1, padding: '12px'}} onClick={() => window.print()}>🖨️ Cetak</button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     try {
         return (
             <div style={{animation: 'fadeIn 0.5s ease-out'}}>
@@ -268,6 +326,7 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                 )}
                 {renderDetailModal()}
                 {renderPaymentModal()}
+                {renderPrintModal()}
                 {showNewReceivableModal && (
                     <div className="modal-overlay" onClick={() => setShowNewReceivableModal(false)}>
                         <div className="modal-content" onClick={e => e.stopPropagation()} style={{maxWidth: '400px', width: '90%'}}>
@@ -415,6 +474,7 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                                 <th>Sisa Tagihan</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
+                                <th>Cetak Struk</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -436,6 +496,11 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                                                 setPaymentAmount('');
                                             }}>Terima Cicilan/Pelunasan</button>
                                         )}
+                                    </td>
+                                    <td>
+                                        <button className="btn btn-outline" style={{padding: '6px 12px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px'}} onClick={() => setPrintDebtData(r)}>
+                                            🖨️ Cetak
+                                        </button>
                                     </td>
                                 </tr>
                             )})}
