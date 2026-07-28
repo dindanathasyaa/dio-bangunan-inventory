@@ -675,29 +675,29 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
             {toast.show && (
                 <div style={{
                     position: 'fixed',
-                    top: '32px',
-                    left: 'calc(50% + 140px)', /* Menghitung area tengah dari sisa layar di samping sidebar */
-                    transform: 'translateX(-50%)',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
                     backgroundColor: '#dc2626', /* Merah solid */
                     border: '2px solid #b91c1c',
                     color: '#ffffff', /* Teks putih */
-                    padding: '16px 28px',
+                    padding: '24px 32px',
                     borderRadius: '12px',
-                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.2)',
+                    boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.5)',
                     zIndex: 999999,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '12px',
+                    gap: '16px',
                     width: 'auto',
-                    minWidth: '320px',
+                    minWidth: '360px',
                     maxWidth: '90%',
-                    animation: 'slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                    animation: 'fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                     fontWeight: '700',
-                    fontSize: '0.95rem',
+                    fontSize: '1.1rem',
                     textAlign: 'center'
                 }}>
-                    <span style={{ fontSize: '1.25rem' }}>
+                    <span style={{ fontSize: '1.5rem' }}>
                         {toast.type === 'warning' ? '⚠️' : toast.type === 'error' ? '❌' : '✅'}
                     </span>
                     <div style={{ flex: 1 }}>{toast.message}</div>
@@ -708,8 +708,8 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                             border: 'none',
                             color: 'inherit',
                             cursor: 'pointer',
-                            fontSize: '1.2rem',
-                            padding: '0 4px',
+                            fontSize: '1.5rem',
+                            padding: '0 8px',
                             fontWeight: 'bold',
                             display: 'flex',
                             alignItems: 'center'
