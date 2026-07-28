@@ -676,7 +676,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 <div style={{
                     position: 'fixed',
                     top: '32px',
-                    left: '50%',
+                    left: 'calc(50% + 120px)', /* Mengompensasi lebar sidebar agar pas di tengah area konten */
                     transform: 'translateX(-50%)',
                     backgroundColor: '#dc2626', /* Merah solid */
                     border: '2px solid #b91c1c',
