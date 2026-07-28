@@ -97,8 +97,13 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
     };
 
     const updateQty = (id, val) => {
-        const v = parseFloat(val);
-        if(v <= 0) {
+        if (val === '') {
+            setCart(cart.map(x => x.id === id ? { ...x, qty: '' } : x));
+            return;
+        }
+        const v = parseInt(val);
+        if (isNaN(v) || v < 0) return;
+        if(v === 0) {
             setCart(cart.filter(x => x.id !== id));
             return;
         }
@@ -112,12 +117,13 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
 
     const checkout = async () => {
         if (activeBranch === 'all') return showToast('Pilih toko cabang spesifik terlebih dahulu untuk melakukan transaksi!', 'warning');
-        if (cart.length === 0) return showToast('Keranjang kosong!', 'warning');
+        const validCart = cart.filter(item => item.qty !== '' && parseInt(item.qty) > 0);
+        if (validCart.length === 0) return showToast('Keranjang kosong atau jumlah tidak valid!', 'warning');
         setLoading(true);
         try {
-            const items = cart.map(item => ({
+            const items = validCart.map(item => ({
                 product_id: item.product_id || item.id, 
-                qty: item.qty,
+                qty: parseInt(item.qty),
                 price: item.price || 15000, 
                 base_price: item.base_price || 10000
             }));
@@ -134,7 +140,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 sale_id: res.data.sale_id,
                 customer_name: customerName,
                 payment_method: paymentMethod,
-                items: [...cart],
+                items: [...validCart],
                 total_amount: totalAmount,
                 transaction_date: isIndirectSale && transactionDate ? transactionDate : new Date().toISOString()
             });
@@ -157,7 +163,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
         }
     };
 
-    const totalAmount = cart.reduce((acc, item) => acc + ((item.price || 15000) * item.qty), 0);
+    const totalAmount = cart.reduce((acc, item) => acc + ((item.price || 15000) * (item.qty === '' ? 0 : parseInt(item.qty))), 0);
 
     const filtered = products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.sku.includes(search));
 

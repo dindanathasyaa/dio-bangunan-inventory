@@ -74,9 +74,14 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
         setOrderItems(orderItems.filter(i => i.product_id !== product_id));
     };
 
-    const updateItemQty = (product_id, qty) => {
-        if (qty < 1) return;
-        setOrderItems(orderItems.map(i => i.product_id === product_id ? { ...i, qty: Number(qty) } : i));
+    const updateItemQty = (product_id, val) => {
+        if (val === '') {
+            setOrderItems(orderItems.map(i => i.product_id === product_id ? { ...i, qty: '' } : i));
+            return;
+        }
+        const qty = parseInt(val);
+        if (isNaN(qty) || qty < 0) return;
+        setOrderItems(orderItems.map(i => i.product_id === product_id ? { ...i, qty } : i));
     };
 
     const updateItemPrice = (product_id, price) => {
@@ -92,7 +97,11 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
         e.preventDefault();
         if (activeBranch === 'all') return showToast('Pilih toko cabang spesifik terlebih dahulu!', 'warning');
         if (!customerName || !address) return showToast('Nama dan Alamat harus diisi!', 'warning');
-        if (orderItems.length === 0) return showToast('Tambahkan minimal 1 barang ke dalam pesanan!', 'warning');
+        
+        // Remove empty or 0 qty items before submitting
+        const validItems = orderItems.filter(i => i.qty !== '' && parseInt(i.qty) > 0);
+        if (validItems.length === 0) return showToast('Tambahkan minimal 1 barang dengan jumlah valid!', 'warning');
+        
         setLoading(true);
         try {
             await axios.post('http://localhost:5000/api/orders', {
@@ -100,10 +109,10 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
                 customer_name: customerName,
                 phone,
                 address,
-                total_amount: totalAmount,
-                items: orderItems.map(i => ({
+                total_amount: validItems.reduce((sum, item) => sum + (parseInt(item.qty) * item.price), 0),
+                items: validItems.map(i => ({
                     product_id: i.product_id,
-                    qty: i.qty,
+                    qty: parseInt(i.qty),
                     price: i.price
                 }))
             });
