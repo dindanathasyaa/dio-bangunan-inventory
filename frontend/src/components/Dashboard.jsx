@@ -25,7 +25,7 @@ const Dashboard = ({ user, setUser }) => {
     const [passwordMsg, setPasswordMsg] = useState(null);
     
     // Multi-Branch State
-    const [activeBranch, setActiveBranch] = useState(user.role === 'OWNER' ? 'all' : user.branch_id);
+    const [activeBranch, setActiveBranch] = useState(user.branch_id === null ? 'all' : user.branch_id);
     const [branches, setBranches] = useState([]);
 
     useEffect(() => {
@@ -255,7 +255,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                 <h1 style={{margin: 0}}>Control Center</h1>
                 
                 <div style={{display: 'flex', gap: '16px', alignItems: 'center'}}>
-                    {user.role === 'OWNER' && (
+                    {user.role === 'OWNER' && user.branch_id === null && (
                         <div style={{display: 'flex', alignItems: 'center'}}>
                             <span style={{fontWeight: 'bold', color: 'white', marginRight: '12px', background: 'var(--secondary-color)', padding: '12px 16px', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: '100%', boxSizing: 'border-box'}}>Pilih Toko:</span>
                             <div className="custom-dropdown-container" style={{position: 'relative'}}>

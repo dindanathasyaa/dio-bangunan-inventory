@@ -23,7 +23,6 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
     const [loading, setLoading] = useState(false);
 
     const [toast, setToast] = useState({ show: false, message: '', type: 'info' });
-    const [showBranchWarning, setShowBranchWarning] = useState(false);
 
     const showToast = (message, type = 'info') => {
         setToast({ show: true, message, type });
@@ -95,10 +94,6 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
 
     const submitOrder = async (e) => {
         e.preventDefault();
-        if (activeBranch === 'all') {
-            setShowBranchWarning(true);
-            return;
-        }
         if (!customerName || !address) return showToast('Nama dan Alamat harus diisi!', 'warning');
         
         // Remove empty or 0 qty items before submitting
@@ -108,7 +103,7 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
         setLoading(true);
         try {
             await axios.post('http://localhost:5000/api/orders', {
-                branch_id: user.role === 'ADMIN' ? user.branch_id : activeBranch,
+                branch_id: user.role === 'ADMIN' ? user.branch_id : (activeBranch === 'all' ? 1 : activeBranch),
                 customer_name: customerName,
                 phone,
                 address,
@@ -145,22 +140,6 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
 
     return (
         <div style={{ animation: 'fadeIn 0.5s ease-out', display: 'flex', flexDirection: 'column', height: '100%', gap: '24px', padding: '0 24px' }}>
-            {/* Branch Warning Modal */}
-            {showBranchWarning && (
-                <div className="modal-overlay" onClick={() => setShowBranchWarning(false)} style={{backdropFilter: 'blur(8px)', alignItems: 'center'}}>
-                    <div className="modal-content" onClick={e => e.stopPropagation()} style={{maxWidth: '400px', textAlign: 'center', padding: '32px'}}>
-                        <div style={{fontSize: '4rem', marginBottom: '16px'}}>🏢</div>
-                        <h2 style={{color: 'var(--primary-color)', marginBottom: '12px'}}>Pilih Toko Cabang</h2>
-                        <p style={{color: 'var(--text-secondary)', marginBottom: '24px', fontSize: '1.1rem', lineHeight: '1.5'}}>
-                            Silakan pilih <strong>toko cabang yang spesifik</strong> terlebih dahulu di menu atas sebelum membuat orderan pengantaran.
-                        </p>
-                        <button className="btn btn-primary" style={{width: '100%', padding: '12px', fontSize: '1.1rem'}} onClick={() => setShowBranchWarning(false)}>
-                            Mengerti
-                        </button>
-                    </div>
-                </div>
-            )}
-            
             {/* Custom Toast Notification */}
             {toast.show && (
                 <div style={{
