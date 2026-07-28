@@ -22,6 +22,16 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
     const [detailDate, setDetailDate] = useState('');
     const [isBranchDropdownOpen, setIsBranchDropdownOpen] = useState(false);
     const [isPaymentDropdownOpen, setIsPaymentDropdownOpen] = useState(false);
+    
+    // Custom Toast Alert State
+    const [toast, setToast] = useState({ show: false, message: '', type: 'info' });
+
+    const showToast = (message, type = 'info') => {
+        setToast({ show: true, message, type });
+        setTimeout(() => {
+            setToast(prev => ({ ...prev, show: false }));
+        }, 4000);
+    };
 
     useEffect(() => {
         fetchProducts();
@@ -67,13 +77,13 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
         const exist = cart.find(x => x.id === product.id);
         if (exist) {
             if (exist.qty + qtyToAdd > product.stock) {
-                alert('Stok tidak mencukupi!');
+                showToast('Stok tidak mencukupi!', 'warning');
                 return;
             }
             setCart(cart.map(x => x.id === product.id ? { ...exist, qty: exist.qty + qtyToAdd } : x));
         } else {
             if (product.stock < qtyToAdd) {
-                alert('Stok tidak mencukupi!');
+                showToast('Stok tidak mencukupi!', 'warning');
                 return;
             }
             if (product.stock <= 0) {
@@ -94,15 +104,15 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
         }
         const product = products.find(p => p.id === id);
         if (v > product.stock) {
-            alert('Melebihi stok yang ada!');
+            showToast('Melebihi stok yang ada!', 'warning');
             return;
         }
         setCart(cart.map(x => x.id === id ? { ...x, qty: v } : x));
     };
 
     const checkout = async () => {
-        if (activeBranch === 'all') return alert('Pilih toko cabang spesifik terlebih dahulu untuk melakukan transaksi!');
-        if (cart.length === 0) return alert('Keranjang kosong!');
+        if (activeBranch === 'all') return showToast('Pilih toko cabang spesifik terlebih dahulu untuk melakukan transaksi!', 'warning');
+        if (cart.length === 0) return showToast('Keranjang kosong!', 'warning');
         setLoading(true);
         try {
             const items = cart.map(item => ({
@@ -137,7 +147,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
             fetchProducts();
         } catch (error) {
             console.error(error);
-            alert('Terjadi kesalahan saat transaksi.');
+            showToast('Terjadi kesalahan saat transaksi.', 'error');
         } finally {
             setLoading(false);
         }
@@ -659,6 +669,51 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                             </table>
                         </div>
                     </div>
+                </div>
+            )}
+            {/* Custom Toast Notification */}
+            {toast.show && (
+                <div style={{
+                    position: 'fixed',
+                    top: '24px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    backgroundColor: toast.type === 'warning' ? '#fffbeb' : toast.type === 'error' ? '#fef2f2' : '#f0fdf4',
+                    border: `2px solid ${toast.type === 'warning' ? '#d97706' : toast.type === 'error' ? '#dc2626' : '#16a34a'}`,
+                    color: toast.type === 'warning' ? '#b45309' : toast.type === 'error' ? '#991b1b' : '#166534',
+                    padding: '16px 24px',
+                    borderRadius: '12px',
+                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+                    zIndex: 9999,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    minWidth: '320px',
+                    maxWidth: '90%',
+                    animation: 'slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                    fontWeight: '600',
+                    fontSize: '0.95rem'
+                }}>
+                    <span style={{ fontSize: '1.25rem' }}>
+                        {toast.type === 'warning' ? '⚠️' : toast.type === 'error' ? '❌' : '✅'}
+                    </span>
+                    <div style={{ flex: 1 }}>{toast.message}</div>
+                    <button 
+                        onClick={() => setToast(prev => ({ ...prev, show: false }))} 
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            color: 'inherit',
+                            cursor: 'pointer',
+                            fontSize: '1.2rem',
+                            padding: '0 4px',
+                            fontWeight: 'bold',
+                            display: 'flex',
+                            alignItems: 'center'
+                        }}
+                    >
+                        ✕
+                    </button>
                 </div>
             )}
         </div>
