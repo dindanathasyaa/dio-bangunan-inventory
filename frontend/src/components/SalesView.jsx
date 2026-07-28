@@ -24,13 +24,15 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
     const [isPaymentDropdownOpen, setIsPaymentDropdownOpen] = useState(false);
     
     // Custom Toast Alert State
-    const [toast, setToast] = useState({ show: false, message: '', type: 'info' });
+    const [toast, setToast] = useState({ show: false, message: '', type: 'info', onClose: null });
 
-    const showToast = (message, type = 'info') => {
-        setToast({ show: true, message, type });
-        setTimeout(() => {
-            setToast(prev => ({ ...prev, show: false }));
-        }, 4000);
+    const showToast = (message, type = 'info', onClose = null) => {
+        setToast({ show: true, message, type, onClose });
+        if (!onClose) {
+            setTimeout(() => {
+                setToast(prev => ({ ...prev, show: false }));
+            }, 4000);
+        }
     };
 
     useEffect(() => {
@@ -135,19 +137,21 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 transaction_date: isIndirectSale && transactionDate ? transactionDate : null
             });
 
-            setTransactionSuccessData({
-                sale_id: res.data.sale_id,
-                customer_name: customerName,
-                payment_method: paymentMethod,
-                items: [...validCart],
-                total_amount: totalAmount,
-                transaction_date: isIndirectSale && transactionDate ? transactionDate : new Date().toISOString()
+            showToast('Transaksi Berhasil!', 'success', () => {
+                setTransactionSuccessData({
+                    sale_id: res.data.sale_id,
+                    customer_name: customerName,
+                    payment_method: paymentMethod,
+                    items: [...validCart],
+                    total_amount: totalAmount,
+                    transaction_date: isIndirectSale && transactionDate ? transactionDate : new Date().toISOString()
+                });
+                if (paymentMethod === 'Kredit') {
+                    setPrintMode('kredit_success');
+                } else {
+                    setPrintMode('menu');
+                }
             });
-            if (paymentMethod === 'Kredit') {
-                setPrintMode('kredit_success');
-            } else {
-                setPrintMode('menu');
-            }
 
             setCart([]);
             setCustomerName('');
@@ -697,7 +701,10 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 </div>
             )}
             {toast.show && (
-                <div className="modal-overlay" onClick={() => setToast(prev => ({ ...prev, show: false }))} style={{backdropFilter: 'blur(8px)', alignItems: 'center', zIndex: 999999}}>
+                <div className="modal-overlay" onClick={() => {
+                    if (toast.onClose) toast.onClose();
+                    setToast(prev => ({ ...prev, show: false, onClose: null }));
+                }} style={{backdropFilter: 'blur(8px)', alignItems: 'center', zIndex: 999999}}>
                     <div className="modal-content" onClick={e => e.stopPropagation()} style={{
                         backgroundColor: toast.type === 'success' ? '#10b981' : toast.type === 'warning' ? '#f59e0b' : '#dc2626',
                         border: toast.type === 'success' ? '2px solid #059669' : toast.type === 'warning' ? '2px solid #d97706' : '2px solid #b91c1c',
@@ -720,7 +727,10 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                         </div>
                         <h2 style={{ margin: 0, fontWeight: '700', fontSize: '1.5rem', color: 'white' }}>{toast.message}</h2>
                         <button 
-                            onClick={() => setToast(prev => ({ ...prev, show: false }))} 
+                            onClick={() => {
+                                if (toast.onClose) toast.onClose();
+                                setToast(prev => ({ ...prev, show: false, onClose: null }));
+                            }} 
                             style={{
                                 background: 'rgba(255, 255, 255, 0.2)',
                                 border: '1px solid rgba(255, 255, 255, 0.5)',
