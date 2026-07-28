@@ -675,24 +675,26 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
             {toast.show && (
                 <div style={{
                     position: 'fixed',
-                    top: '24px',
+                    top: '32px',
                     left: '50%',
                     transform: 'translateX(-50%)',
-                    backgroundColor: toast.type === 'warning' ? '#fffbeb' : toast.type === 'error' ? '#fef2f2' : '#f0fdf4',
-                    border: `2px solid ${toast.type === 'warning' ? '#d97706' : toast.type === 'error' ? '#dc2626' : '#16a34a'}`,
-                    color: toast.type === 'warning' ? '#b45309' : toast.type === 'error' ? '#991b1b' : '#166534',
-                    padding: '16px 24px',
+                    backgroundColor: '#dc2626', /* Merah solid */
+                    border: '2px solid #b91c1c',
+                    color: '#ffffff', /* Teks putih agar kontras */
+                    padding: '16px 28px',
                     borderRadius: '12px',
-                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
-                    zIndex: 9999,
+                    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.2)',
+                    zIndex: 99999,
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '12px',
-                    minWidth: '320px',
+                    justifyContent: 'center',
+                    gap: '16px',
+                    minWidth: '400px',
                     maxWidth: '90%',
                     animation: 'slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                    fontWeight: '600',
-                    fontSize: '0.95rem'
+                    fontWeight: '700',
+                    fontSize: '1rem',
+                    textAlign: 'center'
                 }}>
                     <span style={{ fontSize: '1.25rem' }}>
                         {toast.type === 'warning' ? '⚠️' : toast.type === 'error' ? '❌' : '✅'}
