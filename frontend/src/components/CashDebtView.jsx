@@ -147,8 +147,14 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
     const kasMasuk = filteredTransactions.filter(t => t?.type === 'Masuk');
     const kasKeluar = filteredTransactions.filter(t => t?.type === 'Keluar');
 
-    const renderPaymentModal = () => {
-        if (!paymentModalData) return null;
+    const renderPaymentModal = () => {        if (!paymentModalData) return null;
+        
+        // Hitung sisa hutang yang belum dibayar
+        const selectedItem = paymentModalData.type === 'Receivable' 
+            ? receivables.find(r => r.id === paymentModalData.id)
+            : payables.find(p => p.id === paymentModalData.id);
+        const maxAmount = selectedItem ? (parseFloat(selectedItem.total_debt) - parseFloat(selectedItem.amount_paid || 0)) : 0;
+
         return (
             <div className="modal-overlay" onClick={() => setPaymentModalData(null)}>
                 <div className="modal-content" onClick={e => e.stopPropagation()} style={{maxWidth: '400px', width: '90%'}}>
@@ -157,8 +163,11 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                         <button className="btn-icon" onClick={() => setPaymentModalData(null)}>✕</button>
                     </div>
                     
-                    <p style={{marginBottom: '16px'}}>
+                    <p style={{marginBottom: '8px'}}>
                         Masukkan nominal pembayaran {paymentModalData.type === 'Receivable' ? 'untuk' : 'ke'} <strong>{paymentModalData.name}</strong>:
+                    </p>
+                    <p style={{fontSize: '0.9rem', color: 'var(--danger-color)', marginBottom: '16px', fontWeight: 'bold'}}>
+                        Sisa Tagihan: Rp {maxAmount.toLocaleString()}
                     </p>
 
                     <input 
@@ -166,7 +175,7 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                         className="input-field" 
                         value={paymentAmount}
                         onChange={e => setPaymentAmount(e.target.value)}
-                        placeholder="Rp 0"
+                        placeholder={`Maks. Rp ${maxAmount.toLocaleString()}`}
                         autoFocus
                     />
 
@@ -175,6 +184,10 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                         <button className="btn btn-primary" onClick={() => {
                             const amt = parseFloat(paymentAmount);
                             if (amt && !isNaN(amt) && amt > 0) {
+                                if (amt > maxAmount) {
+                                    alert(`Nominal pembayaran melebihi sisa tagihan (Maksimal Rp ${maxAmount.toLocaleString()})`);
+                                    return;
+                                }
                                 if (paymentModalData.type === 'Receivable') {
                                     handlePayReceivable(paymentModalData.id, amt);
                                 } else {
