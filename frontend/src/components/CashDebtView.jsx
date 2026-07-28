@@ -123,6 +123,7 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                                         <th>Nama Barang</th>
                                         <th>Jumlah</th>
                                         <th>Harga Satuan</th>
+                                        <th style={{textAlign: 'right'}}>Subtotal</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -130,10 +131,21 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                                         <tr key={idx}>
                                             <td>{item.product_name}</td>
                                             <td>{item.qty} {item.unit}</td>
-                                            <td>Rp {parseFloat(item.price || item.buy_price || 0).toLocaleString()}</td>
+                                            <td>Rp {parseFloat(item.price || item.buy_price || 0).toLocaleString('en-US')}</td>
+                                            <td style={{textAlign: 'right', fontWeight: 'bold'}}>
+                                                Rp {parseFloat(item.qty * (item.price || item.buy_price || 0)).toLocaleString('en-US')}
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
+                                <tfoot style={{position: 'sticky', bottom: 0, background: 'var(--panel-bg)', zIndex: 1, borderTop: '2px solid var(--border-color)'}}>
+                                    <tr>
+                                        <td colSpan="3" style={{textAlign: 'right', fontWeight: 'bold'}}>Total Keseluruhan:</td>
+                                        <td style={{textAlign: 'right', fontWeight: 'bold', color: 'var(--primary-color)'}}>
+                                            Rp {items.reduce((acc, item) => acc + (item.qty * (item.price || item.buy_price || 0)), 0).toLocaleString('en-US')}
+                                        </td>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     ) : (
