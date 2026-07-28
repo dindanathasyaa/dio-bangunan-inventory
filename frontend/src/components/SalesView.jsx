@@ -406,7 +406,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                 <div style={{fontSize: '0.9rem', marginBottom: '24px'}}>
                                     <div style={{display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '8px'}}>
                                         <span>TOTAL</span>
-                                        <span>Rp {transactionSuccessData.total_amount.toLocaleString()}</span>
+                                        <span>Rp {Number(transactionSuccessData.total_amount).toLocaleString('en-US')}</span>
                                     </div>
                                     <div style={{display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)'}}>
                                         <span>Pembayaran</span>
@@ -527,15 +527,15 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                             <tbody>
                                                 <tr>
                                                     <td style={{padding: '4px 0'}}>TOTAL {transactionSuccessData.items.reduce((sum, i) => sum + Number(i.qty), 0)} QTY</td>
-                                                    <td style={{padding: '4px 0', textAlign: 'right'}}>{transactionSuccessData.total_amount.toLocaleString()}</td>
+                                                    <td style={{padding: '4px 0', textAlign: 'right'}}>{Number(transactionSuccessData.total_amount).toLocaleString('en-US')}</td>
                                                 </tr>
                                                 <tr>
                                                     <td style={{padding: '4px 0'}}>Bayar</td>
-                                                    <td style={{padding: '4px 0', textAlign: 'right'}}>{transactionSuccessData.payment_method === 'Cash' ? transactionSuccessData.total_amount.toLocaleString() : '0'}</td>
+                                                    <td style={{padding: '4px 0', textAlign: 'right'}}>{transactionSuccessData.payment_method === 'Cash' ? Number(transactionSuccessData.total_amount).toLocaleString('en-US') : '0'}</td>
                                                 </tr>
                                                 <tr>
                                                     <td style={{padding: '4px 0'}}>Kurang</td>
-                                                    <td style={{padding: '4px 0', textAlign: 'right'}}>{transactionSuccessData.payment_method === 'Cash' ? '0' : transactionSuccessData.total_amount.toLocaleString()}</td>
+                                                    <td style={{padding: '4px 0', textAlign: 'right'}}>{transactionSuccessData.payment_method === 'Cash' ? '0' : Number(transactionSuccessData.total_amount).toLocaleString('en-US')}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
