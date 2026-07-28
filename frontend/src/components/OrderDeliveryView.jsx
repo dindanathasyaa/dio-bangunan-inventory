@@ -23,6 +23,7 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
     const [loading, setLoading] = useState(false);
 
     const [toast, setToast] = useState({ show: false, message: '', type: 'info' });
+    const [driverPrompt, setDriverPrompt] = useState({ show: false, deliveryId: null, newStatus: '', currentDriver: '' });
 
     const showToast = (message, type = 'info') => {
         setToast({ show: true, message, type });
@@ -126,12 +127,24 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
         }
     };
 
-    const updateDeliveryStatus = async (id, newStatus, currentDriver) => {
-        const driver = prompt("Masukkan Nama Sopir/Kurir:", currentDriver || '');
-        if (driver === null) return;
+    const updateDeliveryStatus = (id, newStatus, currentDriver) => {
+        setDriverPrompt({ show: true, deliveryId: id, newStatus, currentDriver: currentDriver || '' });
+    };
+
+    const submitDriverUpdate = async (e) => {
+        e.preventDefault();
+        if (!driverPrompt.currentDriver.trim()) {
+            showToast('Nama sopir/kurir tidak boleh kosong!', 'warning');
+            return;
+        }
         try {
-            await axios.put(`http://localhost:5000/api/deliveries/${id}`, { driver_name: driver, status: newStatus });
+            await axios.put(`http://localhost:5000/api/deliveries/${driverPrompt.deliveryId}`, { 
+                driver_name: driverPrompt.currentDriver, 
+                status: driverPrompt.newStatus 
+            });
             fetchData();
+            setDriverPrompt({ show: false, deliveryId: null, newStatus: '', currentDriver: '' });
+            showToast('Status pengantaran berhasil diupdate!', 'success');
         } catch (error) {
             console.error(error);
             showToast('Gagal update status pengantaran', 'error');
@@ -181,6 +194,34 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
                         >
                             Tutup
                         </button>
+                    </div>
+                </div>
+            )}
+            
+            {/* Driver Name Prompt Modal */}
+            {driverPrompt.show && (
+                <div className="modal-overlay" onClick={() => setDriverPrompt({ ...driverPrompt, show: false })}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()} style={{maxWidth: '450px'}}>
+                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
+                            <h2>🚚 Masukkan Nama Sopir/Kurir</h2>
+                            <button className="btn-icon" onClick={() => setDriverPrompt({ ...driverPrompt, show: false })}>✕</button>
+                        </div>
+                        <form onSubmit={submitDriverUpdate}>
+                            <div className="form-group" style={{marginBottom: '24px'}}>
+                                <input 
+                                    type="text" 
+                                    className="input-field" 
+                                    placeholder="Ketik nama sopir atau kurir..."
+                                    value={driverPrompt.currentDriver}
+                                    onChange={e => setDriverPrompt({...driverPrompt, currentDriver: e.target.value})}
+                                    autoFocus
+                                />
+                            </div>
+                            <div style={{display: 'flex', gap: '12px', justifyContent: 'flex-end'}}>
+                                <button type="button" className="btn btn-secondary" onClick={() => setDriverPrompt({ ...driverPrompt, show: false })}>Batal</button>
+                                <button type="submit" className="btn btn-primary" style={{padding: '12px 24px', fontWeight: 'bold'}}>Simpan & Update Status</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             )}
