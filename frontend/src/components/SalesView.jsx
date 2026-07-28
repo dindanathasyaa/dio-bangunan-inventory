@@ -138,7 +138,11 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 total_amount: totalAmount,
                 transaction_date: isIndirectSale && transactionDate ? transactionDate : new Date().toISOString()
             });
-            setPrintMode('menu');
+            if (paymentMethod === 'Kredit') {
+                setPrintMode('kredit_success');
+            } else {
+                setPrintMode('menu');
+            }
 
             setCart([]);
             setCustomerName('');
@@ -383,11 +387,25 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
 
                  {/* Modal Aksi Transaksi Sukses */}
             {transactionSuccessData && (
-                <div                      className={`modal-overlay ${printMode === 'struk' ? 'print-thermal' : (printMode === 'invoice' || printMode === 'surat_jalan' ? 'print-a4' : '')}`} 
-                      style={printMode === 'menu' ? { gap: '24px', flexDirection: 'column', alignItems: 'flex-start', paddingTop: '40px' } : {}}
-                      onClick={() => { if (printMode === 'menu') setTransactionSuccessData(null); }}
+                <div className={`modal-overlay ${printMode === 'struk' ? 'print-thermal' : (printMode === 'invoice' || printMode === 'surat_jalan' ? 'print-a4' : '')}`} 
+                      style={(printMode === 'menu' || printMode === 'kredit_success') ? { gap: '24px' } : {}}
+                      onClick={() => { if (printMode === 'menu' || printMode === 'kredit_success') setTransactionSuccessData(null); }}
                 >
                     
+                    {/* Layout Notifikasi Hutang */}
+                    {printMode === 'kredit_success' && (
+                        <div className="modal-content no-print" style={{maxWidth: '450px', width: '100%', padding: '32px', textAlign: 'center', flexShrink: 0, borderTop: '6px solid var(--primary-color)'}} onClick={e => e.stopPropagation()}>
+                            <div style={{fontSize: '4rem', marginBottom: '16px'}}>📝</div>
+                            <h2 style={{color: 'var(--primary-color)', marginBottom: '16px'}}>Transaksi Masuk Piutang</h2>
+                            <p style={{color: 'var(--text-secondary)', marginBottom: '32px', fontSize: '1.1rem', lineHeight: '1.5'}}>
+                                Pembayaran dengan metode <strong>Kredit/Hutang</strong> berhasil dicatat. Transaksi ini telah masuk ke dalam <strong>Daftar Piutang Pembeli</strong> atas nama <strong>{transactionSuccessData.customer_name || 'Umum'}</strong>.
+                            </p>
+                            <button className="btn btn-primary" style={{width: '100%', padding: '14px', fontSize: '1.1rem'}} onClick={() => setPrintMode('menu')}>
+                                Lanjutkan ke Cetak Struk
+                            </button>
+                        </div>
+                    )}
+
                     {/* Layout Struk Thermal (Detail & Cetak) */}
                     {(printMode === 'struk' || printMode === 'menu') && (
                         <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '24px', flexShrink: 0}} onClick={e => e.stopPropagation()}>
