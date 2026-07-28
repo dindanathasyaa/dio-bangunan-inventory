@@ -140,52 +140,48 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
 
     return (
         <div style={{ animation: 'fadeIn 0.5s ease-out', display: 'flex', flexDirection: 'column', height: '100%', gap: '24px', padding: '0 24px' }}>
-            {/* Custom Toast Notification */}
             {toast.show && (
-                <div style={{
-                    position: 'fixed',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    backgroundColor: toast.type === 'success' ? '#10b981' : toast.type === 'warning' ? '#f59e0b' : '#dc2626',
-                    border: toast.type === 'success' ? '2px solid #059669' : toast.type === 'warning' ? '2px solid #d97706' : '2px solid #b91c1c',
-                    color: '#ffffff',
-                    padding: '24px 32px',
-                    borderRadius: '12px',
-                    boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.5)',
-                    zIndex: 999999,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '16px',
-                    width: 'auto',
-                    minWidth: '360px',
-                    maxWidth: '90%',
-                    animation: 'fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                    fontWeight: '700',
-                    fontSize: '1.1rem',
-                    textAlign: 'center'
-                }}>
-                    <span style={{ fontSize: '1.5rem' }}>
-                        {toast.type === 'warning' ? '⚠️' : toast.type === 'error' ? '❌' : '✅'}
-                    </span>
-                    <div style={{ flex: 1 }}>{toast.message}</div>
-                    <button 
-                        onClick={() => setToast(prev => ({ ...prev, show: false }))} 
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            color: 'inherit',
-                            cursor: 'pointer',
-                            fontSize: '1.5rem',
-                            padding: '0 8px',
-                            fontWeight: 'bold',
-                            display: 'flex',
-                            alignItems: 'center'
-                        }}
-                    >
-                        ✕
-                    </button>
+                <div className="modal-overlay" onClick={() => setToast(prev => ({ ...prev, show: false }))} style={{backdropFilter: 'blur(8px)', alignItems: 'center', zIndex: 999999}}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()} style={{
+                        backgroundColor: toast.type === 'success' ? '#10b981' : toast.type === 'warning' ? '#f59e0b' : '#dc2626',
+                        border: toast.type === 'success' ? '2px solid #059669' : toast.type === 'warning' ? '2px solid #d97706' : '2px solid #b91c1c',
+                        color: '#ffffff',
+                        padding: '32px 48px',
+                        borderRadius: '16px',
+                        boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.5)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '24px',
+                        maxWidth: '500px',
+                        width: '90%',
+                        animation: 'fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        textAlign: 'center'
+                    }}>
+                        <div style={{ fontSize: '5rem', lineHeight: '1' }}>
+                            {toast.type === 'warning' ? '⚠️' : toast.type === 'error' ? '❌' : '✅'}
+                        </div>
+                        <h2 style={{ margin: 0, fontWeight: '700', fontSize: '1.5rem', color: 'white' }}>{toast.message}</h2>
+                        <button 
+                            onClick={() => setToast(prev => ({ ...prev, show: false }))} 
+                            style={{
+                                background: 'rgba(255, 255, 255, 0.2)',
+                                border: '1px solid rgba(255, 255, 255, 0.5)',
+                                color: 'white',
+                                cursor: 'pointer',
+                                fontSize: '1.2rem',
+                                fontWeight: 'bold',
+                                padding: '12px 32px',
+                                borderRadius: '8px',
+                                width: '100%',
+                                marginTop: '8px',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            Tutup
+                        </button>
+                    </div>
                 </div>
             )}
             {/* Header */}
