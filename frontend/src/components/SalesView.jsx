@@ -157,6 +157,44 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
 
     const filtered = products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.sku.includes(search));
 
+    if (user.role === 'OWNER' && activeBranch === 'all') {
+        return (
+            <div style={{animation: 'fadeIn 0.5s ease-out', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%'}}>
+                <div className="glass-panel" style={{padding: '48px', textAlign: 'center', maxWidth: '600px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                    <div style={{fontSize: '5rem', marginBottom: '24px'}}>🏪</div>
+                    <h2 style={{color: 'var(--primary-color)', marginBottom: '16px', fontSize: '2rem'}}>Pilih Toko Terlebih Dahulu</h2>
+                    <p style={{color: 'var(--text-secondary)', fontSize: '1.2rem', marginBottom: '40px', lineHeight: '1.6'}}>
+                        Untuk melakukan transaksi penjualan, Anda harus memilih toko cabang spesifik terlebih dahulu.
+                    </p>
+                    <div className="custom-dropdown-container" style={{position: 'relative', width: '300px'}}>
+                        <div 
+                            className={`custom-select-3d ${isBranchDropdownOpen ? 'active' : ''}`}
+                            onClick={() => setIsBranchDropdownOpen(!isBranchDropdownOpen)}
+                            style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '12px', padding: '16px 24px', cursor: 'pointer', fontSize: '1.2rem', fontWeight: 'bold', boxShadow: '0 10px 20px -10px var(--primary-color)'}}
+                        >
+                            <span>Pilih Toko...</span>
+                            <span style={{fontSize: '1rem'}}>▼</span>
+                        </div>
+                        {isBranchDropdownOpen && (
+                            <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '12px', border: '1px solid var(--border-color)', zIndex: 1000, position: 'absolute', background: 'var(--panel-bg)', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 15px 35px rgba(0,0,0,0.3)'}}>
+                                {branches?.map(b => (
+                                    <div 
+                                        key={b.id} 
+                                        className="custom-dropdown-item branch-dropdown-item"
+                                        onClick={() => { setActiveBranch(b.id); setIsBranchDropdownOpen(false); }}
+                                        style={{padding: '16px 24px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1.1rem', textAlign: 'left', borderBottom: '1px solid var(--border-color)'}}
+                                    >
+                                        🏢 {b.name}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div style={{animation: 'fadeIn 0.5s ease-out', display: 'flex', gap: '24px', height: '100%', overflowX: 'hidden'}}>
             {/* Kiri: Daftar Produk */}
