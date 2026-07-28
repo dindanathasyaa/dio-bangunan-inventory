@@ -676,7 +676,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 <div style={{
                     position: 'fixed',
                     top: '32px',
-                    left: 'calc(50% + 120px)', /* Geser ke tengah area konten (50% layar + kompensasi setengah sidebar) */
+                    left: 'calc(50% + 140px)', /* Menghitung area tengah dari sisa layar di samping sidebar */
                     transform: 'translateX(-50%)',
                     backgroundColor: '#dc2626', /* Merah solid */
                     border: '2px solid #b91c1c',
