@@ -21,6 +21,16 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
     const [showNewReceivableModal, setShowNewReceivableModal] = useState(false);
     const [newReceivableForm, setNewReceivableForm] = useState({ customer_name: '', total_debt: '' });
 
+    // Custom Toast Alert State
+    const [toast, setToast] = useState({ show: false, message: '', type: 'info' });
+
+    const showToast = (message, type = 'info') => {
+        setToast({ show: true, message, type });
+        setTimeout(() => {
+            setToast(prev => ({ ...prev, show: false }));
+        }, 4000);
+    };
+
     useEffect(() => {
         fetchData();
     }, [activeBranch]);
@@ -42,7 +52,7 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
             fetchData();
         } catch (error) {
             console.error(error);
-            alert("Gagal memproses pembayaran");
+            showToast("Gagal memproses pembayaran", "error");
         }
     };
 
@@ -56,7 +66,7 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
             fetchData();
         } catch (error) {
             console.error(error);
-            alert("Gagal memproses pembayaran");
+            showToast("Gagal memproses pembayaran", "error");
         }
     };
 
@@ -69,7 +79,7 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
             fetchData();
         } catch (error) {
             console.error(error);
-            alert("Gagal menambahkan piutang baru");
+            showToast("Gagal menambahkan piutang baru", "error");
         }
     };
 
@@ -80,7 +90,7 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
             setShowDetailModal(true);
         } catch (error) {
             console.error(error);
-            alert("Gagal memuat detail transaksi.");
+            showToast("Gagal memuat detail transaksi.", "error");
         }
     };
 
@@ -185,7 +195,7 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                             const amt = parseFloat(paymentAmount);
                             if (amt && !isNaN(amt) && amt > 0) {
                                 if (amt > maxAmount) {
-                                    alert(`Nominal pembayaran melebihi sisa tagihan (Maksimal Rp ${maxAmount.toLocaleString()})`);
+                                    showToast(`Nominal pembayaran melebihi sisa tagihan (Maksimal Rp ${maxAmount.toLocaleString()})`, "error");
                                     return;
                                 }
                                 if (paymentModalData.type === 'Receivable') {
@@ -196,7 +206,7 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
                                 setPaymentModalData(null);
                                 setPaymentAmount('');
                             } else {
-                                alert("Nominal tidak valid");
+                                showToast("Nominal tidak valid", "error");
                             }
                         }}>Simpan</button>
                     </div>
@@ -208,6 +218,54 @@ const CashDebtView = ({ user, activeBranch, branches }) => {
     try {
         return (
             <div style={{animation: 'fadeIn 0.5s ease-out'}}>
+                {/* Custom Toast Notification */}
+                {toast.show && (
+                    <div style={{
+                        position: 'fixed',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        backgroundColor: toast.type === 'success' ? '#10b981' : '#dc2626',
+                        border: toast.type === 'success' ? '2px solid #059669' : '2px solid #b91c1c',
+                        color: '#ffffff',
+                        padding: '24px 32px',
+                        borderRadius: '12px',
+                        boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.5)',
+                        zIndex: 999999,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '16px',
+                        width: 'auto',
+                        minWidth: '360px',
+                        maxWidth: '90%',
+                        animation: 'fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        fontWeight: '700',
+                        fontSize: '1.1rem',
+                        textAlign: 'center'
+                    }}>
+                        <span style={{ fontSize: '1.5rem' }}>
+                            {toast.type === 'warning' ? '⚠️' : toast.type === 'error' ? '❌' : '✅'}
+                        </span>
+                        <div style={{ flex: 1 }}>{toast.message}</div>
+                        <button 
+                            onClick={() => setToast(prev => ({ ...prev, show: false }))} 
+                            style={{
+                                background: 'none',
+                                border: 'none',
+                                color: 'inherit',
+                                cursor: 'pointer',
+                                fontSize: '1.5rem',
+                                padding: '0 8px',
+                                fontWeight: 'bold',
+                                display: 'flex',
+                                alignItems: 'center'
+                            }}
+                        >
+                            ✕
+                        </button>
+                    </div>
+                )}
                 {renderDetailModal()}
                 {renderPaymentModal()}
                 {showNewReceivableModal && (
