@@ -22,6 +22,16 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
     const [orderItems, setOrderItems] = useState([]); // [{product_id, name, unit, qty, price}]
     const [loading, setLoading] = useState(false);
 
+    // Custom Toast Alert State
+    const [toast, setToast] = useState({ show: false, message: '', type: 'info' });
+
+    const showToast = (message, type = 'info') => {
+        setToast({ show: true, message, type });
+        setTimeout(() => {
+            setToast(prev => ({ ...prev, show: false }));
+        }, 4000);
+    };
+
     const totalAmount = orderItems.reduce((sum, item) => sum + (item.qty * item.price), 0);
 
     useEffect(() => {
@@ -80,9 +90,9 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
 
     const submitOrder = async (e) => {
         e.preventDefault();
-        if (activeBranch === 'all') return alert('Pilih toko cabang spesifik terlebih dahulu!');
-        if (!customerName || !address) return alert('Nama dan Alamat harus diisi!');
-        if (orderItems.length === 0) return alert('Tambahkan minimal 1 barang ke dalam pesanan!');
+        if (activeBranch === 'all') return showToast('Pilih toko cabang spesifik terlebih dahulu!', 'warning');
+        if (!customerName || !address) return showToast('Nama dan Alamat harus diisi!', 'warning');
+        if (orderItems.length === 0) return showToast('Tambahkan minimal 1 barang ke dalam pesanan!', 'warning');
         setLoading(true);
         try {
             await axios.post('http://localhost:5000/api/orders', {
@@ -97,13 +107,13 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
                     price: i.price
                 }))
             });
-            alert('Orderan berhasil dibuat dan masuk Jadwal Pengantaran!');
+            showToast('Orderan berhasil dibuat dan masuk Jadwal Pengantaran!', 'success');
             setCustomerName(''); setPhone(''); setAddress(''); setOrderItems([]);
             fetchData();
             setView('DeliveryBoard');
         } catch (error) {
             console.error(error);
-            alert('Terjadi kesalahan saat menyimpan orderan.');
+            showToast('Terjadi kesalahan saat menyimpan orderan.', 'error');
         } finally {
             setLoading(false);
         }
@@ -117,12 +127,60 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
             fetchData();
         } catch (error) {
             console.error(error);
-            alert('Gagal update status pengantaran');
+            showToast('Gagal update status pengantaran', 'error');
         }
     };
 
     return (
         <div style={{ animation: 'fadeIn 0.5s ease-out', display: 'flex', flexDirection: 'column', height: '100%', gap: '24px', padding: '0 24px' }}>
+            {/* Custom Toast Notification */}
+            {toast.show && (
+                <div style={{
+                    position: 'fixed',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    backgroundColor: toast.type === 'success' ? '#10b981' : toast.type === 'warning' ? '#f59e0b' : '#dc2626',
+                    border: toast.type === 'success' ? '2px solid #059669' : toast.type === 'warning' ? '2px solid #d97706' : '2px solid #b91c1c',
+                    color: '#ffffff',
+                    padding: '24px 32px',
+                    borderRadius: '12px',
+                    boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.5)',
+                    zIndex: 999999,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '16px',
+                    width: 'auto',
+                    minWidth: '360px',
+                    maxWidth: '90%',
+                    animation: 'fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                    fontWeight: '700',
+                    fontSize: '1.1rem',
+                    textAlign: 'center'
+                }}>
+                    <span style={{ fontSize: '1.5rem' }}>
+                        {toast.type === 'warning' ? '⚠️' : toast.type === 'error' ? '❌' : '✅'}
+                    </span>
+                    <div style={{ flex: 1 }}>{toast.message}</div>
+                    <button 
+                        onClick={() => setToast(prev => ({ ...prev, show: false }))} 
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            color: 'inherit',
+                            cursor: 'pointer',
+                            fontSize: '1.5rem',
+                            padding: '0 8px',
+                            fontWeight: 'bold',
+                            display: 'flex',
+                            alignItems: 'center'
+                        }}
+                    >
+                        ✕
+                    </button>
+                </div>
+            )}
             {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px' }}>
                 <div style={{ display: 'flex', gap: '16px' }}>
