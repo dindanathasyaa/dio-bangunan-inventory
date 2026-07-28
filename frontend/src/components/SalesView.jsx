@@ -675,50 +675,47 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
             {toast.show && (
                 <div style={{
                     position: 'fixed',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
+                    top: '32px',
+                    left: 'calc(50% + 120px)', /* Geser ke tengah area konten (50% layar + kompensasi setengah sidebar) */
+                    transform: 'translateX(-50%)',
                     backgroundColor: '#dc2626', /* Merah solid */
                     border: '2px solid #b91c1c',
-                    color: '#ffffff', /* Teks putih agar kontras */
-                    padding: '24px 36px',
-                    borderRadius: '16px',
-                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+                    color: '#ffffff', /* Teks putih */
+                    padding: '16px 28px',
+                    borderRadius: '12px',
+                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.2)',
                     zIndex: 999999,
                     display: 'flex',
-                    flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '16px',
-                    width: '420px',
+                    gap: '12px',
+                    width: 'auto',
+                    minWidth: '320px',
                     maxWidth: '90%',
-                    animation: 'fadeIn 0.3s ease-out forwards',
+                    animation: 'slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                     fontWeight: '700',
-                    fontSize: '1.1rem',
+                    fontSize: '0.95rem',
                     textAlign: 'center'
                 }}>
                     <span style={{ fontSize: '1.25rem' }}>
                         {toast.type === 'warning' ? '⚠️' : toast.type === 'error' ? '❌' : '✅'}
                     </span>
-                    <div style={{ marginTop: '8px' }}>{toast.message}</div>
+                    <div style={{ flex: 1 }}>{toast.message}</div>
                     <button 
                         onClick={() => setToast(prev => ({ ...prev, show: false }))} 
                         style={{
-                            background: 'rgba(255, 255, 255, 0.2)',
+                            background: 'none',
                             border: 'none',
-                            color: '#ffffff',
+                            color: 'inherit',
                             cursor: 'pointer',
-                            fontSize: '0.95rem',
-                            padding: '8px 24px',
-                            borderRadius: '8px',
+                            fontSize: '1.2rem',
+                            padding: '0 4px',
                             fontWeight: 'bold',
-                            marginTop: '16px',
-                            transition: 'background 0.2s'
+                            display: 'flex',
+                            alignItems: 'center'
                         }}
-                        onMouseEnter={e => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
-                        onMouseLeave={e => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
                     >
-                        Mengerti
+                        ✕
                     </button>
                 </div>
             )}
