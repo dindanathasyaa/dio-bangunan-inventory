@@ -137,7 +137,8 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 transaction_date: isIndirectSale && transactionDate ? transactionDate : null
             });
 
-            showToast('Transaksi Berhasil!', 'success', () => {
+            const successMsg = paymentMethod === 'Kredit' ? 'Transaksi Masuk ke Catatan Hutang' : 'Transaksi Berhasil!';
+            showToast(successMsg, 'success', () => {
                 setTransactionSuccessData({
                     sale_id: res.data.sale_id,
                     customer_name: customerName,
