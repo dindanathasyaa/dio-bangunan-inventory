@@ -256,7 +256,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                         className="input-field" 
                         value={paymentAmount}
                         onChange={e => setPaymentAmount(e.target.value)}
-                        placeholder={`Maks. Rp ${maxAmount.toLocaleString('en-US')}`}
+                        placeholder={`Contoh: 50000`}
                         autoFocus
                     />
 
@@ -265,10 +265,6 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                         <button className="btn btn-primary" onClick={() => {
                             const amt = parseFloat(paymentAmount);
                             if (amt && !isNaN(amt) && amt > 0) {
-                                if (amt > maxAmount) {
-                                    showToast(`Nominal pembayaran melebihi sisa tagihan (Maksimal Rp ${maxAmount.toLocaleString('en-US')})`, "error");
-                                    return;
-                                }
                                 if (paymentModalData.type === 'Receivable') {
                                     handlePayReceivable(paymentModalData.id, amt);
                                 } else {
