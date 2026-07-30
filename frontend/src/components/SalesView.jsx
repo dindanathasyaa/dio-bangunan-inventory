@@ -285,8 +285,23 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                             <div>
                                 <div style={{fontWeight: 'bold'}}>{c.name}</div>
                                 {user?.role === 'ADMIN' || user?.role === 'OWNER' ? (
-                                    <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '4px'}}>
-                                        Rp <input type="number" value={c.price} onChange={e => updatePrice(c.id, e.target.value)} style={{width: '90px', padding: '2px 4px', borderRadius: '4px', border: '1px solid var(--border-color)', background: 'var(--panel-bg)', color: 'var(--text-primary)', fontSize: '0.9rem'}} />
+                                    <div style={{color: 'var(--text-secondary)', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px'}}>
+                                        <span style={{fontWeight: 'bold'}}>Rp</span> 
+                                        <input 
+                                            type="number" 
+                                            value={c.price === '' ? '' : Number(c.price)} 
+                                            onChange={e => updatePrice(c.id, e.target.value)} 
+                                            style={{
+                                                width: '120px', 
+                                                padding: '6px 8px', 
+                                                borderRadius: '6px', 
+                                                border: '1px solid var(--primary-color)', 
+                                                background: 'var(--panel-bg)', 
+                                                color: 'var(--text-primary)', 
+                                                fontSize: '1.1rem',
+                                                fontWeight: 'bold'
+                                            }} 
+                                        />
                                     </div>
                                 ) : (
                                     <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Rp {Number(c.price || 15000).toLocaleString('en-US')}</div>
