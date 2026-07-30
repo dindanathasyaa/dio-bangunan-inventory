@@ -1,172 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+const fs = require('fs');
+let content = fs.readFileSync('frontend/src/components/DailyRecapView.jsx', 'utf8');
 
-const DailyRecapView = ({ user, activeBranch }) => {
-    const [recapData, setRecapData] = useState([]);
-    const [recapDate, setRecapDate] = useState('');
-    const [detailData, setDetailData] = useState([]);
-    const [detailDate, setDetailDate] = useState('');
-    const [showDetailModal, setShowDetailModal] = useState(false);
-    const [printData, setPrintData] = useState(null);
-    const [printMode, setPrintMode] = useState('menu'); // Data for receipt printing
+// Add printMode state
+content = content.replace(
+    /const \[printData, setPrintData\] = useState\(null\);/g, 
+    `const [printData, setPrintData] = useState(null);
+    const [printMode, setPrintMode] = useState('menu');`
+);
 
-    useEffect(() => {
-        if (activeBranch) {
-            fetchRecap();
-        }
-        // eslint-disable-next-line
-    }, [activeBranch]);
-
-    const fetchRecap = async () => {
-        try {
-            const res = await axios.get(`http://localhost:5000/api/sales/recap?branch_id=${activeBranch}`);
-            setRecapData(res.data);
-        } catch (error) {
-            console.error(error);
-            alert('Gagal mengambil rekap: ' + error.message);
-        }
+// Update handlePrintReceipt to set printMode to 'menu'
+content = content.replace(
+    /        \/\/ Preview modal will automatically show when printData is set\n    \};\n/g,
+    `        setPrintMode('menu');
     };
+`
+);
 
-    const viewDetail = async (date) => {
-        try {
-            const d = new Date(date);
-            const pad = n => n.toString().padStart(2, '0');
-            const dateStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-            const res = await axios.get(`http://localhost:5000/api/sales?branch_id=${activeBranch}&date=${dateStr}`);
-            setDetailData(res.data);
-            setDetailDate(date);
-            setShowDetailModal(true);
-        } catch (error) {
-            console.error(error);
-            alert('Gagal mengambil detail: ' + error.message);
-        }
-    };
-
-    const handlePrintReceipt = (transaction) => {
-        // Format the transaction data to match the receipt template
-        setPrintData({
-            sale_id: transaction.id,
-            transaction_date: transaction.created_at,
-            customer_name: transaction.customer_name,
-            total_amount: transaction.total_amount,
-            payment_method: transaction.payment_method,
-            items: transaction.items || []
-        });
-        setPrintMode('menu');
-    };
-
-    const filteredRecap = recapData.filter(row => {
-        if (!recapDate) return true;
-        const d = new Date(row.date);
-        const pad = n => n.toString().padStart(2, '0');
-        const rowDateStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-        return rowDateStr === recapDate;
-    });
-
-    return (
-        <div style={{animation: 'fadeIn 0.5s ease-out', height: '100%', display: 'flex', flexDirection: 'column'}}>
-            <div className="glass-panel" style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
-                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
-                    <h2 style={{margin: 0}}>📊 Rekap Penjualan Harian</h2>
-                    <div style={{display: 'flex', gap: '12px'}}>
-                        <button className="btn btn-primary" onClick={fetchRecap}>🔄 Refresh</button>
-                    </div>
-                </div>
-
-                <div style={{display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px'}}>
-                    <label style={{fontWeight: 'bold', color: 'var(--text-secondary)'}}>Filter Tanggal:</label>
-                    <input type="date" className="input-field" style={{marginBottom: 0, width: '200px'}} value={recapDate} onChange={e => setRecapDate(e.target.value)} />
-                    {recapDate && <button className="btn btn-secondary" onClick={() => setRecapDate('')}>Reset</button>}
-                </div>
-
-                <div className="table-container" style={{flex: 1, overflowY: 'auto'}}>
-                    <table className="data-table">
-                        <thead>
-                            <tr>
-                                <th>Tanggal</th>
-                                <th style={{textAlign: 'center'}}>Jml Transaksi</th>
-                                <th style={{textAlign: 'right'}}>Total Omset</th>
-                                <th style={{textAlign: 'right'}}>Total Profit</th>
-                                <th style={{textAlign: 'center'}}>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredRecap.length > 0 ? filteredRecap.map((row, idx) => (
-                                <tr key={idx}>
-                                    <td>{new Date(row.date).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}</td>
-                                    <td style={{textAlign: 'center'}}>{row.total_transactions}</td>
-                                    <td style={{textAlign: 'right', fontWeight: 'bold'}}>Rp {Number(row.total_sales).toLocaleString('id-ID')}</td>
-                                    <td style={{textAlign: 'right', color: '#10b981', fontWeight: 'bold'}}>Rp {Number(row.total_profit).toLocaleString('id-ID')}</td>
-                                    <td style={{textAlign: 'center'}}>
-                                        <button className="btn btn-secondary" style={{padding: '6px 16px', fontSize: '0.9rem'}} onClick={() => viewDetail(row.date)}>Lihat Detail</button>
-                                    </td>
-                                </tr>
-                            )) : (
-                                <tr><td colSpan="5" style={{textAlign: 'center', padding: '24px'}}>Tidak ada data rekap penjualan</td></tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            {/* Modal Detail Penjualan */}
-            {showDetailModal && (
-                <div className="modal-overlay" onClick={() => setShowDetailModal(false)}>
-                    <div className="modal-content no-print" style={{maxWidth: '1100px', width: '90%', maxHeight: '90vh', display: 'flex', flexDirection: 'column'}} onClick={e => e.stopPropagation()}>
-                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
-                            <h2>Detail Penjualan - {new Date(detailDate).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}</h2>
-                            <button className="btn-icon" onClick={() => setShowDetailModal(false)}>✕</button>
-                        </div>
-                        <div className="table-container" style={{flex: 1, overflowY: 'auto'}}>
-                            <table className="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Waktu</th>
-                                        <th>Faktur</th>
-                                        <th>Pelanggan</th>
-                                        <th>Metode</th>
-                                        <th>Item Terjual</th>
-                                        <th style={{textAlign: 'right'}}>Total Omset</th>
-                                        <th style={{textAlign: 'center'}}>Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {detailData.map(sale => (
-                                        <tr key={sale.id}>
-                                            <td>{new Date(sale.created_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'})}</td>
-                                            <td>#{sale.id}</td>
-                                            <td>{sale.customer_name || 'Umum'}</td>
-                                            <td>
-                                                <span className={`status-badge ${sale.payment_method === 'Cash' ? 'status-completed' : 'status-pending'}`}>
-                                                    {sale.payment_method}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <ul style={{margin: 0, paddingLeft: '20px', fontSize: '0.9rem', color: 'var(--text-secondary)'}}>
-                                                    {sale.items && sale.items.map((item, i) => (
-                                                        <li key={i}>{item.name} ({item.qty} {item.unit})</li>
-                                                    ))}
-                                                </ul>
-                                            </td>
-                                            <td style={{textAlign: 'right', fontWeight: 'bold'}}>Rp {Number(sale.total_amount).toLocaleString('id-ID')}</td>
-                                            <td style={{textAlign: 'center'}}>
-                                                <button className="btn btn-primary" style={{padding: '6px 12px', fontSize: '0.85rem'}} onClick={() => handlePrintReceipt(sale)}>
-                                                    🖨️ Cetak Struk
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {detailData.length === 0 && (
-                                        <tr><td colSpan="7" style={{textAlign: 'center'}}>Tidak ada transaksi.</td></tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            
+// Replace the entire Print Preview Modal block with the new layout
+const modalStart = content.indexOf('{/* Print Preview Modal */}');
+if (modalStart !== -1) {
+    const returnEnd = content.indexOf('</div>\n    );\n};', modalStart);
+    if (returnEnd !== -1) {
+        content = content.substring(0, modalStart) + `
             {/* Print Modals */}
             {printData && (
                 <div className="modal-overlay" onClick={() => setPrintData(null)}>
@@ -188,7 +43,7 @@ const DailyRecapView = ({ user, activeBranch }) => {
                     {/* Struk Thermal Layout */}
                     {printMode === 'struk' && (
                         <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '24px', flexShrink: 0}} onClick={e => e.stopPropagation()}>
-                            <style>{`@media print { .print-thermal { display: block !important; } .no-print, .sidebar, .top-nav, .glass-panel, .modal-overlay { display: none !important; } @page { margin: 0; } body { background: white; margin: 0; padding: 0; } }`}</style>
+                            <style>{\`@media print { .print-thermal { display: block !important; } .no-print, .sidebar, .top-nav, .glass-panel, .modal-overlay { display: none !important; } @page { margin: 0; } body { background: white; margin: 0; padding: 0; } }\`}</style>
                             <div className="invoice-container" style={{background: 'white', color: 'black'}}>
                                 <div style={{display: 'flex', justifyContent: 'center', marginBottom: '16px'}}>
                                     <img src="/logo-transparent.png" alt="Dio Bangunan Logo" style={{maxWidth: '140px', width: '100%', mixBlendMode: 'multiply'}} />
@@ -243,7 +98,7 @@ const DailyRecapView = ({ user, activeBranch }) => {
                     {/* Layout A4 (Invoice & Surat Jalan) */}
                     {(printMode === 'invoice' || printMode === 'surat_jalan') && (
                         <div className="modal-content a4-container print-a4" style={{position: 'relative', width: '210mm', padding: '40px', background: 'white', color: 'black', margin: '20px auto', fontFamily: 'sans-serif'}} onClick={e => e.stopPropagation()}>
-                            <style>{`@media print { .no-print, .sidebar, .top-nav, .glass-panel, .modal-overlay { display: none !important; } @page { size: A4 portrait; margin: 0; } body { background: white; } }`}</style>
+                            <style>{\`@media print { .no-print, .sidebar, .top-nav, .glass-panel, .modal-overlay { display: none !important; } @page { size: A4 portrait; margin: 0; } body { background: white; } }\`}</style>
                             
                             <div className="no-print" style={{display: 'flex', justifyContent: 'flex-end', gap: '12px', marginBottom: '32px', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px'}}>
                                 <button className="btn btn-secondary" onClick={() => setPrintMode('menu')}>
@@ -357,8 +212,9 @@ const DailyRecapView = ({ user, activeBranch }) => {
 
                 </div>
             )}
-        </div>
-    );
-};
+        ` + content.substring(returnEnd);
+    }
+}
 
-export default DailyRecapView;
+fs.writeFileSync('frontend/src/components/DailyRecapView.jsx', content);
+console.log('DailyRecapView print menu updated successfully.');
