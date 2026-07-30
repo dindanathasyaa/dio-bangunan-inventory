@@ -11,6 +11,9 @@ import PurchaseView from './PurchaseView';
 import OrderDeliveryView from './OrderDeliveryView';
 import CashDebtView from './CashDebtView';
 import StockAlertView from './StockAlertView';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import CurrencyInput from './CurrencyInput';
 
 const Dashboard = ({ user, setUser }) => {
     const navigate = useNavigate();
@@ -369,7 +372,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                                 <div>
                                     <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Piutang (Pembeli Ngutang)</div>
-                                    <div style={{fontSize: '1.8rem', fontWeight: 'bold', color: '#10b981'}}>Rp {Number(summary.totalReceivables || 0).toLocaleString('en-US')}</div>
+                                    <div style={{fontSize: '1.8rem', fontWeight: 'bold', color: '#10b981'}}>Rp {Number(summary.totalReceivables || 0).toLocaleString('id-ID')}</div>
                                 </div>
                                 <div style={{fontSize: '2rem'}}>📒</div>
                             </div>
@@ -380,7 +383,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                                 <div>
                                     <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Hutang Toko (Ke Supplier)</div>
-                                    <div style={{fontSize: '1.8rem', fontWeight: 'bold', color: '#ef4444'}}>Rp {Number(summary.totalPayables || 0).toLocaleString('en-US')}</div>
+                                    <div style={{fontSize: '1.8rem', fontWeight: 'bold', color: '#ef4444'}}>Rp {Number(summary.totalPayables || 0).toLocaleString('id-ID')}</div>
                                 </div>
                                 <div style={{fontSize: '2rem'}}>🏢</div>
                             </div>
@@ -405,8 +408,8 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                             <div>
                                 <div style={{color: 'var(--text-secondary)', fontSize: '1rem', marginBottom: '8px'}}>Saldo Kas Tunai Saat Ini</div>
-                                <div style={{fontSize: '3rem', fontWeight: 'bold', color: 'var(--primary-color)'}}>Rp {Math.floor(Number(summary.totalCash || 0)).toLocaleString('en-US')}</div>
-                                <div style={{color: 'var(--text-primary)', fontSize: '1rem', marginTop: '8px'}}>Total Profit Kotor: <span style={{fontWeight: 'bold'}}>Rp {Math.floor(Number(summary.totalProfit || 0)).toLocaleString('en-US')}</span></div>
+                                <div style={{fontSize: '3rem', fontWeight: 'bold', color: 'var(--primary-color)'}}>Rp {Math.floor(Number(summary.totalCash || 0)).toLocaleString('id-ID')}</div>
+                                <div style={{color: 'var(--text-primary)', fontSize: '1rem', marginTop: '8px'}}>Total Profit Kotor: <span style={{fontWeight: 'bold'}}>Rp {Math.floor(Number(summary.totalProfit || 0)).toLocaleString('id-ID')}</span></div>
                             </div>
                             <div style={{fontSize: '4rem', opacity: 0.8}}>💰</div>
                         </div>
@@ -906,8 +909,8 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                             </div>
 
                             <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
-                                <div className="form-group" style={{flex: 1}}><label>Harga Jual (Rp)</label><input type="number" className="input-field" value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} required /></div>
-                                <div className="form-group" style={{flex: 1}}><label>Modal Barang (Rp)</label><input type="number" className="input-field" value={newItem.base_price} onChange={e => setNewItem({...newItem, base_price: e.target.value})} required /></div>
+                                <div className="form-group" style={{flex: 1}}><label>Harga Jual (Rp)</label><CurrencyInput className="input-field" value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} required /></div>
+                                <div className="form-group" style={{flex: 1}}><label>Modal Barang (Rp)</label><CurrencyInput className="input-field" value={newItem.base_price} onChange={e => setNewItem({...newItem, base_price: e.target.value})} required /></div>
                             </div>
                             
                             <div style={{display: 'flex', gap: '12px', marginTop: '24px'}}>

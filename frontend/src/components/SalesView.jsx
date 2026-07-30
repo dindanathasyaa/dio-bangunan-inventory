@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import CurrencyInput from './CurrencyInput';
 
 const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
     const [products, setProducts] = useState([]);
@@ -251,7 +252,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                             <div style={{fontWeight: 'bold', marginBottom: '4px'}}>{p.name}</div>
                             <div style={{fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '8px'}}>[{p.sku}]</div>
                             <div style={{fontWeight: 'bold', color: 'var(--primary-color)', fontSize: '1.1rem', marginBottom: '16px'}}>
-                                Rp {Number(p.price || 0).toLocaleString('en-US')}
+                                Rp {Number(p.price || 0).toLocaleString('id-ID')}
                             </div>
                             <div style={{marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '12px'}}>
                                 <span style={{color: 'var(--text-secondary)', fontWeight: 'bold'}}>Stok: {Math.max(0, Number(p.stock))}</span>
@@ -287,8 +288,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                 {user?.role === 'ADMIN' || user?.role === 'OWNER' ? (
                                     <div style={{color: 'var(--text-secondary)', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px'}}>
                                         <span style={{fontWeight: 'bold'}}>Rp</span> 
-                                        <input 
-                                            type="number" 
+                                        <CurrencyInput 
                                             value={c.price === '' ? '' : Number(c.price)} 
                                             onChange={e => updatePrice(c.id, e.target.value)} 
                                             style={{
@@ -304,7 +304,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                         />
                                     </div>
                                 ) : (
-                                    <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Rp {Number(c.price || 15000).toLocaleString('en-US')}</div>
+                                    <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Rp {Number(c.price || 15000).toLocaleString('id-ID')}</div>
                                 )}
                             </div>
                             <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
@@ -318,7 +318,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 <div style={{borderTop: '1px solid var(--border-color)', paddingTop: '16px'}}>
                     <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '16px', fontWeight: 'bold', fontSize: '1.2rem'}}>
                         <span>Total:</span>
-                        <span>Rp {Number(totalAmount).toLocaleString('en-US')}</span>
+                        <span>Rp {Number(totalAmount).toLocaleString('id-ID')}</span>
                     </div>
                     <div className="form-group">
                         <label>Nama Pelanggan (Opsional)</label>
@@ -432,8 +432,8 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                         <div key={idx} style={{marginBottom: '8px', fontSize: '0.85rem'}}>
                                             <div style={{fontWeight: 'bold', marginBottom: '4px'}}>{item.name}</div>
                                             <div style={{display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)'}}>
-                                                <span>{item.qty} x {Number(item.price).toLocaleString('en-US')}</span>
-                                                <span style={{color: 'var(--text-primary)', fontWeight: 'bold'}}>{Number(item.qty * item.price).toLocaleString('en-US')}</span>
+                                                <span>{item.qty} x {Number(item.price).toLocaleString('id-ID')}</span>
+                                                <span style={{color: 'var(--text-primary)', fontWeight: 'bold'}}>{Number(item.qty * item.price).toLocaleString('id-ID')}</span>
                                             </div>
                                         </div>
                                     ))}
@@ -442,7 +442,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                 <div style={{fontSize: '0.9rem', marginBottom: '24px'}}>
                                     <div style={{display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '8px'}}>
                                         <span>TOTAL</span>
-                                        <span>Rp {Number(transactionSuccessData.total_amount).toLocaleString('en-US')}</span>
+                                        <span>Rp {Number(transactionSuccessData.total_amount).toLocaleString('id-ID')}</span>
                                     </div>
                                     <div style={{display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)'}}>
                                         <span>Pembayaran</span>
@@ -544,9 +544,9 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                             <tr key={idx}>
                                                 <td style={{padding: '6px 4px'}}>{idx + 1}</td>
                                                 <td style={{padding: '6px 4px'}}>{item.name}</td>
-                                                {printMode === 'invoice' && <td style={{padding: '6px 4px', textAlign: 'right'}}>{Number(item.price).toLocaleString('en-US')}</td>}
+                                                {printMode === 'invoice' && <td style={{padding: '6px 4px', textAlign: 'right'}}>{Number(item.price).toLocaleString('id-ID')}</td>}
                                                 <td style={{padding: '6px 4px', textAlign: 'center'}}>{item.qty}</td>
-                                                {printMode === 'invoice' && <td style={{padding: '6px 4px', textAlign: 'right'}}>{Number(item.qty * item.price).toLocaleString('en-US')}</td>}
+                                                {printMode === 'invoice' && <td style={{padding: '6px 4px', textAlign: 'right'}}>{Number(item.qty * item.price).toLocaleString('id-ID')}</td>}
                                             </tr>
                                         ))}
                                     </tbody>
@@ -563,15 +563,15 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                             <tbody>
                                                 <tr>
                                                     <td style={{padding: '4px 0'}}>TOTAL {transactionSuccessData.items.reduce((sum, i) => sum + Number(i.qty), 0)} QTY</td>
-                                                    <td style={{padding: '4px 0', textAlign: 'right'}}>{Number(transactionSuccessData.total_amount).toLocaleString('en-US')}</td>
+                                                    <td style={{padding: '4px 0', textAlign: 'right'}}>{Number(transactionSuccessData.total_amount).toLocaleString('id-ID')}</td>
                                                 </tr>
                                                 <tr>
                                                     <td style={{padding: '4px 0'}}>Bayar</td>
-                                                    <td style={{padding: '4px 0', textAlign: 'right'}}>{transactionSuccessData.payment_method === 'Cash' ? Number(transactionSuccessData.total_amount).toLocaleString('en-US') : '0'}</td>
+                                                    <td style={{padding: '4px 0', textAlign: 'right'}}>{transactionSuccessData.payment_method === 'Cash' ? Number(transactionSuccessData.total_amount).toLocaleString('id-ID') : '0'}</td>
                                                 </tr>
                                                 <tr>
                                                     <td style={{padding: '4px 0'}}>Kurang</td>
-                                                    <td style={{padding: '4px 0', textAlign: 'right'}}>{transactionSuccessData.payment_method === 'Cash' ? '0' : Number(transactionSuccessData.total_amount).toLocaleString('en-US')}</td>
+                                                    <td style={{padding: '4px 0', textAlign: 'right'}}>{transactionSuccessData.payment_method === 'Cash' ? '0' : Number(transactionSuccessData.total_amount).toLocaleString('id-ID')}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -640,8 +640,8 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                         <tr key={idx}>
                                             <td>{new Date(row.date).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}</td>
                                             <td style={{textAlign: 'center'}}>{row.total_transactions}</td>
-                                            <td style={{textAlign: 'right', fontWeight: 'bold'}}>Rp {Number(row.total_sales).toLocaleString('en-US')}</td>
-                                            <td style={{textAlign: 'right', color: '#10b981', fontWeight: 'bold'}}>Rp {Number(row.total_profit).toLocaleString('en-US')}</td>
+                                            <td style={{textAlign: 'right', fontWeight: 'bold'}}>Rp {Number(row.total_sales).toLocaleString('id-ID')}</td>
+                                            <td style={{textAlign: 'right', color: '#10b981', fontWeight: 'bold'}}>Rp {Number(row.total_profit).toLocaleString('id-ID')}</td>
                                             <td style={{textAlign: 'center'}}>
                                                 <button className="btn btn-secondary" style={{padding: '4px 12px', fontSize: '0.85rem'}} onClick={() => viewDetail(row.date)}>Detail</button>
                                             </td>
@@ -707,8 +707,8 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                                 ) : '-'}
                                             </td>
                                             <td>{row.payment_method}</td>
-                                            <td style={{textAlign: 'right'}}>Rp {Number(row.total_amount).toLocaleString('en-US')}</td>
-                                            <td style={{textAlign: 'right', color: '#10b981'}}>Rp {Number(row.profit).toLocaleString('en-US')}</td>
+                                            <td style={{textAlign: 'right'}}>Rp {Number(row.total_amount).toLocaleString('id-ID')}</td>
+                                            <td style={{textAlign: 'right', color: '#10b981'}}>Rp {Number(row.profit).toLocaleString('id-ID')}</td>
                                         </tr>
                                     )) : (
                                         <tr><td colSpan="6" style={{textAlign: 'center'}}>Belum ada data penjualan</td></tr>
@@ -719,10 +719,10 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                         <tr>
                                             <td colSpan="5" style={{textAlign: 'right', fontWeight: 'bold'}}>Total Keseluruhan:</td>
                                             <td style={{textAlign: 'right', fontWeight: 'bold', color: 'var(--primary-color)'}}>
-                                                Rp {Number(detailData.reduce((acc, row) => acc + Number(row.total_amount), 0)).toLocaleString('en-US')}
+                                                Rp {Number(detailData.reduce((acc, row) => acc + Number(row.total_amount), 0)).toLocaleString('id-ID')}
                                             </td>
                                             <td style={{textAlign: 'right', fontWeight: 'bold', color: '#10b981'}}>
-                                                Rp {Number(detailData.reduce((acc, row) => acc + Number(row.profit), 0)).toLocaleString('en-US')}
+                                                Rp {Number(detailData.reduce((acc, row) => acc + Number(row.profit), 0)).toLocaleString('id-ID')}
                                             </td>
                                         </tr>
                                     </tfoot>

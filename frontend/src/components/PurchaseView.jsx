@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import CurrencyInput from './CurrencyInput';
 
 const PurchaseView = ({ user, activeBranch, branches, refreshData }) => {
     const navigate = useNavigate();
@@ -278,11 +279,11 @@ const PurchaseView = ({ user, activeBranch, branches, refreshData }) => {
                     </div>
                     <div className="form-group" style={{flex: '1', minWidth: '200px'}}>
                         <label>Harga Modal (Beli)</label>
-                        <input type="number" className="input-field" value={newItem.buy_price} onChange={e => setNewItem({...newItem, buy_price: e.target.value})} required />
+                        <CurrencyInput className="input-field" value={newItem.buy_price} onChange={e => setNewItem({...newItem, buy_price: e.target.value})} required />
                     </div>
                     <div className="form-group" style={{flex: '1', minWidth: '200px'}}>
                         <label>Harga Jual</label>
-                        <input type="number" className="input-field" value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} required />
+                        <CurrencyInput className="input-field" value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} required />
                     </div>
                 </div>
 

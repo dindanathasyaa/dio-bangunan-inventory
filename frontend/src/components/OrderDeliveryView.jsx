@@ -341,7 +341,7 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
                                                     <input
                                                         type="text"
                                                         className="input-field"
-                                                        value={Number(item.price).toLocaleString('en-US')}
+                                                        value={Number(item.price).toLocaleString('id-ID')}
                                                         onChange={e => {
                                                             const raw = e.target.value.replace(/,/g, '');
                                                             if (!isNaN(raw)) updateItemPrice(item.product_id, raw);
@@ -422,7 +422,7 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
                                     <td>ORD-{d.order_id}</td>
                                     <td style={{ fontWeight: 'bold' }}>{d.customer_name} <br /><span style={{ fontWeight: 'normal', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{d.phone}</span></td>
                                     <td style={{ maxWidth: '250px' }}>{d.address}</td>
-                                    <td>Rp {Number(d.total_amount || 0).toLocaleString('en-US')}</td>
+                                    <td>Rp {Number(d.total_amount || 0).toLocaleString('id-ID')}</td>
                                     <td>{d.driver_name || '-'}</td>
                                     <td>
                                         <span className={`badge ${d.status === 'Terkirim' ? 'good' : d.status === 'Di Perjalanan' ? 'low' : ''}`} style={d.status === 'Menunggu' ? { background: '#64748b', color: 'white' } : {}}>

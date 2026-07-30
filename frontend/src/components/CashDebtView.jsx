@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import CurrencyInput from './CurrencyInput';
 
 const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory }) => {
     const [isBranchDropdownOpen, setIsBranchDropdownOpen] = useState(false);
@@ -169,7 +170,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                         <p><strong>Tanggal:</strong> {new Date(cashFlow.created_at).toLocaleString('id-ID', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</p>
                         <p><strong>Keterangan:</strong> {cashFlow.description}</p>
                         <p><strong>Jenis:</strong> <span style={{color: cashFlow.type === 'Masuk' ? '#10b981' : 'var(--danger-color)', fontWeight: 'bold'}}>{cashFlow.type}</span></p>
-                        <p><strong>Nominal:</strong> Rp {parseFloat(cashFlow.amount).toLocaleString('en-US')}</p>
+                        <p><strong>Nominal:</strong> Rp {parseFloat(cashFlow.amount).toLocaleString('id-ID')}</p>
                     </div>
 
                     {items && items.length > 0 ? (
@@ -189,9 +190,9 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                         <tr key={idx}>
                                             <td>{item.product_name}</td>
                                             <td>{item.qty} {item.unit}</td>
-                                            <td>Rp {parseFloat(item.price || item.buy_price || 0).toLocaleString('en-US')}</td>
+                                            <td>Rp {parseFloat(item.price || item.buy_price || 0).toLocaleString('id-ID')}</td>
                                             <td style={{textAlign: 'right', fontWeight: 'bold'}}>
-                                                Rp {parseFloat(item.qty * (item.price || item.buy_price || 0)).toLocaleString('en-US')}
+                                                Rp {parseFloat(item.qty * (item.price || item.buy_price || 0)).toLocaleString('id-ID')}
                                             </td>
                                         </tr>
                                     ))}
@@ -200,7 +201,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                     <tr>
                                         <td colSpan="3" style={{textAlign: 'right', fontWeight: 'bold'}}>Total Keseluruhan:</td>
                                         <td style={{textAlign: 'right', fontWeight: 'bold', color: 'var(--primary-color)'}}>
-                                            Rp {items.reduce((acc, item) => acc + (item.qty * (item.price || item.buy_price || 0)), 0).toLocaleString('en-US')}
+                                            Rp {items.reduce((acc, item) => acc + (item.qty * (item.price || item.buy_price || 0)), 0).toLocaleString('id-ID')}
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -263,11 +264,10 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                         Masukkan nominal pembayaran {paymentModalData.type === 'Receivable' ? 'untuk' : 'ke'} <strong>{paymentModalData.name}</strong>:
                     </p>
                     <p style={{fontSize: '0.9rem', color: 'var(--danger-color)', marginBottom: '16px', fontWeight: 'bold'}}>
-                        Sisa Tagihan: Rp {maxAmount.toLocaleString('en-US')}
+                        Sisa Tagihan: Rp {maxAmount.toLocaleString('id-ID')}
                     </p>
 
-                    <input 
-                        type="number" 
+                    <CurrencyInput 
                         className="input-field" 
                         value={paymentAmount}
                         onChange={e => setPaymentAmount(e.target.value)}
@@ -276,7 +276,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                 handleSavePayment();
                             }
                         }}
-                        placeholder={`Contoh: 50000`}
+                        placeholder={`Contoh: 50.000`}
                         autoFocus
                     />
 
@@ -307,7 +307,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                         <div style={{fontSize: '0.85rem', color: 'var(--text-secondary)'}}>{new Date(h.created_at).toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit'})}</div>
                                     </div>
                                     <div style={{fontWeight: 'bold', color: '#10b981', fontSize: '1.1rem'}}>
-                                        + Rp {Number(h.amount).toLocaleString('en-US')}
+                                        + Rp {Number(h.amount).toLocaleString('id-ID')}
                                     </div>
                                 </div>
                             ))}
@@ -351,8 +351,8 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                     <div key={idx} style={{marginBottom: '6px'}}>
                                         <div style={{fontWeight: 'bold', marginBottom: '2px'}}>{item.name}</div>
                                         <div style={{display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)'}}>
-                                            <span>{item.qty} {item.unit} x {Number(item.price).toLocaleString('en-US')}</span>
-                                            <span style={{color: 'var(--text-primary)', fontWeight: 'bold'}}>{Number(item.qty * item.price).toLocaleString('en-US')}</span>
+                                            <span>{item.qty} {item.unit} x {Number(item.price).toLocaleString('id-ID')}</span>
+                                            <span style={{color: 'var(--text-primary)', fontWeight: 'bold'}}>{Number(item.qty * item.price).toLocaleString('id-ID')}</span>
                                         </div>
                                     </div>
                                 ))}
@@ -362,18 +362,18 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                         <div style={{marginBottom: '16px', borderBottom: '1px dashed var(--border-color)', paddingBottom: '8px', fontSize: '0.85rem'}}>
                             <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}>
                                 <span>Total Hutang:</span>
-                                <span>Rp {parseFloat(printDebtData.total_debt).toLocaleString('en-US')}</span>
+                                <span>Rp {parseFloat(printDebtData.total_debt).toLocaleString('id-ID')}</span>
                             </div>
                             <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}>
                                 <span>Sudah Dibayar:</span>
-                                <span>Rp {parseFloat(printDebtData.amount_paid).toLocaleString('en-US')}</span>
+                                <span>Rp {parseFloat(printDebtData.amount_paid).toLocaleString('id-ID')}</span>
                             </div>
                         </div>
                         
                         <div style={{fontSize: '0.9rem', marginBottom: '24px'}}>
                             <div style={{display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.1rem'}}>
                                 <span>SISA TAGIHAN</span>
-                                <span>Rp {sisa.toLocaleString('en-US')}</span>
+                                <span>Rp {sisa.toLocaleString('id-ID')}</span>
                             </div>
                         </div>
                         
@@ -425,7 +425,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                     <div key={item.id} className="glass-panel" style={{padding: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--item-bg)'}}>
                                         <div>
                                             <div style={{fontWeight: 'bold', color: 'var(--text-primary)'}}>{item.name}</div>
-                                            <div style={{fontSize: '0.85rem', color: 'var(--text-secondary)'}}>Stok: {item.stock} {item.unit} | Rp {Number(item.price).toLocaleString('en-US')}</div>
+                                            <div style={{fontSize: '0.85rem', color: 'var(--text-secondary)'}}>Stok: {item.stock} {item.unit} | Rp {Number(item.price).toLocaleString('id-ID')}</div>
                                         </div>
                                         <button className="btn btn-outline" style={{padding: '6px 12px'}} onClick={() => handleAddToCart(item)}>+ Tambah</button>
                                     </div>
@@ -447,7 +447,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                                 <input type="number" className="input-field" style={{width: '60px', marginBottom: 0, textAlign: 'center', padding: '4px'}} value={item.qty} onChange={e => handleUpdateQty(item.product_id, Number(e.target.value))} />
                                                 <button className="btn-icon" style={{background: 'var(--success-color)', color: 'white', width: '28px', height: '28px'}} onClick={() => handleUpdateQty(item.product_id, item.qty + 1)}>+</button>
                                             </div>
-                                            <div style={{fontWeight: 'bold'}}>Rp {(item.qty * item.price).toLocaleString('en-US')}</div>
+                                            <div style={{fontWeight: 'bold'}}>Rp {(item.qty * item.price).toLocaleString('id-ID')}</div>
                                         </div>
                                     </div>
                                 ))}
@@ -457,7 +457,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                             <div style={{borderTop: '2px solid rgba(255,255,255,0.1)', paddingTop: '16px'}}>
                                 <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '16px', fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--primary-color)'}}>
                                     <span>Total Tambahan:</span>
-                                    <span>Rp {cart.reduce((sum, item) => sum + (item.qty * item.price), 0).toLocaleString('en-US')}</span>
+                                    <span>Rp {cart.reduce((sum, item) => sum + (item.qty * item.price), 0).toLocaleString('id-ID')}</span>
                                 </div>
                                 <button className="btn btn-primary" style={{width: '100%', padding: '12px'}} onClick={handleSaveEditNota} disabled={cart.length === 0}>Simpan Tambahan Hutang</button>
                             </div>
@@ -575,11 +575,11 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                     <div style={{display: 'flex', gap: '24px', marginBottom: '24px'}}>
                         <div className="glass-panel" style={{flex: 1, padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderTop: '4px solid var(--primary-color)'}}>
                             <span className="metric-label">Total Saldo Kas Saat Ini</span>
-                            <span className="metric-value" style={{color: 'var(--primary-color)'}}>Rp {Number(summary?.totalCash || 0).toLocaleString('en-US')}</span>
+                            <span className="metric-value" style={{color: 'var(--primary-color)'}}>Rp {Number(summary?.totalCash || 0).toLocaleString('id-ID')}</span>
                         </div>
                         <div className="glass-panel" style={{flex: 1, padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderTop: '4px solid var(--primary-color)'}}>
                             <span className="metric-label">Total Keuntungan (Profit Kotor)</span>
-                            <span className="metric-value" style={{color: 'var(--primary-color)'}}>Rp {Number(summary?.totalProfit || 0).toLocaleString('en-US')}</span>
+                            <span className="metric-value" style={{color: 'var(--primary-color)'}}>Rp {Number(summary?.totalProfit || 0).toLocaleString('id-ID')}</span>
                         </div>
                     </div>
 
@@ -611,7 +611,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                             <tr key={t.id}>
                                                 <td>{new Date(t.created_at).toLocaleString('id-ID', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</td>
                                                 <td>{t.description}</td>
-                                                <td style={{fontWeight: 'bold', color: '#10b981'}}>Rp {parseFloat(t.amount).toLocaleString('en-US')}</td>
+                                                <td style={{fontWeight: 'bold', color: '#10b981'}}>Rp {parseFloat(t.amount).toLocaleString('id-ID')}</td>
                                                 <td><button className="btn btn-outline" style={{padding: '4px 12px', fontSize: '0.9rem'}} onClick={() => showTransactionDetail(t.id)}>Detail</button></td>
                                             </tr>
                                         ))}
@@ -639,7 +639,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                             <tr key={t.id}>
                                                 <td>{new Date(t.created_at).toLocaleString('id-ID', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</td>
                                                 <td>{t.description}</td>
-                                                <td style={{fontWeight: 'bold', color: 'var(--danger-color)'}}>Rp {parseFloat(t.amount).toLocaleString('en-US')}</td>
+                                                <td style={{fontWeight: 'bold', color: 'var(--danger-color)'}}>Rp {parseFloat(t.amount).toLocaleString('id-ID')}</td>
                                                 <td><button className="btn btn-outline" style={{padding: '4px 12px', fontSize: '0.9rem'}} onClick={() => showTransactionDetail(t.id)}>Detail</button></td>
                                             </tr>
                                         ))}
@@ -677,9 +677,9 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                 return (
                                 <tr key={r.id}>
                                     <td style={{fontWeight: 'bold'}}>{r.customer_name}</td>
-                                    <td>Rp {parseFloat(r.total_debt).toLocaleString('en-US')}</td>
-                                    <td>Rp {parseFloat(r.amount_paid).toLocaleString('en-US')}</td>
-                                    <td style={{color: 'var(--danger-color)', fontWeight: 'bold'}}>Rp {sisa.toLocaleString('en-US')}</td>
+                                    <td>Rp {parseFloat(r.total_debt).toLocaleString('id-ID')}</td>
+                                    <td>Rp {parseFloat(r.amount_paid).toLocaleString('id-ID')}</td>
+                                    <td style={{color: 'var(--danger-color)', fontWeight: 'bold'}}>Rp {sisa.toLocaleString('id-ID')}</td>
                                     <td>
                                         <span className={`badge ${r.status === 'Lunas' ? 'good' : 'low'}`}>{r.status}</span>
                                     </td>
@@ -735,9 +735,9 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                 return (
                                 <tr key={p.id}>
                                     <td style={{fontWeight: 'bold'}}>{p.supplier_name}</td>
-                                    <td>Rp {parseFloat(p.total_debt).toLocaleString('en-US')}</td>
-                                    <td>Rp {parseFloat(p.amount_paid).toLocaleString('en-US')}</td>
-                                    <td style={{color: 'var(--danger-color)', fontWeight: 'bold'}}>Rp {sisa.toLocaleString('en-US')}</td>
+                                    <td>Rp {parseFloat(p.total_debt).toLocaleString('id-ID')}</td>
+                                    <td>Rp {parseFloat(p.amount_paid).toLocaleString('id-ID')}</td>
+                                    <td style={{color: 'var(--danger-color)', fontWeight: 'bold'}}>Rp {sisa.toLocaleString('id-ID')}</td>
                                     <td>
                                         <span className={`badge ${p.status === 'Lunas' ? 'good' : 'low'}`}>{p.status}</span>
                                     </td>
@@ -749,7 +749,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                                     setPaymentAmount('');
                                                 }}>Bayar (Ambil Kas)</button>
                                                 <button className="btn btn-secondary" onClick={() => {
-                                                    if(window.confirm(`Lunas otomatis sebesar Rp ${sisa.toLocaleString('en-US')} untuk ${p.supplier_name}?`)) {
+                                                    if(window.confirm(`Lunas otomatis sebesar Rp ${sisa.toLocaleString('id-ID')} untuk ${p.supplier_name}?`)) {
                                                         handlePayPayable(p.id, sisa);
                                                     }
                                                 }}>Sudah Lunas</button>
