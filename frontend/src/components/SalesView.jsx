@@ -284,7 +284,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                         <div key={c.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', background: 'var(--item-bg)', padding: '12px', borderRadius: '8px'}}>
                             <div>
                                 <div style={{fontWeight: 'bold'}}>{c.name}</div>
-                                {user?.role === 'ADMIN' ? (
+                                {user?.role === 'ADMIN' || user?.role === 'OWNER' ? (
                                     <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '4px'}}>
                                         Rp <input type="number" value={c.price} onChange={e => updatePrice(c.id, e.target.value)} style={{width: '90px', padding: '2px 4px', borderRadius: '4px', border: '1px solid var(--border-color)', background: 'var(--panel-bg)', color: 'var(--text-primary)', fontSize: '0.9rem'}} />
                                     </div>
