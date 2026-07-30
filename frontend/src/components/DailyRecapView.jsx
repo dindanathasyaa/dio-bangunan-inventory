@@ -173,9 +173,12 @@ const DailyRecapView = ({ user, activeBranch }) => {
                     
                     {/* Struk Thermal Layout & Menu */}
                     {(printMode === 'menu' || printMode === 'struk') && (
-                        <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '0', flexShrink: 0, overflow: 'hidden'}} onClick={e => e.stopPropagation()}>
+                        <div className="print-thermal" style={{display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', maxWidth: '350px', width: '100%'}} onClick={e => e.stopPropagation()}>
                             <style>{`@media print { .print-thermal { display: block !important; } .no-print, .sidebar, .top-nav, .glass-panel, .modal-overlay { display: none !important; } @page { margin: 0; } body { background: white; margin: 0; padding: 0; } }`}</style>
-                            <div className="invoice-container" style={{padding: '24px', paddingBottom: '16px'}}>
+                            
+                            {/* Receipt Container */}
+                            <div className="modal-content" style={{position: 'relative', width: '100%', padding: '0', flexShrink: 0, overflow: 'hidden'}}>
+                                <div className="invoice-container" style={{padding: '24px', paddingBottom: '16px'}}>
                                 <div style={{display: 'flex', justifyContent: 'center', marginBottom: '16px'}}>
                                     <img src="/logo-transparent.png" alt="Dio Bangunan Logo" style={{maxWidth: '140px', width: '100%', mixBlendMode: 'multiply'}} />
                                 </div>
@@ -215,7 +218,10 @@ const DailyRecapView = ({ user, activeBranch }) => {
                                 </div>
                             </div>
 
-                            <div className="no-print">
+                            </div>
+
+                            {/* Action Menu Container */}
+                            <div className="modal-content no-print" style={{width: '100%', padding: '0', flexShrink: 0, overflow: 'hidden'}}>
                                 <div style={{background: 'var(--primary-color)', color: 'white', padding: '12px 16px', textAlign: 'center', fontWeight: 'bold', fontSize: '1.1rem'}}>Pilih Format Cetak</div>
                                 <div style={{display: 'flex', flexDirection: 'column'}}>
                                     <button style={{padding: '12px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1rem', cursor: 'pointer', fontWeight: 'bold'}} onClick={() => { setPrintMode('struk'); setTimeout(() => window.print(), 300); }}>🖨️ Cetak Struk Kasir</button>
