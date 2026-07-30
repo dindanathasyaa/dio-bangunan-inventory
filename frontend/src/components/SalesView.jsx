@@ -410,10 +410,9 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                             <style>{`@media print { @page { margin: 0; } body { background: white; } }`}</style>
                             <div className="invoice-container" style={{padding: '24px', paddingBottom: '16px', fontFamily: '"Courier New", Courier, monospace', color: 'black', textTransform: 'uppercase', background: '#f8f8f8', minHeight: '300px'}}>
                                 <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '16px'}}>
-                                    <div style={{width: '80px', height: '80px', borderRadius: '50%', background: '#666', border: '4px solid #fbdc4c', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '8px', overflow: 'hidden'}}>
-                                        <img src="/logo-transparent.png" alt="Dio Bangunan Logo" style={{maxWidth: '120px', mixBlendMode: 'lighten'}} />
+                                    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '8px'}}>
+                                        <img src="/logo-baru.png" alt="Dio Bangunan Logo" style={{maxWidth: '100px', mixBlendMode: 'multiply'}} />
                                     </div>
-                                    <div style={{fontSize: '0.9rem', fontWeight: 'bold', letterSpacing: '1px', color: '#666'}}>DIO BANGUNAN</div>
                                 </div>
                                 
                                 <div style={{fontSize: '0.75rem', marginBottom: '16px', textAlign: 'left', lineHeight: '1.4', color: '#666'}}>
