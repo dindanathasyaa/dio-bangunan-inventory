@@ -173,7 +173,7 @@ const DailyRecapView = ({ user, activeBranch }) => {
                     
                     {/* Struk Thermal Layout & Menu */}
                     {(printMode === 'menu' || printMode === 'struk') && (
-                        <div className="print-thermal" style={{display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', maxWidth: '350px', width: '100%'}} onClick={e => e.stopPropagation()}>
+                        <div className="print-thermal" style={{display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', maxWidth: '350px', width: '100%', maxHeight: '90vh', overflowY: 'auto', padding: '16px 8px'}} onClick={e => e.stopPropagation()}>
                             <style>{`@media print { .print-thermal { display: block !important; } .no-print, .sidebar, .top-nav, .glass-panel, .modal-overlay { display: none !important; } @page { margin: 0; } body { background: white; margin: 0; padding: 0; } }`}</style>
                             
                             {/* Receipt Container */}
