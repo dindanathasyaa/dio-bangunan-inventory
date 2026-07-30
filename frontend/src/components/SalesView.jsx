@@ -229,11 +229,6 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                 </div>
                             </div>
                         )}
-                        {user.role === 'OWNER' && (
-                            <button className="btn btn-secondary" style={{padding: '8px 16px', fontSize: '0.9rem'}} onClick={fetchRecap}>
-                                📊 Rekap Harian
-                            </button>
-                        )}
                     </div>
                 </div>
                 <input 

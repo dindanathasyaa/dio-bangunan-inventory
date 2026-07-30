@@ -118,7 +118,7 @@ module.exports = function(app, pool) {
             let query = `
                 SELECT s.*, 
                     (
-                        SELECT JSON_ARRAYAGG(JSON_OBJECT('name', p.name, 'unit', p.unit, 'qty', si.qty))
+                        SELECT JSON_ARRAYAGG(JSON_OBJECT('name', p.name, 'unit', p.unit, 'qty', si.qty, 'price', si.price))
                         FROM sale_items si
                         JOIN products p ON si.product_id = p.id
                         WHERE si.sale_id = s.id
