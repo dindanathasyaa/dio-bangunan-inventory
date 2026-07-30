@@ -11,8 +11,6 @@ import PurchaseView from './PurchaseView';
 import OrderDeliveryView from './OrderDeliveryView';
 import CashDebtView from './CashDebtView';
 import StockAlertView from './StockAlertView';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import CurrencyInput from './CurrencyInput';
 
 const Dashboard = ({ user, setUser }) => {
