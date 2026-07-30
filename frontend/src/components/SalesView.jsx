@@ -162,8 +162,8 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 setTransactionSuccessData(successData);
                 setPrintMode('kredit_success');
             } else {
-                setTransactionSuccessData(successData);
-                setPrintMode('menu');
+                showToast('Transaksi Berhasil!', 'success');
+                // Tidak mengatur setTransactionSuccessData / setPrintMode('menu') agar tidak muncul popup menu/struk
             }
 
             setCart([]);
