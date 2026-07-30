@@ -123,6 +123,20 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
         }
     };
 
+    const handlePrintDebt = async (r) => {
+        if (r.sale_id > 0) {
+            try {
+                const res = await axios.get(`http://localhost:5000/api/sales/${r.sale_id}/items`);
+                setPrintDebtData({ ...r, items: res.data });
+            } catch (error) {
+                console.error("Gagal memuat detail barang:", error);
+                setPrintDebtData({ ...r, items: [] });
+            }
+        } else {
+            setPrintDebtData({ ...r, items: [] });
+        }
+    };
+
     const renderDetailModal = () => {
         if (!showDetailModal || !detailData) return null;
         const { cashFlow, items } = detailData;
@@ -279,6 +293,21 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                             <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>Petugas:</span> <span>{user.username}</span></div>
                             <div style={{display: 'flex', justifyContent: 'space-between'}}><span>Pelanggan:</span> <span style={{fontWeight: 'bold'}}>{printDebtData.customer_name}</span></div>
                         </div>
+
+                        {printDebtData.items && printDebtData.items.length > 0 && (
+                            <div style={{marginBottom: '16px', borderBottom: '1px dashed var(--border-color)', paddingBottom: '12px', fontSize: '0.85rem'}}>
+                                <div style={{fontWeight: 'bold', marginBottom: '8px', textAlign: 'center'}}>DETAIL BARANG</div>
+                                {printDebtData.items.map((item, idx) => (
+                                    <div key={idx} style={{marginBottom: '6px'}}>
+                                        <div style={{fontWeight: 'bold', marginBottom: '2px'}}>{item.name}</div>
+                                        <div style={{display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)'}}>
+                                            <span>{item.qty} {item.unit} x {Number(item.price).toLocaleString('en-US')}</span>
+                                            <span style={{color: 'var(--text-primary)', fontWeight: 'bold'}}>{Number(item.qty * item.price).toLocaleString('en-US')}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                         
                         <div style={{marginBottom: '16px', borderBottom: '1px dashed var(--border-color)', paddingBottom: '8px', fontSize: '0.85rem'}}>
                             <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}>
@@ -621,7 +650,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                         )}
                                     </td>
                                     <td>
-                                        <button className="btn btn-outline" style={{padding: '6px 12px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px'}} onClick={() => setPrintDebtData(r)}>
+                                        <button className="btn btn-outline" style={{padding: '6px 12px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px'}} onClick={() => handlePrintDebt(r)}>
                                             🖨️ Cetak
                                         </button>
                                     </td>

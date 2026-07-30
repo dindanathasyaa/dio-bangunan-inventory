@@ -102,6 +102,15 @@ module.exports = function(app, pool) {
         }
     });
 
+    app.get('/api/sales/:id/items', async (req, res) => {
+        try {
+            const [rows] = await pool.query('SELECT p.name, p.unit, si.qty, si.price FROM sale_items si JOIN products p ON si.product_id = p.id WHERE si.sale_id = ?', [req.params.id]);
+            res.json(rows);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    });
+
     app.get('/api/sales', async (req, res) => {
         const branch_id = req.query.branch_id;
         const date = req.query.date;
