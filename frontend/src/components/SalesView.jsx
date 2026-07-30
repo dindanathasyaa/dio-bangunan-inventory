@@ -373,11 +373,8 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                         <div className="modal-content no-print" style={{maxWidth: '450px', width: '100%', padding: '32px', textAlign: 'center', flexShrink: 0, borderTop: '6px solid var(--primary-color)'}} onClick={e => e.stopPropagation()}>
                             <div style={{fontSize: '4rem', marginBottom: '16px'}}>📝</div>
                             <h2 style={{color: 'var(--primary-color)', marginBottom: '16px'}}>Transaksi Masuk Piutang</h2>
-                            <p style={{color: 'var(--text-secondary)', marginBottom: '32px', fontSize: '1.1rem', lineHeight: '1.5'}}>
-                                Pembayaran dengan metode <strong>Kredit/Hutang</strong> berhasil dicatat. Transaksi ini telah masuk ke dalam <strong>Daftar Piutang Pembeli</strong> atas nama <strong>{transactionSuccessData.customer_name || 'Umum'}</strong>.
-                            </p>
-                            <button className="btn btn-primary" style={{width: '100%', padding: '14px', fontSize: '1.1rem'}} onClick={() => setPrintMode('menu')}>
-                                Lanjutkan ke Cetak Struk
+                            <button className="btn btn-primary" style={{width: '100%', padding: '14px', fontSize: '1.1rem'}} onClick={() => setTransactionSuccessData(null)}>
+                                Tutup
                             </button>
                         </div>
                     )}
