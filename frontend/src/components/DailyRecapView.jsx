@@ -178,45 +178,71 @@ const DailyRecapView = ({ user, activeBranch }) => {
                             
                             {/* Receipt Container */}
                             <div className="modal-content" style={{position: 'relative', width: '100%', padding: '0', flexShrink: 0, overflow: 'hidden'}}>
-                                <div className="invoice-container" style={{padding: '24px', paddingBottom: '16px'}}>
-                                <div style={{display: 'flex', justifyContent: 'center', marginBottom: '16px'}}>
-                                    <img src="/logo-transparent.png" alt="Dio Bangunan Logo" style={{maxWidth: '140px', width: '100%', mixBlendMode: 'multiply'}} />
-                                </div>
-                                
-                                <div style={{fontSize: '0.85rem', marginBottom: '16px', borderBottom: '1px dashed var(--border-color)', paddingBottom: '12px'}}>
-                                    <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>No. Faktur:</span> <span style={{fontWeight: 'bold'}}>#{printData.sale_id}</span></div>
-                                    <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>Tanggal:</span> <span>{new Date(printData.transaction_date).toLocaleString('id-ID', {dateStyle: 'short', timeStyle: 'short'})}</span></div>
-                                    <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>Kasir:</span> <span>{user?.username}</span></div>
-                                    <div style={{display: 'flex', justifyContent: 'space-between'}}><span>Pelanggan:</span> <span>{printData.customer_name || 'Umum'}</span></div>
-                                </div>
-                                
-                                <div style={{marginBottom: '16px', borderBottom: '1px dashed var(--border-color)', paddingBottom: '8px'}}>
-                                    {printData.items.map((item, idx) => (
-                                        <div key={idx} style={{marginBottom: '8px', fontSize: '0.85rem'}}>
-                                            <div style={{fontWeight: 'bold', marginBottom: '4px'}}>{item.name}</div>
-                                            <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                                                <span>{item.qty} x {Number(item.price || 0).toLocaleString('id-ID')}</span>
-                                                <span style={{fontWeight: 'bold'}}>{Number(item.qty * (item.price || 0)).toLocaleString('id-ID')}</span>
-                                            </div>
+                                <div className="invoice-container" style={{padding: '24px', paddingBottom: '16px', fontFamily: '"Courier New", Courier, monospace', color: 'black', textTransform: 'uppercase', background: '#f8f8f8', minHeight: '300px'}}>
+                                    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '16px'}}>
+                                        <div style={{width: '80px', height: '80px', borderRadius: '50%', background: '#666', border: '4px solid #fbdc4c', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '8px', overflow: 'hidden'}}>
+                                            <img src="/logo-transparent.png" alt="Dio Bangunan Logo" style={{maxWidth: '120px', mixBlendMode: 'lighten'}} />
                                         </div>
-                                    ))}
-                                </div>
-                                
-                                <div style={{fontSize: '0.9rem', marginBottom: '24px'}}>
-                                    <div style={{display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '8px'}}>
-                                        <span>TOTAL</span>
-                                        <span>Rp {Number(printData.total_amount).toLocaleString('id-ID')}</span>
+                                        <div style={{fontSize: '0.9rem', fontWeight: 'bold', letterSpacing: '1px', color: '#666'}}>DIO BANGUNAN</div>
                                     </div>
-                                    <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                                        <span>Pembayaran</span>
-                                        <span>{printData.payment_method === 'Cash' ? 'TUNAI' : 'KREDIT'}</span>
+                                    
+                                    <div style={{fontSize: '0.75rem', marginBottom: '16px', textAlign: 'left', lineHeight: '1.4', color: '#666'}}>
+                                        <div>MENJUAL ALAT BANGUNAN & LISTRIK</div>
+                                        <div>ALAMAT : PASAR TARAM</div>
+                                        <div style={{display: 'flex'}}>
+                                            <div style={{width: '70px'}}>HP/WA</div>
+                                            <div>: 0812 7786 7616<br/>&nbsp;&nbsp;0853 1407 8967</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style={{borderBottom: '1px dashed #999', margin: '8px 0'}}></div>
+                                    
+                                    <div style={{fontSize: '0.75rem', marginBottom: '8px', color: '#555'}}>
+                                        <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '2px'}}><span>Pembeli</span> <span>{printData.customer_name || 'UMUM'}</span></div>
+                                        <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '2px'}}><span>Pembayaran</span> <span>{printData.payment_method === 'Cash' ? 'LUNAS' : 'BELUM BAYAR'}</span></div>
+                                        <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '2px'}}><span>Tanggal</span> <span>{new Date(printData.transaction_date).toLocaleString('id-ID', {dateStyle: 'short', timeStyle: 'short'})}</span></div>
+                                        <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '2px'}}><span>No Struk</span> <span>SR{printData.sale_id}</span></div>
+                                        <div style={{display: 'flex', justifyContent: 'space-between'}}><span>Kasir</span> <span>{user?.username}</span></div>
+                                    </div>
+                                    
+                                    <div style={{borderBottom: '1px dashed #999', margin: '8px 0'}}></div>
+                                    
+                                    <div style={{marginBottom: '8px', fontSize: '0.75rem', color: '#555'}}>
+                                        {printData.items.map((item, idx) => (
+                                            <div key={idx} style={{marginBottom: '6px'}}>
+                                                <div style={{marginBottom: '2px'}}>{item.name}</div>
+                                                <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                                    <span>{Number(item.price || 0).toLocaleString('id-ID')} x {item.qty}</span>
+                                                    <span>{Number(item.qty * (item.price || 0)).toLocaleString('id-ID')}</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    
+                                    <div style={{borderBottom: '1px dashed #999', margin: '8px 0'}}></div>
+                                    
+                                    <div style={{fontSize: '0.75rem', marginBottom: '16px', color: '#555'}}>
+                                        <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '2px'}}>
+                                            <span>TOTAL {printData.items.reduce((acc, item) => acc + parseInt(item.qty || 0), 0)} QTY</span>
+                                            <span>{Number(printData.total_amount).toLocaleString('id-ID')}</span>
+                                        </div>
+                                        <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '2px'}}>
+                                            <span>Bayar</span>
+                                            <span>{printData.payment_method === 'Cash' ? Number(printData.total_amount).toLocaleString('id-ID') : '0'}</span>
+                                        </div>
+                                        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                            <span>Kurang</span>
+                                            <span>{printData.payment_method === 'Cash' ? '0' : Number(printData.total_amount).toLocaleString('id-ID')}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style={{borderBottom: '1px dashed #999', margin: '8px 0'}}></div>
+                                    
+                                    <div style={{fontSize: '0.75rem', lineHeight: '1.4', color: '#666'}}>
+                                        <div>TERIMA KASIH</div>
+                                        <div>KAMI SIAP MENYEDIAKAN KEBUTUHAN ANDA</div>
                                     </div>
                                 </div>
-                                
-                                <div style={{textAlign: 'center', fontSize: '0.85rem'}}>
-                                    <p style={{margin: 0, fontStyle: 'italic'}}>Terima kasih atas kunjungan Anda!</p>
-                                </div>
-                            </div>
 
                             </div>
 
