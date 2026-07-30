@@ -383,17 +383,68 @@ module.exports = function(app, pool) {
         }
     });
 
-    app.post('/api/receivables/new', async (req, res) => {
-        const { customer_name, total_debt } = req.body;
-        if (!customer_name || !total_debt) return res.status(400).json({ error: 'Nama dan nominal hutang diperlukan' });
+    app.post('/api/receivables/:id/add-items', async (req, res) => {
+        const { id } = req.params;
+        const { items } = req.body;
+        
+        if (!items || items.length === 0) {
+            return res.status(400).json({ error: 'Tidak ada barang yang ditambahkan' });
+        }
+
+        const connection = await pool.getConnection();
         try {
-            await pool.query(
-                `INSERT INTO receivables (sale_id, customer_name, total_debt, amount_paid, status) VALUES (0, ?, ?, 0, 'Belum Lunas')`,
-                [customer_name, total_debt]
+            await connection.beginTransaction();
+
+            const [recvRows] = await connection.query(`SELECT sale_id, total_debt, amount_paid FROM receivables WHERE id = ?`, [id]);
+            if (recvRows.length === 0) throw new Error("Piutang tidak ditemukan");
+            const receivable = recvRows[0];
+            
+            if (receivable.sale_id <= 0) {
+                throw new Error("Tidak dapat mengedit nota Piutang Lama");
+            }
+
+            const [saleRows] = await connection.query(`SELECT branch_id FROM sales WHERE id = ?`, [receivable.sale_id]);
+            if (saleRows.length === 0) throw new Error("Data nota penjualan asli tidak ditemukan");
+            const branch_id = saleRows[0].branch_id;
+
+            let addAmount = 0;
+            let addProfit = 0;
+
+            for (let item of items) {
+                addAmount += (item.qty * item.price);
+                addProfit += (item.qty * (item.price - item.base_price));
+
+                await connection.query(
+                    `INSERT INTO sale_items (sale_id, product_id, qty, price, base_price) VALUES (?, ?, ?, ?, ?)`,
+                    [receivable.sale_id, item.product_id, item.qty, item.price, item.base_price]
+                );
+
+                await connection.query(
+                    `UPDATE inventory SET stock = stock - ? WHERE product_id = ? AND branch_id = ?`,
+                    [item.qty, item.product_id, branch_id]
+                );
+            }
+
+            await connection.query(
+                `UPDATE sales SET total_amount = total_amount + ?, profit = profit + ? WHERE id = ?`,
+                [addAmount, addProfit, receivable.sale_id]
             );
-            res.json({ message: 'Piutang baru berhasil ditambahkan' });
+
+            const newTotalDebt = parseFloat(receivable.total_debt) + addAmount;
+            const status = parseFloat(receivable.amount_paid) >= newTotalDebt ? 'Lunas' : 'Belum Lunas';
+
+            await connection.query(
+                `UPDATE receivables SET total_debt = ?, status = ? WHERE id = ?`,
+                [newTotalDebt, status, id]
+            );
+
+            await connection.commit();
+            res.json({ message: 'Berhasil menambahkan barang ke nota hutang' });
         } catch (error) {
+            await connection.rollback();
             res.status(500).json({ error: error.message });
+        } finally {
+            connection.release();
         }
     });
 

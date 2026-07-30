@@ -111,7 +111,7 @@ const Dashboard = ({ user, setUser }) => {
                         <Route path="/sales" element={<SalesView user={user} activeBranch={activeBranch} setActiveBranch={setActiveBranch} branches={branches} />} />
                         <Route path="/orders" element={<OrderDeliveryView user={user} activeBranch={activeBranch} />} />
                         <Route path="/purchases" element={<PurchaseView user={user} activeBranch={activeBranch} branches={branches} refreshData={fetchData} />} />
-                        <Route path="/cash" element={<CashDebtView user={user} activeBranch={activeBranch} setActiveBranch={setActiveBranch} branches={branches} />} />
+                        <Route path="/cash" element={<CashDebtView user={user} activeBranch={activeBranch} setActiveBranch={setActiveBranch} branches={branches} inventory={inventory} />} />
                         <Route path="/categories" element={<CategorySettings />} />
                         <Route path="/scanner" element={<Scanner user={user} activeBranch={activeBranch} />} />
                         

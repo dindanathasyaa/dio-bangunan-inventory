@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const CashDebtView = ({ user, activeBranch, setActiveBranch, branches }) => {
+const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory }) => {
     const [isBranchDropdownOpen, setIsBranchDropdownOpen] = useState(false);
     const [view, setView] = useState('CashFlow'); // CashFlow, Receivables, Payables
     const [transactions, setTransactions] = useState([]);
@@ -18,9 +18,10 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches }) => {
     const [paymentModalData, setPaymentModalData] = useState(null);
     const [paymentAmount, setPaymentAmount] = useState('');
 
-    // New Receivable Modal
-    const [showNewReceivableModal, setShowNewReceivableModal] = useState(false);
-    const [newReceivableForm, setNewReceivableForm] = useState({ customer_name: '', total_debt: '' });
+    // Edit Nota Modal
+    const [editNotaData, setEditNotaData] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [cart, setCart] = useState([]);
     const [printDebtData, setPrintDebtData] = useState(null);
 
     // Custom Toast Alert State
@@ -71,17 +72,34 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches }) => {
             showToast("Gagal memproses pembayaran", "error");
         }
     };
+    const handleAddToCart = (product) => {
+        const existingItem = cart.find(item => item.product_id === product.id);
+        if (existingItem) {
+            setCart(cart.map(item => item.product_id === product.id ? { ...item, qty: item.qty + 1 } : item));
+        } else {
+            setCart([...cart, { product_id: product.id, name: product.name, qty: 1, price: product.price, base_price: product.base_price, sku: product.sku, unit: product.unit }]);
+        }
+    };
 
-    const handleCreateNewReceivable = async (e) => {
-        e.preventDefault();
+    const handleUpdateQty = (productId, newQty) => {
+        if (newQty < 1) {
+            setCart(cart.filter(item => item.product_id !== productId));
+        } else {
+            setCart(cart.map(item => item.product_id === productId ? { ...item, qty: newQty } : item));
+        }
+    };
+
+    const handleSaveEditNota = async () => {
+        if (!editNotaData || cart.length === 0) return;
         try {
-            await axios.post('http://localhost:5000/api/receivables/new', newReceivableForm);
-            setShowNewReceivableModal(false);
-            setNewReceivableForm({ customer_name: '', total_debt: '' });
+            await axios.post(`http://localhost:5000/api/receivables/${editNotaData.id}/add-items`, { items: cart });
+            showToast("Berhasil menambahkan barang ke nota hutang!", "success");
+            setEditNotaData(null);
+            setCart([]);
             fetchData();
         } catch (error) {
             console.error(error);
-            showToast("Gagal menambahkan piutang baru", "error");
+            showToast("Gagal menambahkan barang ke nota hutang", "error");
         }
     };
 
@@ -286,6 +304,82 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches }) => {
         );
     };
 
+    const renderEditNotaModal = () => {
+        if (!editNotaData) return null;
+        
+        const filteredInventory = (inventory || []).filter(item => 
+            item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+            item.sku.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+
+        return (
+            <div className="modal-overlay" onClick={() => { setEditNotaData(null); setCart([]); setSearchQuery(''); }}>
+                <div className="modal-content" onClick={e => e.stopPropagation()} style={{maxWidth: '800px', width: '95%', maxHeight: '90vh', overflowY: 'auto'}}>
+                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
+                        <h2>✏️ Edit Nota (Tambah Hutang) - {editNotaData.customer_name}</h2>
+                        <button className="btn-icon" onClick={() => { setEditNotaData(null); setCart([]); setSearchQuery(''); }}>✕</button>
+                    </div>
+                    
+                    <div style={{display: 'flex', gap: '24px', flexWrap: 'wrap'}}>
+                        {/* Kiri: Pencarian Barang */}
+                        <div style={{flex: '1 1 300px'}}>
+                            <h3 style={{marginBottom: '16px', color: 'var(--text-primary)'}}>Pilih Barang</h3>
+                            <input 
+                                type="text" 
+                                className="input-field" 
+                                placeholder="Cari nama barang atau kode..." 
+                                value={searchQuery}
+                                onChange={e => setSearchQuery(e.target.value)}
+                                style={{marginBottom: '16px'}}
+                            />
+                            <div style={{maxHeight: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px'}}>
+                                {filteredInventory.slice(0, 20).map(item => (
+                                    <div key={item.id} className="glass-panel" style={{padding: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--item-bg)'}}>
+                                        <div>
+                                            <div style={{fontWeight: 'bold', color: 'var(--text-primary)'}}>{item.name}</div>
+                                            <div style={{fontSize: '0.85rem', color: 'var(--text-secondary)'}}>Stok: {item.stock} {item.unit} | Rp {Number(item.price).toLocaleString('en-US')}</div>
+                                        </div>
+                                        <button className="btn btn-outline" style={{padding: '6px 12px'}} onClick={() => handleAddToCart(item)}>+ Tambah</button>
+                                    </div>
+                                ))}
+                                {filteredInventory.length === 0 && <div style={{textAlign: 'center', color: 'var(--text-secondary)', padding: '20px'}}>Barang tidak ditemukan</div>}
+                            </div>
+                        </div>
+
+                        {/* Kanan: Keranjang Tambahan */}
+                        <div style={{flex: '1 1 300px'}}>
+                            <h3 style={{marginBottom: '16px', color: 'var(--text-primary)'}}>Barang yang Ditambahkan</h3>
+                            <div style={{maxHeight: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px'}}>
+                                {cart.map(item => (
+                                    <div key={item.product_id} className="glass-panel" style={{padding: '12px', background: 'var(--item-bg)'}}>
+                                        <div style={{fontWeight: 'bold', marginBottom: '8px', color: 'var(--text-primary)'}}>{item.name}</div>
+                                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                            <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                                                <button className="btn-icon" style={{background: 'var(--danger-color)', color: 'white', width: '28px', height: '28px'}} onClick={() => handleUpdateQty(item.product_id, item.qty - 1)}>-</button>
+                                                <input type="number" className="input-field" style={{width: '60px', marginBottom: 0, textAlign: 'center', padding: '4px'}} value={item.qty} onChange={e => handleUpdateQty(item.product_id, Number(e.target.value))} />
+                                                <button className="btn-icon" style={{background: 'var(--success-color)', color: 'white', width: '28px', height: '28px'}} onClick={() => handleUpdateQty(item.product_id, item.qty + 1)}>+</button>
+                                            </div>
+                                            <div style={{fontWeight: 'bold'}}>Rp {(item.qty * item.price).toLocaleString('en-US')}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                                {cart.length === 0 && <div style={{textAlign: 'center', color: 'var(--text-secondary)', padding: '20px'}}>Keranjang kosong</div>}
+                            </div>
+                            
+                            <div style={{borderTop: '2px solid rgba(255,255,255,0.1)', paddingTop: '16px'}}>
+                                <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '16px', fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--primary-color)'}}>
+                                    <span>Total Tambahan:</span>
+                                    <span>Rp {cart.reduce((sum, item) => sum + (item.qty * item.price), 0).toLocaleString('en-US')}</span>
+                                </div>
+                                <button className="btn btn-primary" style={{width: '100%', padding: '12px'}} onClick={handleSaveEditNota} disabled={cart.length === 0}>Simpan Tambahan Hutang</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     try {
         return (
             <div style={{animation: 'fadeIn 0.5s ease-out'}}>
@@ -337,42 +431,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 {renderDetailModal()}
                 {renderPaymentModal()}
                 {renderPrintModal()}
-                {showNewReceivableModal && (
-                    <div className="modal-overlay" onClick={() => setShowNewReceivableModal(false)}>
-                        <div className="modal-content" onClick={e => e.stopPropagation()} style={{maxWidth: '400px', width: '90%'}}>
-                            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
-                                <h2>Tambah Piutang Lama</h2>
-                                <button className="btn-icon" onClick={() => setShowNewReceivableModal(false)}>✕</button>
-                            </div>
-                            <form onSubmit={handleCreateNewReceivable}>
-                                <div className="form-group" style={{marginBottom: '16px'}}>
-                                    <label>Nama Pembeli</label>
-                                    <input 
-                                        type="text" 
-                                        className="input-field" 
-                                        value={newReceivableForm.customer_name}
-                                        onChange={e => setNewReceivableForm({...newReceivableForm, customer_name: e.target.value})}
-                                        required 
-                                    />
-                                </div>
-                                <div className="form-group" style={{marginBottom: '24px'}}>
-                                    <label>Total Nominal Hutang</label>
-                                    <input 
-                                        type="number" 
-                                        className="input-field" 
-                                        value={newReceivableForm.total_debt}
-                                        onChange={e => setNewReceivableForm({...newReceivableForm, total_debt: e.target.value})}
-                                        required 
-                                    />
-                                </div>
-                                <div style={{display: 'flex', gap: '12px', justifyContent: 'flex-end'}}>
-                                    <button type="button" className="btn btn-secondary" onClick={() => setShowNewReceivableModal(false)}>Batal</button>
-                                    <button type="submit" className="btn btn-primary">Simpan</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                )}
+                {renderEditNotaModal()}
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
                     <h1 style={{margin: 0}}>Kas, Piutang, Hutang</h1>
                     
@@ -510,7 +569,6 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 <div className="glass-panel table-container">
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
                         <h2>Daftar Piutang Pembeli</h2>
-                        <button className="btn btn-primary" onClick={() => setShowNewReceivableModal(true)}>+ Tambah Piutang Lama</button>
                     </div>
                     <table className="data-table">
                         <thead>
@@ -538,10 +596,19 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                     </td>
                                     <td>
                                         {r.status !== 'Lunas' && (
-                                            <button className="btn btn-secondary" onClick={() => {
-                                                setPaymentModalData({ type: 'Receivable', id: r.id, name: r.customer_name });
-                                                setPaymentAmount('');
-                                            }}>Terima Cicilan/Pelunasan</button>
+                                            <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+                                                <button className="btn btn-secondary" onClick={() => {
+                                                    setPaymentModalData({ type: 'Receivable', id: r.id, name: r.customer_name });
+                                                    setPaymentAmount('');
+                                                }}>Terima Cicilan/Pelunasan</button>
+                                                {r.sale_id > 0 && (
+                                                    <button className="btn btn-outline" style={{borderColor: '#f59e0b', color: '#f59e0b'}} onClick={() => {
+                                                        setEditNotaData(r);
+                                                        setCart([]);
+                                                        setSearchQuery('');
+                                                    }}>✏️ Edit Nota (Tambah Hutang)</button>
+                                                )}
+                                            </div>
                                         )}
                                     </td>
                                     <td>
