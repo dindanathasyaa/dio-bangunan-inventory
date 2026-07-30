@@ -385,7 +385,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                     
                     <div className="no-print" style={{display: 'flex', gap: '12px', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-color)'}}>
                         <button className="btn btn-secondary" style={{flex: 1, padding: '12px'}} onClick={() => setPrintDebtData(null)}>Tutup</button>
-                        <button className="btn btn-primary" style={{flex: 1, padding: '12px'}} onClick={() => window.print()}>🖨️ Cetak</button>
+                        <button className="btn btn-primary" style={{flex: 1, padding: '12px'}} onClick={() => window.print()}>Cetak</button>
                     </div>
                 </div>
             </div>
@@ -705,7 +705,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                     </td>
                                     <td>
                                         <button className="btn btn-outline" style={{padding: '6px 12px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px'}} onClick={() => handlePrintDebt(r)}>
-                                            🖨️ Cetak
+                                            Cetak
                                         </button>
                                     </td>
                                 </tr>

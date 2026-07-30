@@ -506,7 +506,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                     Kembali
                                 </button>
                                 <button className="btn btn-primary" onClick={() => window.print()}>
-                                    🖨️ Cetak
+                                    Cetak
                                 </button>
                             </div>
 

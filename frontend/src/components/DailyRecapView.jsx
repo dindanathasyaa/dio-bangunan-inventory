@@ -151,7 +151,7 @@ const DailyRecapView = ({ user, activeBranch }) => {
                                             <td style={{textAlign: 'right', fontWeight: 'bold'}}>Rp {Number(sale.total_amount).toLocaleString('id-ID')}</td>
                                             <td style={{textAlign: 'center'}}>
                                                 <button className="btn btn-primary" style={{padding: '6px 12px', fontSize: '0.85rem'}} onClick={() => handlePrintReceipt(sale)}>
-                                                    🖨️ Cetak Struk
+                                                    Cetak Struk
                                                 </button>
                                             </td>
                                         </tr>
@@ -268,7 +268,7 @@ const DailyRecapView = ({ user, activeBranch }) => {
                                     Kembali
                                 </button>
                                 <button className="btn btn-primary" onClick={() => window.print()}>
-                                    🖨️ Cetak
+                                    Cetak
                                 </button>
                             </div>
 
