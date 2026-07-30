@@ -169,12 +169,12 @@ const DailyRecapView = ({ user, activeBranch }) => {
             
             {/* Print Modals */}
             {printData && (
-                <div className="modal-overlay" onClick={() => setPrintData(null)}>
+                <div className="modal-overlay" style={{ alignItems: 'flex-start', overflowY: 'auto', padding: '40px 24px' }} onClick={() => setPrintData(null)}>
                     
                     {/* Struk Thermal Layout & Menu */}
                     {(printMode === 'menu' || printMode === 'struk') && (
-                        <div className="print-thermal" style={{display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', maxWidth: '350px', width: '100%', maxHeight: '90vh', overflowY: 'auto', padding: '16px 8px'}} onClick={e => e.stopPropagation()}>
-                            <style>{`@media print { .print-thermal { display: block !important; } .no-print, .sidebar, .top-nav, .glass-panel, .modal-overlay { display: none !important; } @page { margin: 0; } body { background: white; margin: 0; padding: 0; } }`}</style>
+                        <div className="print-thermal" style={{display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', maxWidth: '350px', width: '100%', margin: 'auto'}} onClick={e => e.stopPropagation()}>
+                            <style>{`@media print { .no-print { display: none !important; } .modal-overlay { background: transparent !important; padding: 0 !important; overflow: visible !important; } @page { margin: 0; } body { background: white; margin: 0; padding: 0; } }`}</style>
                             
                             {/* Receipt Container */}
                             <div className="modal-content" style={{position: 'relative', width: '100%', padding: '0', flexShrink: 0, overflow: 'hidden'}}>
