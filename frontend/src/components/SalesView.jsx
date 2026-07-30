@@ -162,10 +162,8 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 setTransactionSuccessData(successData);
                 setPrintMode('kredit_success');
             } else {
-                showToast('Transaksi Berhasil!', 'success', () => {
-                    setTransactionSuccessData(successData);
-                    setPrintMode('menu');
-                });
+                setTransactionSuccessData(successData);
+                setPrintMode('menu');
             }
 
             setCart([]);
@@ -412,7 +410,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                     )}
 
                     {/* Layout Struk Thermal (Detail & Cetak) */}
-                    {(printMode === 'struk' || printMode === 'menu') && (
+                    {printMode === 'struk' && (
                         <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '24px', flexShrink: 0}} onClick={e => e.stopPropagation()}>
                             <style>{`@media print { @page { margin: 0; } body { background: white; } }`}</style>
                             <div className="invoice-container">
