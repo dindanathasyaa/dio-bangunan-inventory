@@ -117,7 +117,18 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
         setCart(cart.map(x => x.id === id ? { ...x, qty: v } : x));
     };
 
+    const updatePrice = (id, val) => {
+        if (val === '') {
+            setCart(cart.map(x => x.id === id ? { ...x, price: '' } : x));
+            return;
+        }
+        const v = parseFloat(val);
+        if (isNaN(v) || v < 0) return;
+        setCart(cart.map(x => x.id === id ? { ...x, price: v } : x));
+    };
+
     const checkout = async () => {
+        const totalAmount = cart.reduce((acc, c) => acc + (c.qty || 0) * (c.price || 0), 0);
         const validCart = cart.filter(item => item.qty !== '' && parseInt(item.qty) > 0);
         if (validCart.length === 0) return showToast('Keranjang kosong atau jumlah tidak valid!', 'warning');
         setLoading(true);
@@ -273,7 +284,13 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                         <div key={c.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', background: 'var(--item-bg)', padding: '12px', borderRadius: '8px'}}>
                             <div>
                                 <div style={{fontWeight: 'bold'}}>{c.name}</div>
-                                <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Rp {Number(c.price || 15000).toLocaleString('en-US')}</div>
+                                {user?.role === 'ADMIN' ? (
+                                    <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '4px'}}>
+                                        Rp <input type="number" value={c.price} onChange={e => updatePrice(c.id, e.target.value)} style={{width: '90px', padding: '2px 4px', borderRadius: '4px', border: '1px solid var(--border-color)', background: 'var(--panel-bg)', color: 'var(--text-primary)', fontSize: '0.9rem'}} />
+                                    </div>
+                                ) : (
+                                    <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Rp {Number(c.price || 15000).toLocaleString('en-US')}</div>
+                                )}
                             </div>
                             <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
                                 <input type="number" value={c.qty} onChange={e => updateQty(c.id, e.target.value)} style={{width: '60px', padding: '4px', borderRadius: '4px', border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-primary)'}} />
