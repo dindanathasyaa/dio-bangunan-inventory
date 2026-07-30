@@ -405,8 +405,8 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                     )}
 
                     {/* Layout Struk Thermal (Detail & Cetak) */}
-                    {printMode === 'struk' && (
-                        <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '24px', flexShrink: 0}} onClick={e => e.stopPropagation()}>
+                    {(printMode === 'struk' || printMode === 'struk_besar') && (
+                        <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '0', flexShrink: 0, zoom: printMode === 'struk_besar' ? 2.2 : 1}} onClick={e => e.stopPropagation()}>
                             <style>{`@media print { @page { margin: 0; } body { background: white; } }`}</style>
                             <div className="invoice-container" style={{padding: '24px', paddingBottom: '16px', fontFamily: '"Courier New", Courier, monospace', color: 'black', textTransform: 'uppercase', background: '#f8f8f8', minHeight: '300px'}}>
                                 <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '16px'}}>
@@ -473,14 +473,11 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                 </div>
                             </div>
                             
-                            {printMode === 'struk' && (
-                                <div className="no-print" style={{display: 'flex', gap: '12px', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-color)'}}>
-                                    <button className="btn btn-secondary" style={{flex: 1, padding: '12px'}} onClick={() => setPrintMode('menu')}>
-                                        Kembali
-                                    </button>
-                                    <button className="btn btn-primary" style={{flex: 1, padding: '12px'}} onClick={() => window.print()}>
-                                        🖨️ Cetak
-                                    </button>
+                            {(printMode === 'struk' || printMode === 'struk_besar') && (
+                                <div className="no-print" style={{display: 'flex', flexDirection: 'column', marginTop: '0', borderTop: '1px solid var(--border-color)'}}>
+                                    <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('struk'); setTimeout(() => window.print(), 300); }}>Cetak (Kecil / Thermal)</button>
+                                    <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('struk_besar'); setTimeout(() => window.print(), 300); }}>Cetak (Besar / A4)</button>
+                                    <button style={{padding: '16px', border: 'none', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => setPrintMode('menu')}>Kembali</button>
                                 </div>
                             )}
                         </div>
