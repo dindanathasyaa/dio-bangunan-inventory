@@ -73,11 +73,20 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
         }
     };
     const handleAddToCart = (product) => {
-        const existingItem = cart.find(item => item.product_id === product.id);
+        const productId = product.product_id || product.id;
+        const existingItem = cart.find(item => item.product_id === productId);
         if (existingItem) {
-            setCart(cart.map(item => item.product_id === product.id ? { ...item, qty: item.qty + 1 } : item));
+            setCart(cart.map(item => item.product_id === productId ? { ...item, qty: item.qty + 1 } : item));
         } else {
-            setCart([...cart, { product_id: product.id, name: product.name, qty: 1, price: product.price, base_price: product.base_price, sku: product.sku, unit: product.unit }]);
+            setCart([...cart, { 
+                product_id: productId, 
+                name: product.name, 
+                qty: 1, 
+                price: product.price || 15000, 
+                base_price: product.base_price || (product.price ? product.price * 0.8 : 10000), 
+                sku: product.sku, 
+                unit: product.unit 
+            }]);
         }
     };
 
