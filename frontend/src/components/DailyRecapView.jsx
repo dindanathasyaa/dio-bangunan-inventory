@@ -69,7 +69,7 @@ const DailyRecapView = ({ user, activeBranch }) => {
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
                     <h2 style={{margin: 0}}>📊 Rekap Penjualan Harian</h2>
                     <div style={{display: 'flex', gap: '12px'}}>
-                        <button className="btn btn-primary" onClick={fetchRecap}>🔄</button>
+                        <button style={{background: 'none', border: 'none', fontSize: '1.8rem', cursor: 'pointer', padding: '4px', margin: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'transform 0.2s'}} onClick={fetchRecap} title="Refresh" onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.1)'} onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}>🔄</button>
                     </div>
                 </div>
 
