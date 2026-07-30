@@ -69,7 +69,7 @@ const DailyRecapView = ({ user, activeBranch }) => {
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
                     <h2 style={{margin: 0}}>📊 Rekap Penjualan Harian</h2>
                     <div style={{display: 'flex', gap: '12px'}}>
-                        <button className="btn btn-primary" onClick={fetchRecap}>🔄 Refresh</button>
+                        <button className="btn btn-primary" onClick={fetchRecap}>🔄</button>
                     </div>
                 </div>
 
