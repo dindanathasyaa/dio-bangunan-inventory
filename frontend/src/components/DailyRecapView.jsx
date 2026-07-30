@@ -172,31 +172,31 @@ const DailyRecapView = ({ user, activeBranch }) => {
                 <div className="modal-overlay" style={{ alignItems: 'flex-start', overflowY: 'auto', padding: '40px 24px' }} onClick={() => setPrintData(null)}>
                     
                     {/* Struk Thermal Layout & Menu */}
-                    {(printMode === 'menu' || printMode === 'struk' || printMode === 'struk_besar') && (
-                        <div className="print-thermal" style={{display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', maxWidth: printMode === 'struk_besar' ? '100%' : '350px', width: '100%', margin: 'auto'}} onClick={e => e.stopPropagation()}>
+                    {(printMode === 'menu' || printMode === 'struk') && (
+                        <div className="print-thermal" style={{display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', maxWidth: '350px', width: '100%', margin: 'auto'}} onClick={e => e.stopPropagation()}>
                             <style>{`@media print { .no-print { display: none !important; } .modal-overlay { background: transparent !important; padding: 0 !important; overflow: visible !important; } @page { margin: 0; } body { background: white; margin: 0; padding: 0; } }`}</style>
                             
                             {/* Receipt Container */}
                             <div className="modal-content" style={{position: 'relative', width: '100%', padding: '0', flexShrink: 0, overflow: 'hidden'}}>
-                                <div className="invoice-container" style={{padding: '24px', paddingBottom: '16px', fontFamily: '"Courier New", Courier, monospace', color: 'black', textTransform: 'uppercase', background: '#f8f8f8', minHeight: '300px', fontSize: printMode === 'struk_besar' ? '1.5rem' : '0.75rem'}}>
+                                <div className="invoice-container" style={{padding: '24px', paddingBottom: '16px', fontFamily: '"Courier New", Courier, monospace', color: 'black', textTransform: 'uppercase', background: '#f8f8f8', minHeight: '300px'}}>
                                     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '16px'}}>
                                         <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '8px'}}>
-                                            <img src="/logo-baru.png" alt="Dio Bangunan Logo" style={{maxWidth: printMode === 'struk_besar' ? '200px' : '100px', mixBlendMode: 'multiply'}} />
+                                            <img src="/logo-baru.png" alt="Dio Bangunan Logo" style={{maxWidth: '100px', mixBlendMode: 'multiply'}} />
                                         </div>
                                     </div>
                                     
-                                    <div style={{marginBottom: '16px', textAlign: 'left', lineHeight: '1.4', color: '#666'}}>
+                                    <div style={{fontSize: '0.75rem', marginBottom: '16px', textAlign: 'left', lineHeight: '1.4', color: '#666'}}>
                                         <div>MENJUAL ALAT BANGUNAN & LISTRIK</div>
                                         <div>ALAMAT : PASAR TARAM</div>
                                         <div style={{display: 'flex'}}>
-                                            <div style={{width: printMode === 'struk_besar' ? '140px' : '70px'}}>HP/WA</div>
+                                            <div style={{width: '70px'}}>HP/WA</div>
                                             <div>: 0812 7786 7616<br/>&nbsp;&nbsp;0853 1407 8967</div>
                                         </div>
                                     </div>
                                     
                                     <div style={{borderBottom: '1px dashed #999', margin: '8px 0'}}></div>
                                     
-                                    <div style={{marginBottom: '8px', color: '#555'}}>
+                                    <div style={{fontSize: '0.75rem', marginBottom: '8px', color: '#555'}}>
                                         <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '2px'}}><span>Pembeli</span> <span>{printData.customer_name || 'UMUM'}</span></div>
                                         <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '2px'}}><span>Pembayaran</span> <span>{printData.payment_method === 'Cash' ? 'LUNAS' : 'BELUM BAYAR'}</span></div>
                                         <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '2px'}}><span>Tanggal</span> <span>{new Date(printData.transaction_date).toLocaleString('id-ID', {dateStyle: 'short', timeStyle: 'short'})}</span></div>
@@ -206,7 +206,7 @@ const DailyRecapView = ({ user, activeBranch }) => {
                                     
                                     <div style={{borderBottom: '1px dashed #999', margin: '8px 0'}}></div>
                                     
-                                    <div style={{marginBottom: '8px', color: '#555'}}>
+                                    <div style={{fontSize: '0.75rem', marginBottom: '8px', color: '#555'}}>
                                         {printData.items.map((item, idx) => (
                                             <div key={idx} style={{marginBottom: '6px'}}>
                                                 <div style={{marginBottom: '2px'}}>{item.name}</div>
@@ -220,7 +220,7 @@ const DailyRecapView = ({ user, activeBranch }) => {
                                     
                                     <div style={{borderBottom: '1px dashed #999', margin: '8px 0'}}></div>
                                     
-                                    <div style={{marginBottom: '16px', color: '#555'}}>
+                                    <div style={{fontSize: '0.75rem', marginBottom: '16px', color: '#555'}}>
                                         <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '2px'}}>
                                             <span>TOTAL {printData.items.reduce((acc, item) => acc + parseInt(item.qty || 0), 0)} QTY</span>
                                             <span>{Number(printData.total_amount).toLocaleString('id-ID')}</span>
@@ -237,7 +237,7 @@ const DailyRecapView = ({ user, activeBranch }) => {
                                     
                                     <div style={{borderBottom: '1px dashed #999', margin: '8px 0'}}></div>
                                     
-                                    <div style={{lineHeight: '1.4', color: '#666'}}>
+                                    <div style={{fontSize: '0.75rem', lineHeight: '1.4', color: '#666'}}>
                                         <div>TERIMA KASIH</div>
                                         <div>KAMI SIAP MENYEDIAKAN KEBUTUHAN ANDA</div>
                                     </div>
@@ -249,10 +249,9 @@ const DailyRecapView = ({ user, activeBranch }) => {
                             <div className="modal-content no-print" style={{width: '100%', padding: '0', flexShrink: 0, overflow: 'hidden'}}>
                                 <div style={{display: 'flex', flexDirection: 'column'}}>
                                     <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => setPrintMode('struk')}>Detail</button>
-                                    <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('struk'); setTimeout(() => window.print(), 300); }}>Cetak (Kecil / Thermal)</button>
-                                    <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('struk_besar'); setTimeout(() => window.print(), 300); }}>Cetak (Besar / A4)</button>
-                                    <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('invoice'); setTimeout(() => window.print(), 300); }}>Invoice Profesional (A4)</button>
-                                    <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('surat_jalan'); setTimeout(() => window.print(), 300); }}>Surat Jalan (A4)</button>
+                                    <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('struk'); setTimeout(() => window.print(), 300); }}>Cetak Struk (Kecil/Thermal)</button>
+                                    <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('invoice'); setTimeout(() => window.print(), 300); }}>Cetak Invoice (A4)</button>
+                                    <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('surat_jalan'); setTimeout(() => window.print(), 300); }}>Surat Jalan</button>
                                     <button style={{padding: '16px', border: 'none', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => setPrintData(null)}>Close</button>
                                 </div>
                             </div>

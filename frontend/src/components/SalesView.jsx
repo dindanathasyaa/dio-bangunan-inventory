@@ -405,28 +405,28 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                     )}
 
                     {/* Layout Struk Thermal (Detail & Cetak) */}
-                    {(printMode === 'struk' || printMode === 'struk_besar') && (
-                        <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: printMode === 'struk_besar' ? '100%' : '350px', padding: '0', flexShrink: 0}} onClick={e => e.stopPropagation()}>
+                    {printMode === 'struk' && (
+                        <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '0', flexShrink: 0}} onClick={e => e.stopPropagation()}>
                             <style>{`@media print { @page { margin: 0; } body { background: white; } }`}</style>
-                            <div className="invoice-container" style={{padding: '24px', paddingBottom: '16px', fontFamily: '"Courier New", Courier, monospace', color: 'black', textTransform: 'uppercase', background: '#f8f8f8', minHeight: '300px', fontSize: printMode === 'struk_besar' ? '1.5rem' : '0.75rem'}}>
+                            <div className="invoice-container" style={{padding: '24px', paddingBottom: '16px', fontFamily: '"Courier New", Courier, monospace', color: 'black', textTransform: 'uppercase', background: '#f8f8f8', minHeight: '300px'}}>
                                 <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '16px'}}>
                                     <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '8px'}}>
-                                        <img src="/logo-baru.png" alt="Dio Bangunan Logo" style={{maxWidth: printMode === 'struk_besar' ? '200px' : '100px', mixBlendMode: 'multiply'}} />
+                                        <img src="/logo-baru.png" alt="Dio Bangunan Logo" style={{maxWidth: '100px', mixBlendMode: 'multiply'}} />
                                     </div>
                                 </div>
                                 
-                                <div style={{marginBottom: '16px', textAlign: 'left', lineHeight: '1.4', color: '#666'}}>
+                                <div style={{fontSize: '0.75rem', marginBottom: '16px', textAlign: 'left', lineHeight: '1.4', color: '#666'}}>
                                     <div>MENJUAL ALAT BANGUNAN & LISTRIK</div>
                                     <div>ALAMAT : PASAR TARAM</div>
                                     <div style={{display: 'flex'}}>
-                                        <div style={{width: printMode === 'struk_besar' ? '140px' : '70px'}}>HP/WA</div>
+                                        <div style={{width: '70px'}}>HP/WA</div>
                                         <div>: 0812 7786 7616<br/>&nbsp;&nbsp;0853 1407 8967</div>
                                     </div>
                                 </div>
                                 
                                 <div style={{borderBottom: '1px dashed #999', margin: '8px 0'}}></div>
                                 
-                                <div style={{marginBottom: '8px', color: '#555'}}>
+                                <div style={{fontSize: '0.75rem', marginBottom: '8px', color: '#555'}}>
                                     <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '2px'}}><span>Pembeli</span> <span>{transactionSuccessData.customer_name || 'UMUM'}</span></div>
                                     <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '2px'}}><span>Pembayaran</span> <span>{transactionSuccessData.payment_method === 'Cash' ? 'LUNAS' : 'BELUM BAYAR'}</span></div>
                                     <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '2px'}}><span>Tanggal</span> <span>{new Date(transactionSuccessData.transaction_date).toLocaleString('id-ID', {dateStyle: 'short', timeStyle: 'short'})}</span></div>
@@ -436,7 +436,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                 
                                 <div style={{borderBottom: '1px dashed #999', margin: '8px 0'}}></div>
                                 
-                                <div style={{marginBottom: '8px', color: '#555'}}>
+                                <div style={{fontSize: '0.75rem', marginBottom: '8px', color: '#555'}}>
                                     {transactionSuccessData.items.map((item, idx) => (
                                         <div key={idx} style={{marginBottom: '6px'}}>
                                             <div style={{marginBottom: '2px'}}>{item.name}</div>
@@ -450,7 +450,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                 
                                 <div style={{borderBottom: '1px dashed #999', margin: '8px 0'}}></div>
                                 
-                                <div style={{marginBottom: '16px', color: '#555'}}>
+                                <div style={{fontSize: '0.75rem', marginBottom: '16px', color: '#555'}}>
                                     <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '2px'}}>
                                         <span>TOTAL {transactionSuccessData.items.reduce((acc, item) => acc + parseInt(item.qty || 0), 0)} QTY</span>
                                         <span>{Number(transactionSuccessData.total_amount).toLocaleString('id-ID')}</span>
@@ -467,17 +467,20 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                 
                                 <div style={{borderBottom: '1px dashed #999', margin: '8px 0'}}></div>
                                 
-                                <div style={{lineHeight: '1.4', color: '#666'}}>
+                                <div style={{fontSize: '0.75rem', lineHeight: '1.4', color: '#666'}}>
                                     <div>TERIMA KASIH</div>
                                     <div>KAMI SIAP MENYEDIAKAN KEBUTUHAN ANDA</div>
                                 </div>
                             </div>
                             
-                            {(printMode === 'struk' || printMode === 'struk_besar') && (
-                                <div className="no-print" style={{display: 'flex', flexDirection: 'column', marginTop: '0', borderTop: '1px solid var(--border-color)'}}>
-                                    <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('struk'); setTimeout(() => window.print(), 300); }}>Cetak (Kecil / Thermal)</button>
-                                    <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('struk_besar'); setTimeout(() => window.print(), 300); }}>Cetak (Besar / A4)</button>
-                                    <button style={{padding: '16px', border: 'none', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => setPrintMode('menu')}>Kembali</button>
+                            {printMode === 'struk' && (
+                                <div className="no-print" style={{display: 'flex', gap: '12px', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-color)'}}>
+                                    <button className="btn btn-secondary" style={{flex: 1, padding: '12px'}} onClick={() => setPrintMode('menu')}>
+                                        Kembali
+                                    </button>
+                                    <button className="btn btn-primary" style={{flex: 1, padding: '12px'}} onClick={() => window.print()}>
+                                        🖨️ Cetak
+                                    </button>
                                 </div>
                             )}
                         </div>
