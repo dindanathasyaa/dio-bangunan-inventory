@@ -223,11 +223,11 @@ const DailyRecapView = ({ user, activeBranch }) => {
                             {/* Action Menu Container */}
                             <div className="modal-content no-print" style={{width: '100%', padding: '0', flexShrink: 0, overflow: 'hidden'}}>
                                 <div style={{display: 'flex', flexDirection: 'column'}}>
-                                    <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: '#3b82f6', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => setPrintMode('struk')}>Detail</button>
-                                    <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: '#3b82f6', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('struk'); setTimeout(() => window.print(), 300); }}>Cetak</button>
-                                    <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: '#3b82f6', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('invoice'); setTimeout(() => window.print(), 300); }}>Invoice</button>
-                                    <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: '#3b82f6', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('surat_jalan'); setTimeout(() => window.print(), 300); }}>Surat Jalan</button>
-                                    <button style={{padding: '16px', border: 'none', background: 'white', color: '#3b82f6', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => setPrintData(null)}>Close</button>
+                                    <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => setPrintMode('struk')}>Detail</button>
+                                    <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('struk'); setTimeout(() => window.print(), 300); }}>Cetak</button>
+                                    <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('invoice'); setTimeout(() => window.print(), 300); }}>Invoice</button>
+                                    <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('surat_jalan'); setTimeout(() => window.print(), 300); }}>Surat Jalan</button>
+                                    <button style={{padding: '16px', border: 'none', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => setPrintData(null)}>Close</button>
                                 </div>
                             </div>
                         </div>
