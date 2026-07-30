@@ -51,13 +51,7 @@ const DailyRecapView = ({ user, activeBranch }) => {
             payment_method: transaction.payment_method,
             items: transaction.items || []
         });
-        
-        // Wait for the state to render the hidden receipt, then trigger print
-        setTimeout(() => {
-            window.print();
-            // Automatically clear print data after printing so it doesn't linger
-            setTimeout(() => setPrintData(null), 500); 
-        }, 300);
+        // Preview modal will automatically show when printData is set
     };
 
     const filteredRecap = recapData.filter(row => {
@@ -171,47 +165,58 @@ const DailyRecapView = ({ user, activeBranch }) => {
                 </div>
             )}
 
-            {/* Hidden Receipt Layout for Printing */}
+            {/* Print Preview Modal */}
             {printData && (
-                <div className="print-thermal" style={{display: 'none'}}>
-                    <style>{`@media print { .print-thermal { display: block !important; } .no-print, .sidebar, .top-nav, .glass-panel { display: none !important; } @page { margin: 0; } body { background: white; margin: 0; padding: 0; } }`}</style>
-                    <div className="invoice-container" style={{maxWidth: '350px', padding: '24px', margin: '0 auto', background: 'white', color: 'black'}}>
-                        <div style={{display: 'flex', justifyContent: 'center', marginBottom: '16px'}}>
-                            <img src="/logo-transparent.png" alt="Dio Bangunan Logo" style={{maxWidth: '140px', width: '100%'}} />
-                        </div>
-                        
-                        <div style={{fontSize: '0.85rem', marginBottom: '16px', borderBottom: '1px dashed black', paddingBottom: '12px'}}>
-                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>No. Faktur:</span> <span style={{fontWeight: 'bold'}}>#{printData.sale_id}</span></div>
-                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>Tanggal:</span> <span>{new Date(printData.transaction_date).toLocaleString('id-ID', {dateStyle: 'short', timeStyle: 'short'})}</span></div>
-                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>Kasir:</span> <span>{user?.username}</span></div>
-                            <div style={{display: 'flex', justifyContent: 'space-between'}}><span>Pelanggan:</span> <span>{printData.customer_name || 'Umum'}</span></div>
-                        </div>
-                        
-                        <div style={{marginBottom: '16px', borderBottom: '1px dashed black', paddingBottom: '8px'}}>
-                            {printData.items.map((item, idx) => (
-                                <div key={idx} style={{marginBottom: '8px', fontSize: '0.85rem'}}>
-                                    <div style={{fontWeight: 'bold', marginBottom: '4px'}}>{item.name}</div>
-                                    <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                                        <span>{item.qty} x {Number(item.price || 0).toLocaleString('id-ID')}</span>
-                                        <span style={{fontWeight: 'bold'}}>{Number(item.qty * (item.price || 0)).toLocaleString('id-ID')}</span>
+                <div className="modal-overlay" onClick={() => setPrintData(null)}>
+                    <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '24px', flexShrink: 0}} onClick={e => e.stopPropagation()}>
+                        <style>{`@media print { .print-thermal { display: block !important; } .no-print, .sidebar, .top-nav, .glass-panel, .modal-overlay { display: none !important; } @page { margin: 0; } body { background: white; margin: 0; padding: 0; } }`}</style>
+                        <div className="invoice-container" style={{background: 'white', color: 'black', padding: '16px', borderRadius: '8px'}}>
+                            <div style={{display: 'flex', justifyContent: 'center', marginBottom: '16px'}}>
+                                <img src="/logo-transparent.png" alt="Dio Bangunan Logo" style={{maxWidth: '140px', width: '100%', mixBlendMode: 'multiply'}} />
+                            </div>
+                            
+                            <div style={{fontSize: '0.85rem', marginBottom: '16px', borderBottom: '1px dashed black', paddingBottom: '12px'}}>
+                                <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>No. Faktur:</span> <span style={{fontWeight: 'bold'}}>#{printData.sale_id}</span></div>
+                                <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>Tanggal:</span> <span>{new Date(printData.transaction_date).toLocaleString('id-ID', {dateStyle: 'short', timeStyle: 'short'})}</span></div>
+                                <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}><span>Kasir:</span> <span>{user?.username}</span></div>
+                                <div style={{display: 'flex', justifyContent: 'space-between'}}><span>Pelanggan:</span> <span>{printData.customer_name || 'Umum'}</span></div>
+                            </div>
+                            
+                            <div style={{marginBottom: '16px', borderBottom: '1px dashed black', paddingBottom: '8px'}}>
+                                {printData.items.map((item, idx) => (
+                                    <div key={idx} style={{marginBottom: '8px', fontSize: '0.85rem'}}>
+                                        <div style={{fontWeight: 'bold', marginBottom: '4px'}}>{item.name}</div>
+                                        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                            <span>{item.qty} x {Number(item.price || 0).toLocaleString('id-ID')}</span>
+                                            <span style={{fontWeight: 'bold'}}>{Number(item.qty * (item.price || 0)).toLocaleString('id-ID')}</span>
+                                        </div>
                                     </div>
+                                ))}
+                            </div>
+                            
+                            <div style={{fontSize: '0.9rem', marginBottom: '24px'}}>
+                                <div style={{display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '8px'}}>
+                                    <span>TOTAL</span>
+                                    <span>Rp {Number(printData.total_amount).toLocaleString('id-ID')}</span>
                                 </div>
-                            ))}
-                        </div>
-                        
-                        <div style={{fontSize: '0.9rem', marginBottom: '24px'}}>
-                            <div style={{display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '8px'}}>
-                                <span>TOTAL</span>
-                                <span>Rp {Number(printData.total_amount).toLocaleString('id-ID')}</span>
+                                <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                    <span>Pembayaran</span>
+                                    <span>{printData.payment_method === 'Cash' ? 'TUNAI' : 'KREDIT'}</span>
+                                </div>
                             </div>
-                            <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                                <span>Pembayaran</span>
-                                <span>{printData.payment_method === 'Cash' ? 'TUNAI' : 'KREDIT'}</span>
+                            
+                            <div style={{textAlign: 'center', fontSize: '0.85rem'}}>
+                                <p style={{margin: 0, fontStyle: 'italic'}}>Terima kasih atas kunjungan Anda!</p>
                             </div>
                         </div>
-                        
-                        <div style={{textAlign: 'center', fontSize: '0.85rem'}}>
-                            <p style={{margin: 0, fontStyle: 'italic'}}>Terima kasih atas kunjungan Anda!</p>
+
+                        <div className="no-print" style={{display: 'flex', gap: '12px', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-color)'}}>
+                            <button className="btn btn-secondary" style={{flex: 1, padding: '12px'}} onClick={() => setPrintData(null)}>
+                                Tutup
+                            </button>
+                            <button className="btn btn-primary" style={{flex: 1, padding: '12px'}} onClick={() => window.print()}>
+                                🖨️ Cetak
+                            </button>
                         </div>
                     </div>
                 </div>
