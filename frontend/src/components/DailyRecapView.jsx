@@ -189,7 +189,7 @@ const DailyRecapView = ({ user, activeBranch }) => {
                     {printMode === 'struk' && (
                         <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: '350px', padding: '24px', flexShrink: 0}} onClick={e => e.stopPropagation()}>
                             <style>{`@media print { .print-thermal { display: block !important; } .no-print, .sidebar, .top-nav, .glass-panel, .modal-overlay { display: none !important; } @page { margin: 0; } body { background: white; margin: 0; padding: 0; } }`}</style>
-                            <div className="invoice-container" style={{background: 'white', color: 'black'}}>
+                            <div className="invoice-container">
                                 <div style={{display: 'flex', justifyContent: 'center', marginBottom: '16px'}}>
                                     <img src="/logo-transparent.png" alt="Dio Bangunan Logo" style={{maxWidth: '140px', width: '100%', mixBlendMode: 'multiply'}} />
                                 </div>
