@@ -474,13 +474,9 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                             </div>
                             
                             {printMode === 'struk' && (
-                                <div className="no-print" style={{display: 'flex', gap: '12px', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-color)'}}>
-                                    <button className="btn btn-secondary" style={{flex: 1, padding: '12px'}} onClick={() => setPrintMode('menu')}>
-                                        Kembali
-                                    </button>
-                                    <button className="btn btn-primary" style={{flex: 1, padding: '12px'}} onClick={() => window.print()}>
-                                        🖨️ Cetak
-                                    </button>
+                                <div className="no-print" style={{display: 'flex', flexDirection: 'column', marginTop: '0', borderTop: '1px solid var(--border-color)'}}>
+                                    <button style={{padding: '16px', border: 'none', borderBottom: '1px solid var(--border-color)', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => { setPrintMode('struk'); setTimeout(() => window.print(), 300); }}>Cetak</button>
+                                    <button style={{padding: '16px', border: 'none', background: 'white', color: 'var(--primary-color)', fontSize: '1.1rem', cursor: 'pointer'}} onClick={() => setPrintMode('menu')}>Kembali</button>
                                 </div>
                             )}
                         </div>
