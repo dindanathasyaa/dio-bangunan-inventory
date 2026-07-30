@@ -240,7 +240,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                             <div style={{fontWeight: 'bold', marginBottom: '4px'}}>{p.name}</div>
                             <div style={{fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '8px'}}>[{p.sku}]</div>
                             <div style={{fontWeight: 'bold', color: 'var(--primary-color)', fontSize: '1.1rem', marginBottom: '16px'}}>
-                                Rp {parseFloat(p.price || 0).toLocaleString()}
+                                Rp {Number(p.price || 0).toLocaleString('en-US')}
                             </div>
                             <div style={{marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '12px'}}>
                                 <span style={{color: 'var(--text-secondary)', fontWeight: 'bold'}}>Stok: {Math.max(0, Number(p.stock))}</span>
@@ -273,7 +273,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                         <div key={c.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', background: 'var(--item-bg)', padding: '12px', borderRadius: '8px'}}>
                             <div>
                                 <div style={{fontWeight: 'bold'}}>{c.name}</div>
-                                <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Rp {(c.price || 15000).toLocaleString()}</div>
+                                <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Rp {Number(c.price || 15000).toLocaleString('en-US')}</div>
                             </div>
                             <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
                                 <input type="number" value={c.qty} onChange={e => updateQty(c.id, e.target.value)} style={{width: '60px', padding: '4px', borderRadius: '4px', border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-primary)'}} />
@@ -286,7 +286,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 <div style={{borderTop: '1px solid var(--border-color)', paddingTop: '16px'}}>
                     <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '16px', fontWeight: 'bold', fontSize: '1.2rem'}}>
                         <span>Total:</span>
-                        <span>Rp {totalAmount.toLocaleString()}</span>
+                        <span>Rp {Number(totalAmount).toLocaleString('en-US')}</span>
                     </div>
                     <div className="form-group">
                         <label>Nama Pelanggan (Opsional)</label>
@@ -400,8 +400,8 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                         <div key={idx} style={{marginBottom: '8px', fontSize: '0.85rem'}}>
                                             <div style={{fontWeight: 'bold', marginBottom: '4px'}}>{item.name}</div>
                                             <div style={{display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)'}}>
-                                                <span>{item.qty} x {item.price.toLocaleString()}</span>
-                                                <span style={{color: 'var(--text-primary)', fontWeight: 'bold'}}>{(item.qty * item.price).toLocaleString()}</span>
+                                                <span>{item.qty} x {Number(item.price).toLocaleString('en-US')}</span>
+                                                <span style={{color: 'var(--text-primary)', fontWeight: 'bold'}}>{Number(item.qty * item.price).toLocaleString('en-US')}</span>
                                             </div>
                                         </div>
                                     ))}
@@ -512,9 +512,9 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                             <tr key={idx}>
                                                 <td style={{padding: '6px 4px'}}>{idx + 1}</td>
                                                 <td style={{padding: '6px 4px'}}>{item.name}</td>
-                                                {printMode === 'invoice' && <td style={{padding: '6px 4px', textAlign: 'right'}}>{item.price.toLocaleString()}</td>}
+                                                {printMode === 'invoice' && <td style={{padding: '6px 4px', textAlign: 'right'}}>{Number(item.price).toLocaleString('en-US')}</td>}
                                                 <td style={{padding: '6px 4px', textAlign: 'center'}}>{item.qty}</td>
-                                                {printMode === 'invoice' && <td style={{padding: '6px 4px', textAlign: 'right'}}>{(item.qty * item.price).toLocaleString()}</td>}
+                                                {printMode === 'invoice' && <td style={{padding: '6px 4px', textAlign: 'right'}}>{Number(item.qty * item.price).toLocaleString('en-US')}</td>}
                                             </tr>
                                         ))}
                                     </tbody>
@@ -608,8 +608,8 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                         <tr key={idx}>
                                             <td>{new Date(row.date).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}</td>
                                             <td style={{textAlign: 'center'}}>{row.total_transactions}</td>
-                                            <td style={{textAlign: 'right', fontWeight: 'bold'}}>Rp {Number(row.total_sales).toLocaleString()}</td>
-                                            <td style={{textAlign: 'right', color: '#10b981', fontWeight: 'bold'}}>Rp {Number(row.total_profit).toLocaleString()}</td>
+                                            <td style={{textAlign: 'right', fontWeight: 'bold'}}>Rp {Number(row.total_sales).toLocaleString('en-US')}</td>
+                                            <td style={{textAlign: 'right', color: '#10b981', fontWeight: 'bold'}}>Rp {Number(row.total_profit).toLocaleString('en-US')}</td>
                                             <td style={{textAlign: 'center'}}>
                                                 <button className="btn btn-secondary" style={{padding: '4px 12px', fontSize: '0.85rem'}} onClick={() => viewDetail(row.date)}>Detail</button>
                                             </td>
@@ -675,8 +675,8 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                                 ) : '-'}
                                             </td>
                                             <td>{row.payment_method}</td>
-                                            <td style={{textAlign: 'right'}}>Rp {Number(row.total_amount).toLocaleString()}</td>
-                                            <td style={{textAlign: 'right', color: '#10b981'}}>Rp {Number(row.profit).toLocaleString()}</td>
+                                            <td style={{textAlign: 'right'}}>Rp {Number(row.total_amount).toLocaleString('en-US')}</td>
+                                            <td style={{textAlign: 'right', color: '#10b981'}}>Rp {Number(row.profit).toLocaleString('en-US')}</td>
                                         </tr>
                                     )) : (
                                         <tr><td colSpan="6" style={{textAlign: 'center'}}>Belum ada data penjualan</td></tr>
@@ -687,10 +687,10 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                         <tr>
                                             <td colSpan="5" style={{textAlign: 'right', fontWeight: 'bold'}}>Total Keseluruhan:</td>
                                             <td style={{textAlign: 'right', fontWeight: 'bold', color: 'var(--primary-color)'}}>
-                                                Rp {detailData.reduce((acc, row) => acc + Number(row.total_amount), 0).toLocaleString()}
+                                                Rp {Number(detailData.reduce((acc, row) => acc + Number(row.total_amount), 0)).toLocaleString('en-US')}
                                             </td>
                                             <td style={{textAlign: 'right', fontWeight: 'bold', color: '#10b981'}}>
-                                                Rp {detailData.reduce((acc, row) => acc + Number(row.profit), 0).toLocaleString()}
+                                                Rp {Number(detailData.reduce((acc, row) => acc + Number(row.profit), 0)).toLocaleString('en-US')}
                                             </td>
                                         </tr>
                                     </tfoot>
