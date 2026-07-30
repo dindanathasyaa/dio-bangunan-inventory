@@ -383,6 +383,15 @@ module.exports = function(app, pool) {
         }
     });
 
+    app.get('/api/receivables/:id/history', async (req, res) => {
+        try {
+            const [rows] = await pool.query('SELECT amount, created_at, description FROM cash_flow WHERE reference_id = ? AND description = \'Pembayaran Piutang Pembeli\' ORDER BY created_at DESC', [req.params.id]);
+            res.json(rows);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    });
+
     app.get('/api/receivables', async (req, res) => {
         try {
             const [rows] = await pool.query('SELECT * FROM receivables ORDER BY created_at DESC');
@@ -454,6 +463,15 @@ module.exports = function(app, pool) {
             res.status(500).json({ error: error.message });
         } finally {
             connection.release();
+        }
+    });
+
+    app.get('/api/payables/:id/history', async (req, res) => {
+        try {
+            const [rows] = await pool.query('SELECT amount, created_at, description FROM cash_flow WHERE reference_id = ? AND description = \'Pembayaran Hutang Toko\' ORDER BY created_at DESC', [req.params.id]);
+            res.json(rows);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
         }
     });
 

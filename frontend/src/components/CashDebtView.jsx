@@ -24,6 +24,10 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
     const [cart, setCart] = useState([]);
     const [printDebtData, setPrintDebtData] = useState(null);
 
+    // History Modal
+    const [historyModalData, setHistoryModalData] = useState(null);
+    const [historyData, setHistoryData] = useState([]);
+
     // Custom Toast Alert State
     const [toast, setToast] = useState({ show: false, message: '', type: 'info' });
 
@@ -120,6 +124,18 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
         } catch (error) {
             console.error(error);
             showToast("Gagal memuat detail transaksi.", "error");
+        }
+    };
+
+    const handleShowHistory = async (id, type) => {
+        try {
+            const endpoint = type === 'Receivable' ? `/api/receivables/${id}/history` : `/api/payables/${id}/history`;
+            const res = await axios.get(`http://localhost:5000${endpoint}`);
+            setHistoryData(res.data);
+            setHistoryModalData({ id, type });
+        } catch (error) {
+            console.error(error);
+            showToast("Gagal memuat riwayat cicilan.", "error");
         }
     };
 
@@ -265,6 +281,37 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                             }
                         }}>Simpan</button>
                     </div>
+                </div>
+            </div>
+        );
+    };
+
+    const renderHistoryModal = () => {
+        if (!historyModalData) return null;
+        return (
+            <div className="modal-overlay" onClick={() => setHistoryModalData(null)}>
+                <div className="modal-content" onClick={e => e.stopPropagation()} style={{maxWidth: '500px', width: '90%'}}>
+                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
+                        <h2>Riwayat Pembayaran Cicilan</h2>
+                        <button className="btn-icon" onClick={() => setHistoryModalData(null)}>✕</button>
+                    </div>
+                    {historyData.length > 0 ? (
+                        <div style={{maxHeight: '400px', overflowY: 'auto'}}>
+                            {historyData.map((h, i) => (
+                                <div key={i} style={{padding: '12px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                    <div>
+                                        <div style={{fontWeight: 'bold'}}>{new Date(h.created_at).toLocaleDateString('id-ID', {day:'2-digit',month:'long',year:'numeric'})}</div>
+                                        <div style={{fontSize: '0.85rem', color: 'var(--text-secondary)'}}>{new Date(h.created_at).toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit'})}</div>
+                                    </div>
+                                    <div style={{fontWeight: 'bold', color: '#10b981', fontSize: '1.1rem'}}>
+                                        + Rp {Number(h.amount).toLocaleString('en-US')}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div style={{textAlign: 'center', color: 'var(--text-secondary)', padding: '32px 0'}}>Belum ada riwayat pembayaran.</div>
+                    )}
                 </div>
             </div>
         );
@@ -467,7 +514,8 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                     </div>
                 )}
                 {renderDetailModal()}
-                {renderPaymentModal()}
+            {renderHistoryModal()}
+            {renderPaymentModal()}
                 {renderPrintModal()}
                 {renderEditNotaModal()}
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
@@ -648,6 +696,9 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                                 )}
                                             </div>
                                         )}
+                                        <button className="btn btn-outline" style={{borderColor: '#3b82f6', color: '#3b82f6', marginTop: r.status !== 'Lunas' ? '8px' : '0', width: '100%'}} onClick={() => {
+                                            handleShowHistory(r.id, 'Receivable');
+                                        }}>Riwayat Cicilan</button>
                                     </td>
                                     <td>
                                         <button className="btn btn-outline" style={{padding: '6px 12px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px'}} onClick={() => handlePrintDebt(r)}>
@@ -687,9 +738,9 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                     <td>
                                         <span className={`badge ${p.status === 'Lunas' ? 'good' : 'low'}`}>{p.status}</span>
                                     </td>
-                                    <td style={{display: 'flex', gap: '8px', alignItems: 'center'}}>
+                                    <td style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
                                         {p.status !== 'Lunas' && (
-                                            <>
+                                            <div style={{display: 'flex', gap: '8px', alignItems: 'center'}}>
                                                 <button className="btn btn-primary" onClick={() => {
                                                     setPaymentModalData({ type: 'Payable', id: p.id, name: p.supplier_name });
                                                     setPaymentAmount('');
@@ -699,8 +750,11 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                                         handlePayPayable(p.id, sisa);
                                                     }
                                                 }}>Sudah Lunas</button>
-                                            </>
+                                            </div>
                                         )}
+                                        <button className="btn btn-outline" style={{borderColor: '#3b82f6', color: '#3b82f6', width: '100%'}} onClick={() => {
+                                            handleShowHistory(p.id, 'Payable');
+                                        }}>Riwayat Cicilan</button>
                                     </td>
                                 </tr>
                             )})}
