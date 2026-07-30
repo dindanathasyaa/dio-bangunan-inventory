@@ -406,7 +406,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
 
                     {/* Layout Struk Thermal (Detail & Cetak) */}
                     {(printMode === 'struk' || printMode === 'struk_besar') && (
-                        <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: printMode === 'struk_besar' ? '800px' : '350px', padding: '0', flexShrink: 0}} onClick={e => e.stopPropagation()}>
+                        <div className="modal-content print-thermal" style={{position: 'relative', maxWidth: printMode === 'struk_besar' ? '100%' : '350px', padding: '0', flexShrink: 0}} onClick={e => e.stopPropagation()}>
                             <style>{`@media print { @page { margin: 0; } body { background: white; } }`}</style>
                             <div className="invoice-container" style={{padding: '24px', paddingBottom: '16px', fontFamily: '"Courier New", Courier, monospace', color: 'black', textTransform: 'uppercase', background: '#f8f8f8', minHeight: '300px', fontSize: printMode === 'struk_besar' ? '1.5rem' : '0.75rem'}}>
                                 <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '16px'}}>
