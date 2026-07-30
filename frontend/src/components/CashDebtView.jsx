@@ -236,6 +236,21 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
             : payables.find(p => p.id === paymentModalData.id);
         const maxAmount = selectedItem ? (parseFloat(selectedItem.total_debt) - parseFloat(selectedItem.amount_paid || 0)) : 0;
 
+        const handleSavePayment = () => {
+            const amt = parseFloat(paymentAmount);
+            if (amt && !isNaN(amt) && amt > 0) {
+                if (paymentModalData.type === 'Receivable') {
+                    handlePayReceivable(paymentModalData.id, amt);
+                } else {
+                    handlePayPayable(paymentModalData.id, amt);
+                }
+                setPaymentModalData(null);
+                setPaymentAmount('');
+            } else {
+                showToast("Nominal tidak valid", "error");
+            }
+        };
+
         return (
             <div className="modal-overlay" onClick={() => setPaymentModalData(null)}>
                 <div className="modal-content" onClick={e => e.stopPropagation()} style={{maxWidth: '400px', width: '90%'}}>
@@ -256,26 +271,18 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                         className="input-field" 
                         value={paymentAmount}
                         onChange={e => setPaymentAmount(e.target.value)}
+                        onKeyDown={e => {
+                            if (e.key === 'Enter') {
+                                handleSavePayment();
+                            }
+                        }}
                         placeholder={`Contoh: 50000`}
                         autoFocus
                     />
 
                     <div style={{display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px'}}>
                         <button className="btn btn-secondary" onClick={() => setPaymentModalData(null)}>Batal</button>
-                        <button className="btn btn-primary" onClick={() => {
-                            const amt = parseFloat(paymentAmount);
-                            if (amt && !isNaN(amt) && amt > 0) {
-                                if (paymentModalData.type === 'Receivable') {
-                                    handlePayReceivable(paymentModalData.id, amt);
-                                } else {
-                                    handlePayPayable(paymentModalData.id, amt);
-                                }
-                                setPaymentModalData(null);
-                                setPaymentAmount('');
-                            } else {
-                                showToast("Nominal tidak valid", "error");
-                            }
-                        }}>Simpan</button>
+                        <button className="btn btn-primary" onClick={handleSavePayment}>Simpan</button>
                     </div>
                 </div>
             </div>
