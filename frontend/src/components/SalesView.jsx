@@ -137,22 +137,24 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 transaction_date: isIndirectSale && transactionDate ? transactionDate : null
             });
 
-            const successMsg = paymentMethod === 'Kredit' ? 'Transaksi Masuk ke Catatan Hutang' : 'Transaksi Berhasil!';
-            showToast(successMsg, 'success', () => {
-                setTransactionSuccessData({
-                    sale_id: res.data.sale_id,
-                    customer_name: customerName,
-                    payment_method: paymentMethod,
-                    items: [...validCart],
-                    total_amount: totalAmount,
-                    transaction_date: isIndirectSale && transactionDate ? transactionDate : new Date().toISOString()
-                });
-                if (paymentMethod === 'Kredit') {
-                    setPrintMode('kredit_success');
-                } else {
+            const successData = {
+                sale_id: res.data.sale_id,
+                customer_name: customerName,
+                payment_method: paymentMethod,
+                items: [...validCart],
+                total_amount: totalAmount,
+                transaction_date: isIndirectSale && transactionDate ? transactionDate : new Date().toISOString()
+            };
+
+            if (paymentMethod === 'Kredit') {
+                setTransactionSuccessData(successData);
+                setPrintMode('kredit_success');
+            } else {
+                showToast('Transaksi Berhasil!', 'success', () => {
+                    setTransactionSuccessData(successData);
                     setPrintMode('menu');
-                }
-            });
+                });
+            }
 
             setCart([]);
             setCustomerName('');
