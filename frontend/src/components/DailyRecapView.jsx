@@ -261,7 +261,7 @@ const DailyRecapView = ({ user, activeBranch }) => {
                     {/* Layout A4 (Invoice & Surat Jalan) */}
                     {(printMode === 'invoice' || printMode === 'surat_jalan') && (
                         <div className="modal-content a4-container print-a4" style={{position: 'relative', width: '210mm', padding: '40px', background: 'white', color: 'black', margin: '20px auto', fontFamily: 'sans-serif'}} onClick={e => e.stopPropagation()}>
-                            <style>{`@media print { .no-print, .sidebar, .top-nav, .glass-panel, .modal-overlay { display: none !important; } @page { size: A4 portrait; margin: 0; } body { background: white; } }`}</style>
+                            <style>{`@media print { .no-print, .sidebar, .top-nav, .glass-panel { display: none !important; } .modal-overlay { background: transparent !important; padding: 0 !important; overflow: visible !important; } @page { size: A4 portrait; margin: 0; } body { background: white; } }`}</style>
                             
                             <div className="no-print" style={{display: 'flex', justifyContent: 'flex-end', gap: '12px', marginBottom: '32px', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px'}}>
                                 <button className="btn btn-secondary" onClick={() => setPrintMode('menu')}>
