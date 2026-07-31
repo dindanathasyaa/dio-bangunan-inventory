@@ -197,7 +197,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 items,
                 transaction_date: isIndirectSale && transactionDate ? transactionDate : null,
                 delivery_status: deliveryStatus,
-                amount_paid: amountPaid ? parseFloat(amountPaid.replace(/[^0-9]/g, '')) : null,
+                amount_paid: amountPaid ? parseFloat(String(amountPaid).replace(/[^0-9]/g, '')) : null,
                 save_as_deposit: saveAsDeposit
             });
 
@@ -467,9 +467,9 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                         {paymentMethod === 'Cash' && (
                             <div className="form-group" style={{marginTop: '16px'}}>
                                 <label>Jumlah Uang Diterima (Rp)</label>
-                                <CurrencyInput value={amountPaid} onChange={setAmountPaid} className="input-field" placeholder="Ketik jumlah uang..." />
+                                <CurrencyInput value={amountPaid} onChange={e => setAmountPaid(e.target.value)} className="input-field" placeholder="Ketik jumlah uang..." />
                                 {(() => {
-                                    const paid = amountPaid ? parseFloat(amountPaid.replace(/[^0-9]/g, '')) : 0;
+                                    const paid = amountPaid ? parseFloat(String(amountPaid).replace(/[^0-9]/g, '')) : 0;
                                     const change = paid - totalAmount;
                                     if (change > 0) {
                                         return (
