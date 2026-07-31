@@ -59,15 +59,22 @@ module.exports = function(app, pool) {
 
             for (let item of items) {
                 await connection.query(
-                    `INSERT INTO sale_items (sale_id, product_id, qty, price, base_price) VALUES (?, ?, ?, ?, ?)`,
-                    [sale_id, item.product_id, item.qty, item.price, item.base_price]
+                    `INSERT INTO sale_items (sale_id, product_id, variant_id, qty, price, base_price) VALUES (?, ?, ?, ?, ?, ?)`,
+                    [sale_id, item.product_id, item.variant_id || null, item.qty, item.price, item.base_price]
                 );
                 // Deduct stock only if it's taken immediately
                 if (delivery_status === 'Langsung') {
-                    await connection.query(
-                        `UPDATE inventory SET stock = stock - ? WHERE product_id = ? AND branch_id = ?`,
-                        [item.qty, item.product_id, branch_id]
-                    );
+                    if (item.variant_id) {
+                        await connection.query(
+                            `UPDATE inventory SET stock = stock - ? WHERE product_id = ? AND variant_id = ? AND branch_id = ?`,
+                            [item.qty, item.product_id, item.variant_id, branch_id]
+                        );
+                    } else {
+                        await connection.query(
+                            `UPDATE inventory SET stock = stock - ? WHERE product_id = ? AND variant_id IS NULL AND branch_id = ?`,
+                            [item.qty, item.product_id, branch_id]
+                        );
+                    }
                 }
             }
 
@@ -154,7 +161,7 @@ module.exports = function(app, pool) {
 
     app.get('/api/sales/:id/items', async (req, res) => {
         try {
-            const [rows] = await pool.query('SELECT p.name, p.unit, si.qty, si.price FROM sale_items si JOIN products p ON si.product_id = p.id WHERE si.sale_id = ?', [req.params.id]);
+            const [rows] = await pool.query('SELECT IF(v.name IS NOT NULL, CONCAT(p.name, " - ", v.name), p.name) as name, p.unit, si.qty, si.price FROM sale_items si JOIN products p ON si.product_id = p.id LEFT JOIN product_variants v ON si.variant_id = v.id WHERE si.sale_id = ?', [req.params.id]);
             res.json(rows);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -186,12 +193,19 @@ module.exports = function(app, pool) {
             await connection.query('UPDATE sales SET delivery_status = ? WHERE id = ?', [delivery_status, id]);
             
             // Deduct stock for all items in this sale
-            const [items] = await connection.query('SELECT product_id, qty FROM sale_items WHERE sale_id = ?', [id]);
+            const [items] = await connection.query('SELECT product_id, variant_id, qty FROM sale_items WHERE sale_id = ?', [id]);
             for (let item of items) {
-                await connection.query(
-                    'UPDATE inventory SET stock = stock - ? WHERE product_id = ? AND branch_id = ?',
-                    [item.qty, item.product_id, sale.branch_id]
-                );
+                if (item.variant_id) {
+                    await connection.query(
+                        'UPDATE inventory SET stock = stock - ? WHERE product_id = ? AND variant_id = ? AND branch_id = ?',
+                        [item.qty, item.product_id, item.variant_id, sale.branch_id]
+                    );
+                } else {
+                    await connection.query(
+                        'UPDATE inventory SET stock = stock - ? WHERE product_id = ? AND variant_id IS NULL AND branch_id = ?',
+                        [item.qty, item.product_id, sale.branch_id]
+                    );
+                }
             }
             
             await connection.commit();
@@ -210,9 +224,10 @@ module.exports = function(app, pool) {
             let query = `
                 SELECT s.*, 
                     (
-                        SELECT JSON_ARRAYAGG(JSON_OBJECT('name', p.name, 'unit', p.unit, 'qty', si.qty, 'price', si.price))
+                        SELECT JSON_ARRAYAGG(JSON_OBJECT('name', IF(v.name IS NOT NULL, CONCAT(p.name, ' - ', v.name), p.name), 'unit', p.unit, 'qty', si.qty, 'price', si.price))
                         FROM sale_items si
                         JOIN products p ON si.product_id = p.id
+                        LEFT JOIN product_variants v ON si.variant_id = v.id
                         WHERE si.sale_id = s.id
                     ) AS items
                 FROM sales s 
@@ -238,9 +253,10 @@ module.exports = function(app, pool) {
             let query = `
                 SELECT s.*, 
                     (
-                        SELECT JSON_ARRAYAGG(JSON_OBJECT('name', p.name, 'unit', p.unit, 'qty', si.qty, 'price', si.price))
+                        SELECT JSON_ARRAYAGG(JSON_OBJECT('name', IF(v.name IS NOT NULL, CONCAT(p.name, ' - ', v.name), p.name), 'unit', p.unit, 'qty', si.qty, 'price', si.price))
                         FROM sale_items si
                         JOIN products p ON si.product_id = p.id
+                        LEFT JOIN product_variants v ON si.variant_id = v.id
                         WHERE si.sale_id = s.id
                     ) AS items
                 FROM sales s 

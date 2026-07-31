@@ -1,18 +1,20 @@
 const mysql = require('mysql2/promise');
-
-async function checkDb() {
+async function checkSchema() {
     const connection = await mysql.createConnection({
         host: 'localhost',
         user: 'root',
         password: '',
         database: 'dio_bangunan'
     });
+    
+    const [products] = await connection.query('DESCRIBE products');
+    console.log("PRODUCTS TABLE");
+    console.table(products);
 
-    console.log("--- Sales ---");
-    const [sales] = await connection.query('SELECT * FROM sales ORDER BY id DESC LIMIT 5');
-    console.table(sales);
+    const [inventory] = await connection.query('DESCRIBE inventory');
+    console.log("INVENTORY TABLE");
+    console.table(inventory);
 
     await connection.end();
 }
-
-checkDb().catch(console.error);
+checkSchema().catch(console.error);

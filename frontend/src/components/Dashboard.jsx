@@ -459,7 +459,9 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
         stock: 0,
         min_stock: 5,
         max_stock: 50,
-        branch_id: user.role === 'ADMIN' ? user.branch_id : 1
+        branch_id: user.role === 'ADMIN' ? user.branch_id : 1,
+        hasVariants: false,
+        variants: [{ name: '', stock: 0 }]
     });
 
     useEffect(() => {
@@ -509,9 +511,9 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
         }
 
         try {
-            await axios.post('http://localhost:5000/api/inventory', { ...newItem, unit: finalUnit, stock: lembar });
+            await axios.post('http://localhost:5000/api/inventory', { ...newItem, unit: finalUnit, stock: lembar, variants: newItem.hasVariants ? newItem.variants : [] });
             setShowModal(false);
-            setNewItem({ sku: '', name: '', category_id: '', unit: 'Lembar', price: '', stock: 0, min_stock: 5, max_stock: 50, branch_id: user.role === 'ADMIN' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : 1) });
+            setNewItem({ sku: '', name: '', category_id: '', unit: '', price: '', base_price: '', stock: 0, min_stock: 5, max_stock: 50, branch_id: user.role === 'ADMIN' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : 1), hasVariants: false, variants: [{ name: '', stock: 0 }] });
             setUnitType('');
             setMajemukType('');
             setMajemukMultiplier(20);
@@ -624,7 +626,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                         <div key={item.id} className="glass-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px', borderRadius: '12px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
                                 <div style={{flex: 1}}>
-                                    <h3 style={{ margin: '0 0 8px 0', color: 'var(--text-primary)', fontSize: '1.25rem', lineHeight: '1.4' }}>{item.name}</h3>
+                                    <h3 style={{ margin: '0 0 8px 0', color: 'var(--text-primary)', fontSize: '1.25rem', lineHeight: '1.4' }}>{item.name} {item.variant_name ? `- ${item.variant_name}` : ''}</h3>
                                     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                                         <span style={{background: 'var(--border-color)', padding: '4px 10px', borderRadius: '6px', fontSize: '0.85rem', color: 'var(--text-secondary)'}}>🏷️ {item.category}</span>
                                         <span style={{background: 'var(--border-color)', padding: '4px 10px', borderRadius: '6px', fontSize: '0.85rem', color: 'var(--text-secondary)'}}>🏢 {item.branch_name}</span>
@@ -920,6 +922,55 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                             <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
                                 <div className="form-group" style={{flex: 1}}><label>Harga Jual (Rp)</label><CurrencyInput className="input-field" value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} required /></div>
                                 <div className="form-group" style={{flex: 1}}><label>Modal Barang (Rp)</label><CurrencyInput className="input-field" value={newItem.base_price} onChange={e => setNewItem({...newItem, base_price: e.target.value})} required /></div>
+                            </div>
+                            
+                            <div style={{marginBottom: '16px', background: 'var(--panel-bg)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-color)'}}>
+                                <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 'bold', color: 'var(--primary-color)'}}>
+                                    <input type="checkbox" checked={newItem.hasVariants} onChange={e => setNewItem({...newItem, hasVariants: e.target.checked})} style={{transform: 'scale(1.2)'}} />
+                                    Apakah produk ini memiliki varian? (Misal: Warna, Ukuran)
+                                </label>
+                                {newItem.hasVariants && (
+                                    <div style={{marginTop: '16px'}}>
+                                        <div style={{fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '12px'}}>Jika punya varian, stok akan dihitung per varian. Kolom "Stok" utama di atas akan diabaikan.</div>
+                                        {newItem.variants.map((variant, index) => (
+                                            <div key={index} style={{display: 'flex', gap: '12px', marginBottom: '12px', alignItems: 'flex-end', background: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #e5e7eb'}}>
+                                                <div className="form-group" style={{flex: 2, marginBottom: 0}}>
+                                                    <label>Nama Varian</label>
+                                                    <input type="text" className="input-field" value={variant.name} onChange={e => {
+                                                        const newVariants = [...newItem.variants];
+                                                        newVariants[index].name = e.target.value;
+                                                        setNewItem({...newItem, variants: newVariants});
+                                                    }} placeholder="Cth: Merah 5kg" required />
+                                                </div>
+                                                <div className="form-group" style={{flex: 1, marginBottom: 0}}>
+                                                    <label>Stok Varian</label>
+                                                    <input type="number" className="input-field" value={variant.stock === '' ? '' : variant.stock} onChange={e => {
+                                                        const newVariants = [...newItem.variants];
+                                                        newVariants[index].stock = e.target.value === '' ? '' : Number(e.target.value);
+                                                        setNewItem({...newItem, variants: newVariants});
+                                                    }} required />
+                                                </div>
+                                                <div className="form-group" style={{flex: 1, marginBottom: 0}}>
+                                                    <label>Harga (Opsi)</label>
+                                                    <input type="number" className="input-field" value={variant.price || ''} onChange={e => {
+                                                        const newVariants = [...newItem.variants];
+                                                        newVariants[index].price = e.target.value ? Number(e.target.value) : null;
+                                                        setNewItem({...newItem, variants: newVariants});
+                                                    }} placeholder="Kosong = Induk" />
+                                                </div>
+                                                {newItem.variants.length > 1 && (
+                                                    <button type="button" className="btn-icon" style={{color: '#ef4444', padding: '10px', background: '#fee2e2', borderRadius: '6px'}} onClick={() => {
+                                                        const newVariants = newItem.variants.filter((_, i) => i !== index);
+                                                        setNewItem({...newItem, variants: newVariants});
+                                                    }}>✕</button>
+                                                )}
+                                            </div>
+                                        ))}
+                                        <button type="button" className="btn btn-outline" style={{padding: '8px 16px', fontSize: '0.9rem', width: '100%', borderStyle: 'dashed'}} onClick={() => {
+                                            setNewItem({...newItem, variants: [...newItem.variants, {name: '', stock: 0}]});
+                                        }}>+ Tambah Varian Lain</button>
+                                    </div>
+                                )}
                             </div>
                             
                             <div style={{display: 'flex', gap: '12px', marginTop: '24px'}}>

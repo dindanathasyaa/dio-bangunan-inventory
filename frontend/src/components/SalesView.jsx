@@ -184,6 +184,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
         try {
             const items = validCart.map(item => ({
                 product_id: item.product_id || item.id, 
+                variant_id: item.variant_id || null,
                 qty: parseInt(item.qty),
                 price: item.price || 15000, 
                 base_price: item.base_price || 10000
@@ -238,7 +239,12 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
 
     const totalAmount = cart.reduce((acc, item) => acc + ((item.price || 15000) * (item.qty === '' ? 0 : parseInt(item.qty))), 0);
 
-    const filtered = products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.sku.includes(search));
+    const filtered = products.filter(p => 
+        p.name.toLowerCase().includes(search.toLowerCase()) || 
+        (p.variant_name && p.variant_name.toLowerCase().includes(search.toLowerCase())) || 
+        p.sku.includes(search) || 
+        (p.variant_sku && p.variant_sku.includes(search))
+    );
 
 
 
@@ -299,8 +305,8 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 <div style={{overflowY: 'auto', overflowX: 'hidden', flex: 1, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px'}}>
                     {filtered.map(p => (
                         <div key={p.id} style={{background: 'var(--item-bg)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column'}}>
-                            <div style={{fontWeight: 'bold', marginBottom: '4px'}}>{p.name}</div>
-                            <div style={{fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '8px'}}>[{p.sku}]</div>
+                            <div style={{fontWeight: 'bold', marginBottom: '4px'}}>{p.name} {p.variant_name ? `- ${p.variant_name}` : ''}</div>
+                            <div style={{fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '8px'}}>[{p.variant_sku || p.sku}]</div>
                             <div style={{fontWeight: 'bold', color: 'var(--primary-color)', fontSize: '1.1rem', marginBottom: '16px'}}>
                                 Rp {Number(p.price || 0).toLocaleString('id-ID')}
                             </div>
@@ -334,7 +340,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                     {cart.map(c => (
                         <div key={c.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', background: 'var(--item-bg)', padding: '12px', borderRadius: '8px'}}>
                             <div>
-                                <div style={{fontWeight: 'bold'}}>{c.name}</div>
+                                <div style={{fontWeight: 'bold'}}>{c.name} {c.variant_name ? `- ${c.variant_name}` : ''}</div>
                                 {user?.role === 'ADMIN' || user?.role === 'OWNER' ? (
                                     <div style={{color: 'var(--text-secondary)', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px'}}>
                                         <span style={{fontWeight: 'bold'}}>Rp</span> 
@@ -617,7 +623,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                 <div style={{fontSize: '0.75rem', marginBottom: '8px', color: '#555'}}>
                                     {transactionSuccessData.items.map((item, idx) => (
                                         <div key={idx} style={{marginBottom: '6px'}}>
-                                            <div style={{marginBottom: '2px'}}>{item.name}</div>
+                                            <div style={{marginBottom: '2px'}}>{item.name} {item.variant_name ? `- ${item.variant_name}` : ''}</div>
                                             <div style={{display: 'flex', justifyContent: 'space-between'}}>
                                                 <span>{Number(item.price || 0).toLocaleString('id-ID')} x {item.qty}</span>
                                                 <span>{Number(item.qty * (item.price || 0)).toLocaleString('id-ID')}</span>
@@ -735,7 +741,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                         {transactionSuccessData.items.map((item, idx) => (
                                             <tr key={idx}>
                                                 <td style={{padding: '6px 4px'}}>{idx + 1}</td>
-                                                <td style={{padding: '6px 4px'}}>{item.name}</td>
+                                                <td style={{padding: '6px 4px'}}>{item.name} {item.variant_name ? `- ${item.variant_name}` : ''}</td>
                                                 {printMode === 'invoice' && <td style={{padding: '6px 4px', textAlign: 'right'}}>{Number(item.price).toLocaleString('id-ID')}</td>}
                                                 <td style={{padding: '6px 4px', textAlign: 'center'}}>{item.qty}</td>
                                                 {printMode === 'invoice' && <td style={{padding: '6px 4px', textAlign: 'right'}}>{Number(item.qty * item.price).toLocaleString('id-ID')}</td>}
@@ -878,7 +884,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                                 {row.items ? (
                                                     (typeof row.items === 'string' ? JSON.parse(row.items) : row.items).map((item, i) => (
                                                         <div key={i} style={{fontSize: '0.85rem', marginBottom: '4px'}}>
-                                                            • {item.name}
+                                                            • {item.name} {item.variant_name ? `- ${item.variant_name}` : ''}
                                                         </div>
                                                     ))
                                                 ) : '-'}

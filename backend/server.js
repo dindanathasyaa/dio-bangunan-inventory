@@ -78,9 +78,13 @@ app.get('/api/next-sku', async (req, res) => {
 app.get('/api/inventory', async (req, res) => {
     const branch_id = req.query.branch_id;
     let query = `
-        SELECT i.id, p.id as product_id, p.name, p.sku, c.name as category, p.unit, p.price, p.base_price, i.stock, i.min_stock, i.max_stock, i.branch_id, b.name as branch_name 
+        SELECT 
+            i.id, p.id as product_id, p.name, p.sku, c.name as category, p.unit, p.price, p.base_price, 
+            i.stock, i.min_stock, i.max_stock, i.branch_id, b.name as branch_name,
+            v.id as variant_id, v.name as variant_name, v.sku as variant_sku, v.price as variant_price, v.base_price as variant_base_price
         FROM inventory i
         JOIN products p ON i.product_id = p.id
+        LEFT JOIN product_variants v ON i.variant_id = v.id
         LEFT JOIN categories c ON p.category_id = c.id
         JOIN branches b ON i.branch_id = b.id
     `;
@@ -99,38 +103,61 @@ app.get('/api/inventory', async (req, res) => {
 
 // Add New Inventory Item
 app.post('/api/inventory', async (req, res) => {
-    const { sku, name, category_id, unit, price, base_price, stock, branch_id, min_stock, max_stock } = req.body;
+    const { sku, name, category_id, unit, price, base_price, stock, branch_id, min_stock, max_stock, variants } = req.body;
     try {
         // 1. Check if product exists by SKU, if not, insert into products
         let product_id;
-        const [existingProducts] = await pool.query('SELECT id FROM products WHERE sku = ?', [sku]);
+        const [existingProducts] = await pool.query('SELECT id FROM products WHERE sku = ? AND sku != ""', [sku]);
         
-        if (existingProducts.length > 0) {
+        if (existingProducts && existingProducts.length > 0) {
             product_id = existingProducts[0].id;
         } else {
             const [result] = await pool.query(
                 'INSERT INTO products (sku, name, category_id, unit, price, base_price) VALUES (?, ?, ?, ?, ?, ?)',
-                [sku, name, category_id || 1, unit, price || 0, base_price || 0]
+                [sku || '', name, category_id || 1, unit, price || 0, base_price || 0]
             );
             product_id = result.insertId;
         }
 
-        // 2. Insert or update inventory for the specific branch
-        await pool.query(
-            `INSERT INTO inventory (product_id, branch_id, stock, min_stock, max_stock) 
-             VALUES (?, ?, ?, ?, ?) 
-             ON DUPLICATE KEY UPDATE stock = stock + ?`,
-            [product_id, branch_id, stock, min_stock, max_stock, stock]
-        );
+        // 2. Insert variants and inventory
+        if (variants && variants.length > 0) {
+            for (let v of variants) {
+                const [vResult] = await pool.query(
+                    'INSERT INTO product_variants (product_id, name, sku, price, base_price) VALUES (?, ?, ?, ?, ?)',
+                    [product_id, v.name, v.sku || null, v.price || null, v.base_price || null]
+                );
+                const variant_id = vResult.insertId;
+                
+                await pool.query(
+                    `INSERT INTO inventory (product_id, variant_id, branch_id, stock, min_stock, max_stock) 
+                     VALUES (?, ?, ?, ?, ?, ?) 
+                     ON DUPLICATE KEY UPDATE stock = stock + ?`,
+                    [product_id, variant_id, branch_id, v.stock, min_stock, max_stock, v.stock]
+                );
 
-        // 3. Log transaction
-        await pool.query(
-            'INSERT INTO transactions (product_id, branch_id, type, quantity) VALUES (?, ?, ?, ?)',
-            [product_id, branch_id, 'IN', stock]
-        );
+                await pool.query(
+                    'INSERT INTO transactions (product_id, variant_id, branch_id, type, quantity) VALUES (?, ?, ?, ?, ?)',
+                    [product_id, variant_id, branch_id, 'IN', v.stock]
+                );
+            }
+        } else {
+            // No variants, insert normal inventory
+            await pool.query(
+                `INSERT INTO inventory (product_id, branch_id, stock, min_stock, max_stock) 
+                 VALUES (?, ?, ?, ?, ?) 
+                 ON DUPLICATE KEY UPDATE stock = stock + ?`,
+                [product_id, branch_id, stock, min_stock, max_stock, stock]
+            );
+
+            await pool.query(
+                'INSERT INTO transactions (product_id, branch_id, type, quantity) VALUES (?, ?, ?, ?)',
+                [product_id, branch_id, 'IN', stock]
+            );
+        }
 
         res.status(201).json({ message: 'Barang berhasil ditambahkan' });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: error.message });
     }
 });
