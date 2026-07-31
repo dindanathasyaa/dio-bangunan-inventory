@@ -427,6 +427,18 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                 <option value="new">+ Tambah Pelanggan Baru...</option>
                             </select>
                         </div>
+                        {!selectedCustomerId && (
+                            <div className="form-group" style={{marginTop: '12px'}}>
+                                <label>Nama / Keterangan Pembeli</label>
+                                <input 
+                                    type="text" 
+                                    className="input-field" 
+                                    value={customerName} 
+                                    onChange={e => setCustomerName(e.target.value)} 
+                                    placeholder="Ketik nama pembeli..." 
+                                />
+                            </div>
+                        )}
                         <div className="form-group" style={{marginTop: '16px'}}>
                             <label>Metode Pembayaran</label>
                             <div style={{display: 'flex', gap: '12px', marginTop: '8px', flexWrap: 'wrap'}}>
