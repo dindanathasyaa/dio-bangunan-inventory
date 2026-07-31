@@ -9,6 +9,7 @@ import Scanner from './Scanner';
 import SalesView from './SalesView';
 import PurchaseView from './PurchaseView';
 import OrderDeliveryView from './OrderDeliveryView';
+import DeliveryOrderView from './DeliveryOrderView';
 import CashDebtView from './CashDebtView';
 import StockAlertView from './StockAlertView';
 import DailyRecapView from './DailyRecapView';
@@ -79,6 +80,7 @@ const Dashboard = ({ user, setUser }) => {
                     {user.role !== 'ADMIN' && <Link to="/inventory" className={`nav-link ${location.pathname === '/inventory' ? 'active' : ''}`}>Data Inventory</Link>}
                     <Link to="/sales" className={`nav-link ${location.pathname === '/sales' ? 'active' : ''}`}>Penjualan (Kasir)</Link>
                     <Link to="/orders" className={`nav-link ${location.pathname === '/orders' ? 'active' : ''}`}>Order & Pengantaran</Link>
+                    <Link to="/delivery-orders" className={`nav-link ${location.pathname === '/delivery-orders' ? 'active' : ''}`}>Daftar DO (Titipan)</Link>
                     
                     {user.role === 'OWNER' && (
                         <>
@@ -113,6 +115,7 @@ const Dashboard = ({ user, setUser }) => {
                         <Route path="/inventory" element={user.role === 'ADMIN' ? <Navigate to="/sales" replace /> : <InventoryView inventory={inventory} refreshData={fetchData} user={user} activeBranch={activeBranch} branches={branches} />} />
                         <Route path="/sales" element={<SalesView user={user} activeBranch={activeBranch} setActiveBranch={setActiveBranch} branches={branches} />} />
                         <Route path="/orders" element={<OrderDeliveryView user={user} activeBranch={activeBranch} />} />
+                        <Route path="/delivery-orders" element={<DeliveryOrderView user={user} activeBranch={activeBranch} />} />
                         <Route path="/rekap" element={<DailyRecapView user={user} activeBranch={activeBranch} />} />
                         <Route path="/purchases" element={<PurchaseView user={user} activeBranch={activeBranch} branches={branches} refreshData={fetchData} />} />
                         <Route path="/cash" element={<CashDebtView user={user} activeBranch={activeBranch} setActiveBranch={setActiveBranch} branches={branches} inventory={inventory} />} />

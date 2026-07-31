@@ -2,7 +2,7 @@ module.exports = function(app, pool) {
 
     // --- SALES ---
     app.post('/api/sales', async (req, res) => {
-        const { branch_id, customer_name, payment_method, items, transaction_date } = req.body;
+        const { branch_id, customer_name, payment_method, items, transaction_date, delivery_status = 'Langsung' } = req.body;
         // items: [{ product_id, qty, price, base_price }]
         const connection = await pool.getConnection();
         try {
@@ -19,13 +19,13 @@ module.exports = function(app, pool) {
             let saleRes;
             if (transaction_date) {
                 [saleRes] = await connection.query(
-                    `INSERT INTO sales (branch_id, customer_name, total_amount, profit, payment_method, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
-                    [branch_id, customer_name, total_amount, total_profit, payment_method, transaction_date]
+                    `INSERT INTO sales (branch_id, customer_name, total_amount, profit, payment_method, created_at, delivery_status) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                    [branch_id, customer_name, total_amount, total_profit, payment_method, transaction_date, delivery_status]
                 );
             } else {
                 [saleRes] = await connection.query(
-                    `INSERT INTO sales (branch_id, customer_name, total_amount, profit, payment_method) VALUES (?, ?, ?, ?, ?)`,
-                    [branch_id, customer_name, total_amount, total_profit, payment_method]
+                    `INSERT INTO sales (branch_id, customer_name, total_amount, profit, payment_method, delivery_status) VALUES (?, ?, ?, ?, ?, ?)`,
+                    [branch_id, customer_name, total_amount, total_profit, payment_method, delivery_status]
                 );
             }
             const sale_id = saleRes.insertId;
@@ -35,11 +35,13 @@ module.exports = function(app, pool) {
                     `INSERT INTO sale_items (sale_id, product_id, qty, price, base_price) VALUES (?, ?, ?, ?, ?)`,
                     [sale_id, item.product_id, item.qty, item.price, item.base_price]
                 );
-                // Deduct stock
-                await connection.query(
-                    `UPDATE inventory SET stock = stock - ? WHERE product_id = ? AND branch_id = ?`,
-                    [item.qty, item.product_id, branch_id]
-                );
+                // Deduct stock only if it's taken immediately
+                if (delivery_status === 'Langsung') {
+                    await connection.query(
+                        `UPDATE inventory SET stock = stock - ? WHERE product_id = ? AND branch_id = ?`,
+                        [item.qty, item.product_id, branch_id]
+                    );
+                }
             }
 
             if (payment_method === 'Cash') {
@@ -105,6 +107,76 @@ module.exports = function(app, pool) {
     app.get('/api/sales/:id/items', async (req, res) => {
         try {
             const [rows] = await pool.query('SELECT p.name, p.unit, si.qty, si.price FROM sale_items si JOIN products p ON si.product_id = p.id WHERE si.sale_id = ?', [req.params.id]);
+            res.json(rows);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    });
+
+    app.put('/api/sales/:id/delivery-status', async (req, res) => {
+        const { id } = req.params;
+        const { delivery_status } = req.body;
+        
+        if (delivery_status !== 'Sudah Diambil') {
+            return res.status(400).json({ error: 'Status tidak valid' });
+        }
+
+        const connection = await pool.getConnection();
+        try {
+            await connection.beginTransaction();
+            
+            // Check current status
+            const [sales] = await connection.query('SELECT branch_id, delivery_status FROM sales WHERE id = ?', [id]);
+            if (sales.length === 0) throw new Error('Penjualan tidak ditemukan');
+            const sale = sales[0];
+            
+            if (sale.delivery_status === 'Sudah Diambil') {
+                throw new Error('Barang sudah diambil sebelumnya');
+            }
+
+            // Update status
+            await connection.query('UPDATE sales SET delivery_status = ? WHERE id = ?', [delivery_status, id]);
+            
+            // Deduct stock for all items in this sale
+            const [items] = await connection.query('SELECT product_id, qty FROM sale_items WHERE sale_id = ?', [id]);
+            for (let item of items) {
+                await connection.query(
+                    'UPDATE inventory SET stock = stock - ? WHERE product_id = ? AND branch_id = ?',
+                    [item.qty, item.product_id, sale.branch_id]
+                );
+            }
+            
+            await connection.commit();
+            res.json({ message: 'Status berhasil diupdate dan stok dipotong' });
+        } catch (error) {
+            await connection.rollback();
+            res.status(500).json({ error: error.message });
+        } finally {
+            connection.release();
+        }
+    });
+
+    app.get('/api/sales/delivery-orders', async (req, res) => {
+        const branch_id = req.query.branch_id;
+        try {
+            let query = `
+                SELECT s.*, 
+                    (
+                        SELECT JSON_ARRAYAGG(JSON_OBJECT('name', p.name, 'unit', p.unit, 'qty', si.qty, 'price', si.price))
+                        FROM sale_items si
+                        JOIN products p ON si.product_id = p.id
+                        WHERE si.sale_id = s.id
+                    ) AS items
+                FROM sales s 
+                WHERE s.delivery_status = 'DO'
+            `;
+            const params = [];
+            if (branch_id && branch_id !== 'all') {
+                query += ' AND s.branch_id = ?';
+                params.push(branch_id);
+            }
+            query += ' ORDER BY s.created_at DESC';
+            const [rows] = await pool.query(query, params);
             res.json(rows);
         } catch (error) {
             res.status(500).json({ error: error.message });

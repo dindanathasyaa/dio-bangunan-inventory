@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS sales (
     total_amount DECIMAL(15,2) NOT NULL,
     profit DECIMAL(15,2) NOT NULL,
     payment_method ENUM('Cash', 'Kredit') DEFAULT 'Cash',
+    delivery_status ENUM('Langsung', 'DO', 'Sudah Diambil') DEFAULT 'Langsung',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (branch_id) REFERENCES branches(id)
 );

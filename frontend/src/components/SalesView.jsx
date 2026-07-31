@@ -23,6 +23,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
     const [detailDate, setDetailDate] = useState('');
     const [isBranchDropdownOpen, setIsBranchDropdownOpen] = useState(false);
     const [isPaymentDropdownOpen, setIsPaymentDropdownOpen] = useState(false);
+    const [deliveryStatus, setDeliveryStatus] = useState('Langsung'); // 'Langsung' or 'DO'
     
     // Custom Toast Alert State
     const [toast, setToast] = useState({ show: false, message: '', type: 'info', onClose: null });
@@ -146,7 +147,8 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 customer_name: customerName,
                 payment_method: paymentMethod,
                 items,
-                transaction_date: isIndirectSale && transactionDate ? transactionDate : null
+                transaction_date: isIndirectSale && transactionDate ? transactionDate : null,
+                delivery_status: deliveryStatus
             });
 
             const successData = {
@@ -357,6 +359,19 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                             )}
                         </div>
                     )}
+                    <div className="form-group" style={{marginTop: '16px'}}>
+                        <label>Status Pengambilan</label>
+                        <div style={{display: 'flex', gap: '16px', marginTop: '8px'}}>
+                            <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '8px 12px', border: '1px solid var(--border-color)', borderRadius: '8px', background: deliveryStatus === 'Langsung' ? 'rgba(59,130,246,0.1)' : 'white', borderColor: deliveryStatus === 'Langsung' ? 'var(--primary-color)' : 'var(--border-color)'}}>
+                                <input type="radio" name="deliveryStatus" value="Langsung" checked={deliveryStatus === 'Langsung'} onChange={() => setDeliveryStatus('Langsung')} style={{margin: 0}} />
+                                <span style={{fontWeight: deliveryStatus === 'Langsung' ? 'bold' : 'normal', color: deliveryStatus === 'Langsung' ? 'var(--primary-color)' : 'var(--text-primary)'}}>Langsung</span>
+                            </label>
+                            <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '8px 12px', border: '1px solid var(--border-color)', borderRadius: '8px', background: deliveryStatus === 'DO' ? 'rgba(245,158,11,0.1)' : 'white', borderColor: deliveryStatus === 'DO' ? '#f59e0b' : 'var(--border-color)'}}>
+                                <input type="radio" name="deliveryStatus" value="DO" checked={deliveryStatus === 'DO'} onChange={() => setDeliveryStatus('DO')} style={{margin: 0}} />
+                                <span style={{fontWeight: deliveryStatus === 'DO' ? 'bold' : 'normal', color: deliveryStatus === 'DO' ? '#f59e0b' : 'var(--text-primary)'}}>DO (Titip)</span>
+                            </label>
+                        </div>
+                    </div>
                     <button className="btn btn-primary" style={{width: '100%', padding: '16px', fontSize: '1.1rem', marginTop: '24px'}} onClick={checkout} disabled={loading || cart.length === 0}>
                         {loading ? 'Memproses...' : 'Selesaikan Pembayaran'}
                     </button>
