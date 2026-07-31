@@ -95,6 +95,22 @@ app.get('/api/inventory', async (req, res) => {
     }
     try {
         const [rows] = await pool.query(query, params);
+        
+        if (rows.length > 0) {
+            const productIds = [...new Set(rows.map(r => r.product_id))];
+            const [conversions] = await pool.query('SELECT * FROM product_conversions WHERE product_id IN (?)', [productIds]);
+            
+            const conversionsMap = {};
+            conversions.forEach(c => {
+                if (!conversionsMap[c.product_id]) conversionsMap[c.product_id] = [];
+                conversionsMap[c.product_id].push(c);
+            });
+            
+            rows.forEach(r => {
+                r.conversions = conversionsMap[r.product_id] || [];
+            });
+        }
+
         res.json(rows);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -103,7 +119,7 @@ app.get('/api/inventory', async (req, res) => {
 
 // Add New Inventory Item
 app.post('/api/inventory', async (req, res) => {
-    const { sku, name, category_id, unit, price, base_price, stock, branch_id, min_stock, max_stock, variants } = req.body;
+    const { sku, name, category_id, unit, price, base_price, stock, branch_id, min_stock, max_stock, variants, conversions } = req.body;
     try {
         // 1. Check if product exists by SKU, if not, insert into products
         let product_id;
@@ -153,6 +169,18 @@ app.post('/api/inventory', async (req, res) => {
                 'INSERT INTO transactions (product_id, branch_id, type, quantity) VALUES (?, ?, ?, ?)',
                 [product_id, branch_id, 'IN', stock]
             );
+        }
+
+        // 3. Insert Conversions
+        if (conversions && conversions.length > 0) {
+            for (let c of conversions) {
+                if (c.name && c.multiplier && c.price) {
+                    await pool.query(
+                        'INSERT INTO product_conversions (product_id, name, multiplier, price) VALUES (?, ?, ?, ?)',
+                        [product_id, c.name, c.multiplier, c.price]
+                    );
+                }
+            }
         }
 
         res.status(201).json({ message: 'Barang berhasil ditambahkan' });

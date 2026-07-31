@@ -100,10 +100,11 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
     };
 
     const addToCart = (product, qtyToAdd = 1) => {
-        qtyToAdd = parseInt(qtyToAdd) || 1;
+        qtyToAdd = parseFloat(qtyToAdd) || 1;
         const exist = cart.find(x => x.id === product.id);
         if (exist) {
-            if (exist.qty + qtyToAdd > product.stock) {
+            const multiplier = exist.multiplier || 1;
+            if ((exist.qty + qtyToAdd) * multiplier > product.stock) {
                 showToast('Stok tidak mencukupi!', 'warning');
                 return;
             }
@@ -128,14 +129,16 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
             setCart(cart.map(x => x.id === id ? { ...x, qty: '' } : x));
             return;
         }
-        const v = parseInt(val);
+        const v = parseFloat(val);
         if (isNaN(v) || v < 0) return;
         if(v === 0) {
             setCart(cart.filter(x => x.id !== id));
             return;
         }
+        const cartItem = cart.find(x => x.id === id);
+        const multiplier = cartItem ? (cartItem.multiplier || 1) : 1;
         const product = products.find(p => p.id === id);
-        if (v > product.stock) {
+        if (v * multiplier > product.stock) {
             showToast('Melebihi stok yang ada!', 'warning');
             return;
         }
@@ -150,6 +153,24 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
         const v = parseFloat(val);
         if (isNaN(v) || v < 0) return;
         setCart(cart.map(x => x.id === id ? { ...x, price: v } : x));
+    };
+
+    const updateCartUnit = (cartItemId, conversionId) => {
+        setCart(cart.map(x => {
+            if (x.id === cartItemId) {
+                if (!conversionId) {
+                    // Reset to default
+                    return { ...x, active_conversion_id: null, price: x.original_price || x.price, multiplier: 1, unit_name: x.unit }; 
+                }
+                const conv = x.conversions.find(c => c.id == conversionId);
+                if (conv) {
+                    // Save original price if not saved yet
+                    const origPrice = x.original_price || x.price;
+                    return { ...x, active_conversion_id: conv.id, original_price: origPrice, price: conv.price, multiplier: conv.multiplier, unit_name: conv.name };
+                }
+            }
+            return x;
+        }));
     };
 
     const handleAddCustomer = async () => {
@@ -178,16 +199,18 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
 
     const checkout = async () => {
         const totalAmount = cart.reduce((acc, c) => acc + (c.qty || 0) * (c.price || 0), 0);
-        const validCart = cart.filter(item => item.qty !== '' && parseInt(item.qty) > 0);
+        const validCart = cart.filter(item => item.qty !== '' && parseFloat(item.qty) > 0);
         if (validCart.length === 0) return showToast('Keranjang kosong atau jumlah tidak valid!', 'warning');
         setLoading(true);
         try {
             const items = validCart.map(item => ({
                 product_id: item.product_id || item.id, 
                 variant_id: item.variant_id || null,
-                qty: parseInt(item.qty),
+                qty: parseFloat(item.qty),
                 price: item.price || 15000, 
-                base_price: item.base_price || 10000
+                base_price: item.base_price || 10000,
+                multiplier: item.multiplier || 1,
+                unit_name: item.unit_name || null
             }));
 
             const res = await axios.post('http://localhost:5000/api/sales', {
@@ -364,7 +387,21 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                 )}
                             </div>
                             <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
-                                <input type="number" value={c.qty} onChange={e => updateQty(c.id, e.target.value)} style={{width: '60px', padding: '4px', borderRadius: '4px', border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-primary)'}} />
+                                <input type="number" step="0.01" value={c.qty} onChange={e => updateQty(c.id, e.target.value)} style={{width: '60px', padding: '4px', borderRadius: '4px', border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-primary)'}} />
+                                {c.conversions && c.conversions.length > 0 ? (
+                                    <select 
+                                        value={c.active_conversion_id || ''} 
+                                        onChange={e => updateCartUnit(c.id, e.target.value)}
+                                        style={{padding: '4px', borderRadius: '4px', border: '1px solid var(--border-color)', background: 'var(--panel-bg)', color: 'var(--text-primary)'}}
+                                    >
+                                        <option value="">{c.unit}</option>
+                                        {c.conversions.map(conv => (
+                                            <option key={conv.id} value={conv.id}>{conv.name}</option>
+                                        ))}
+                                    </select>
+                                ) : (
+                                    <span style={{fontSize: '0.9rem', color: 'var(--text-secondary)'}}>{c.unit}</span>
+                                )}
                             </div>
                         </div>
                     ))}
@@ -625,7 +662,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                         <div key={idx} style={{marginBottom: '6px'}}>
                                             <div style={{marginBottom: '2px'}}>{item.name} {item.variant_name ? `- ${item.variant_name}` : ''}</div>
                                             <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                                                <span>{Number(item.price || 0).toLocaleString('id-ID')} x {item.qty}</span>
+                                                <span>{Number(item.price || 0).toLocaleString('id-ID')} x {item.qty} {item.unit_name || item.unit}</span>
                                                 <span>{Number(item.qty * (item.price || 0)).toLocaleString('id-ID')}</span>
                                             </div>
                                         </div>
@@ -743,7 +780,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                                 <td style={{padding: '6px 4px'}}>{idx + 1}</td>
                                                 <td style={{padding: '6px 4px'}}>{item.name} {item.variant_name ? `- ${item.variant_name}` : ''}</td>
                                                 {printMode === 'invoice' && <td style={{padding: '6px 4px', textAlign: 'right'}}>{Number(item.price).toLocaleString('id-ID')}</td>}
-                                                <td style={{padding: '6px 4px', textAlign: 'center'}}>{item.qty}</td>
+                                                <td style={{padding: '6px 4px', textAlign: 'center'}}>{item.qty} {item.unit_name || item.unit}</td>
                                                 {printMode === 'invoice' && <td style={{padding: '6px 4px', textAlign: 'right'}}>{Number(item.qty * item.price).toLocaleString('id-ID')}</td>}
                                             </tr>
                                         ))}

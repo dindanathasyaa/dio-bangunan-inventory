@@ -461,7 +461,8 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
         max_stock: 50,
         branch_id: user.role === 'ADMIN' ? user.branch_id : 1,
         hasVariants: false,
-        variants: [{ name: '', stock: 0 }]
+        variants: [{ name: '', stock: 0 }],
+        conversions: [{ name: '', multiplier: '', price: '' }]
     });
 
     useEffect(() => {
@@ -502,18 +503,11 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
         }
 
         let finalUnit = newItem.unit;
-        if (unitType === 'Konversi') {
-            if (!majemukType || !majemukMultiplier) {
-                alert('Pilih Satuan Besar dan Pengali!');
-                return;
-            }
-            finalUnit = `${majemukType} (${majemukMultiplier} ${newItem.unit})`;
-        }
 
         try {
-            await axios.post('http://localhost:5000/api/inventory', { ...newItem, unit: finalUnit, stock: lembar, variants: newItem.hasVariants ? newItem.variants : [] });
+            await axios.post('http://localhost:5000/api/inventory', { ...newItem, unit: finalUnit, stock: lembar, variants: newItem.hasVariants ? newItem.variants : [], conversions: unitType === 'Konversi' ? newItem.conversions : [] });
             setShowModal(false);
-            setNewItem({ sku: '', name: '', category_id: '', unit: '', price: '', base_price: '', stock: 0, min_stock: 5, max_stock: 50, branch_id: user.role === 'ADMIN' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : 1), hasVariants: false, variants: [{ name: '', stock: 0 }] });
+            setNewItem({ sku: '', name: '', category_id: '', unit: '', price: '', base_price: '', stock: 0, min_stock: 5, max_stock: 50, branch_id: user.role === 'ADMIN' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : 1), hasVariants: false, variants: [{ name: '', stock: 0 }], conversions: [{ name: '', multiplier: '', price: '' }] });
             setUnitType('');
             setMajemukType('');
             setMajemukMultiplier(20);
@@ -803,79 +797,48 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                             
                             {unitType === 'Konversi' ? (
                                 <div style={{background: 'var(--item-bg)', padding: '16px', borderRadius: '8px', marginBottom: '16px'}}>
-                                    <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
-                                        <div className="form-group" style={{flex: 1, marginBottom: 0}}>
-                                            <label>Pilih Satuan Besar</label>
-                                            <div className="custom-dropdown-container" style={{position: 'relative', width: '100%', zIndex: isMajemukDropdownOpen ? 10 : 1}}>
-                                                <div 
-                                                    className={`custom-select-3d ${isMajemukDropdownOpen ? 'active' : ''}`}
-                                                    onClick={() => setIsMajemukDropdownOpen(!isMajemukDropdownOpen)}
-                                                    style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box', border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer'}}
-                                                >
-                                                    <span style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{majemukType || 'Satuan Besar'}</span>
-                                                    <span style={{fontSize: '0.8rem', marginLeft: '16px'}}>▼</span>
-                                                </div>
-                                                {isMajemukDropdownOpen && (
-                                                    <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000, overflow: 'hidden', padding: 0}}>
-                                                        {largeUnitsList.map(unit => (
-                                                            <div 
-                                                                key={unit.name}
-                                                                className={`custom-dropdown-item ${majemukType === unit.name ? 'selected' : ''}`}
-                                                                onClick={() => {
-                                                                    setMajemukType(unit.name);
-                                                                    setIsMajemukDropdownOpen(false);
-                                                                    setMajemukMultiplier(unit.default_multiplier);
-                                                                }}
-                                                                style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
-                                                            >
-                                                                {unit.name}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                )}
+                                    <div style={{fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '12px'}}>Tambahkan opsi pecahan/satuan jual yang akan memotong dari satu stok induk yang sama. (Contoh: 1/4 Meter, 1 Dus, dll)</div>
+                                    {newItem.conversions.map((conv, index) => (
+                                        <div key={index} style={{display: 'flex', gap: '12px', marginBottom: '12px', alignItems: 'flex-end', background: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #e5e7eb'}}>
+                                            <div className="form-group" style={{flex: 2, marginBottom: 0}}>
+                                                <label>Nama Satuan</label>
+                                                <input type="text" className="input-field" value={conv.name} onChange={e => {
+                                                    const newConvs = [...newItem.conversions];
+                                                    newConvs[index].name = e.target.value;
+                                                    setNewItem({...newItem, conversions: newConvs});
+                                                }} placeholder="Cth: 1/4 Meter" required />
                                             </div>
+                                            <div className="form-group" style={{flex: 1, marginBottom: 0}}>
+                                                <label>Pengali Stok</label>
+                                                <input type="number" step="0.01" className="input-field" value={conv.multiplier} onChange={e => {
+                                                    const newConvs = [...newItem.conversions];
+                                                    newConvs[index].multiplier = e.target.value;
+                                                    setNewItem({...newItem, conversions: newConvs});
+                                                }} placeholder="Cth: 0.25" required />
+                                            </div>
+                                            <div className="form-group" style={{flex: 1, marginBottom: 0}}>
+                                                <label>Harga Jual (Rp)</label>
+                                                <input type="number" className="input-field" value={conv.price} onChange={e => {
+                                                    const newConvs = [...newItem.conversions];
+                                                    newConvs[index].price = e.target.value;
+                                                    setNewItem({...newItem, conversions: newConvs});
+                                                }} placeholder="Cth: 5000" required />
+                                            </div>
+                                            {index > 0 && (
+                                                <button type="button" className="btn btn-danger" style={{padding: '12px 16px', marginBottom: '0'}} onClick={() => {
+                                                    const newConvs = newItem.conversions.filter((_, i) => i !== index);
+                                                    setNewItem({...newItem, conversions: newConvs});
+                                                }}>X</button>
+                                            )}
                                         </div>
-                                        <div className="form-group" style={{flex: 1, marginBottom: 0}}>
-                                            <label>Isi per 1 {majemukType} (Multiplier)</label>
-                                            <input 
-                                                type="number" 
-                                                className="input-field" 
-                                                value={majemukMultiplier} 
-                                                onChange={e => {
-                                                    const val = Number(e.target.value);
-                                                    setMajemukMultiplier(val);
-                                                    setLembar(kodi * val);
-                                                }} 
-                                            />
-                                        </div>
-                                    </div>
-                                    <div style={{display: 'flex', gap: '16px'}}>
-                                        <div className="form-group" style={{flex: 1, marginBottom: 0}}>
-                                            <label>Stok ({majemukType})</label>
-                                            <input 
-                                                type="number" 
-                                                className="input-field" 
-                                                value={kodi} 
-                                                onChange={e => {
-                                                    const val = Number(e.target.value);
-                                                    setKodi(val); 
-                                                    setLembar(val * majemukMultiplier);
-                                                }} 
-                                            />
-                                        </div>
-                                        <div className="form-group" style={{flex: 1, marginBottom: 0}}>
-                                            <label>Stok (Eceran / {newItem.unit || 'Pcs'})</label>
-                                            <input 
-                                                type="number" 
-                                                className="input-field" 
-                                                value={lembar} 
-                                                onChange={e => {
-                                                    const val = Number(e.target.value);
-                                                    setLembar(val); 
-                                                    setKodi(val / majemukMultiplier);
-                                                }} 
-                                            />
-                                        </div>
+                                    ))}
+                                    <button type="button" className="btn btn-outline" style={{width: '100%', marginTop: '8px', borderStyle: 'dashed'}} onClick={() => {
+                                        setNewItem({...newItem, conversions: [...newItem.conversions, {name: '', multiplier: '', price: ''}]});
+                                    }}>+ Tambah Satuan Konversi Lain</button>
+
+                                    <div className="form-group" style={{marginTop: '16px', marginBottom: 0}}>
+                                        <label>Stok Total (Induk)</label>
+                                        <input type="number" step="0.01" className="input-field" value={lembar} onChange={e => setLembar(e.target.value)} placeholder="Stok master saat ini" required />
                                     </div>
                                 </div>
                             ) : (
