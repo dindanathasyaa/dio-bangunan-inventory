@@ -427,41 +427,22 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                 <option value="new">+ Tambah Pelanggan Baru...</option>
                             </select>
                         </div>
-                        <div className="form-group" style={{position: 'relative', marginTop: '16px'}}>
+                        <div className="form-group" style={{marginTop: '16px'}}>
                             <label>Metode Pembayaran</label>
-                            <div 
-                                className={`input-field custom-select-3d ${isPaymentDropdownOpen ? 'active' : ''}`}
-                                onClick={() => setIsPaymentDropdownOpen(!isPaymentDropdownOpen)}
-                                style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', background: 'var(--panel-bg)', color: 'var(--text-primary)'}}
-                            >
-                                <span>{paymentMethod === 'Cash' ? 'Cash (Lunas)' : paymentMethod === 'Kredit' ? 'Kredit (Hutang)' : 'Potong Saldo (Deposit)'}</span>
-                                <span style={{fontSize: '0.8rem'}}>▼</span>
+                            <div style={{display: 'flex', gap: '12px', marginTop: '8px', flexWrap: 'wrap'}}>
+                                <label style={{flex: 1, minWidth: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer', padding: '12px', border: '2px solid', borderRadius: '8px', background: paymentMethod === 'Cash' ? 'var(--primary-color)' : 'white', borderColor: paymentMethod === 'Cash' ? 'var(--primary-color)' : 'var(--border-color)', color: paymentMethod === 'Cash' ? 'white' : 'var(--text-primary)', transition: 'all 0.2s', textAlign: 'center'}}>
+                                    <input type="radio" name="paymentMethod" value="Cash" checked={paymentMethod === 'Cash'} onChange={() => setPaymentMethod('Cash')} style={{display: 'none'}} />
+                                    <span style={{fontWeight: 'bold'}}>Tunai (Lunas)</span>
+                                </label>
+                                <label style={{flex: 1, minWidth: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer', padding: '12px', border: '2px solid', borderRadius: '8px', background: paymentMethod === 'Kredit' ? '#ef4444' : 'white', borderColor: paymentMethod === 'Kredit' ? '#ef4444' : 'var(--border-color)', color: paymentMethod === 'Kredit' ? 'white' : 'var(--text-primary)', transition: 'all 0.2s', textAlign: 'center'}}>
+                                    <input type="radio" name="paymentMethod" value="Kredit" checked={paymentMethod === 'Kredit'} onChange={() => setPaymentMethod('Kredit')} style={{display: 'none'}} />
+                                    <span style={{fontWeight: 'bold'}}>Kredit (Hutang)</span>
+                                </label>
+                                <label style={{flex: 1, minWidth: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer', padding: '12px', border: '2px solid', borderRadius: '8px', background: paymentMethod === 'Potong Saldo' ? '#10b981' : 'white', borderColor: paymentMethod === 'Potong Saldo' ? '#10b981' : 'var(--border-color)', color: paymentMethod === 'Potong Saldo' ? 'white' : 'var(--text-primary)', transition: 'all 0.2s', textAlign: 'center'}}>
+                                    <input type="radio" name="paymentMethod" value="Potong Saldo" checked={paymentMethod === 'Potong Saldo'} onChange={() => setPaymentMethod('Potong Saldo')} style={{display: 'none'}} />
+                                    <span style={{fontWeight: 'bold'}}>Potong Saldo</span>
+                                </label>
                             </div>
-                            {isPaymentDropdownOpen && (
-                                <div className="custom-dropdown-menu" style={{position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', background: '#ffffff', border: '1px solid var(--border-color)', borderRadius: '6px', zIndex: 1000, overflow: 'hidden'}}>
-                                    <div 
-                                        className={`custom-dropdown-item ${paymentMethod === 'Cash' ? 'selected' : ''}`}
-                                        onClick={() => { setPaymentMethod('Cash'); setIsPaymentDropdownOpen(false); }}
-                                        style={{padding: '10px 12px', cursor: 'pointer'}}
-                                    >
-                                        Cash (Lunas)
-                                    </div>
-                                    <div 
-                                        className={`custom-dropdown-item ${paymentMethod === 'Kredit' ? 'selected' : ''}`}
-                                        onClick={() => { setPaymentMethod('Kredit'); setIsPaymentDropdownOpen(false); }}
-                                        style={{padding: '10px 12px', cursor: 'pointer'}}
-                                    >
-                                        Kredit (Hutang)
-                                    </div>
-                                    <div 
-                                        className={`custom-dropdown-item ${paymentMethod === 'Potong Saldo' ? 'selected' : ''}`}
-                                        onClick={() => { setPaymentMethod('Potong Saldo'); setIsPaymentDropdownOpen(false); }}
-                                        style={{padding: '10px 12px', cursor: 'pointer'}}
-                                    >
-                                        Potong Saldo (Deposit)
-                                    </div>
-                                </div>
-                            )}
                         </div>
                         
                         {paymentMethod === 'Cash' && (
