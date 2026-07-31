@@ -32,9 +32,14 @@ const CustomersView = ({ user }) => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px' }}>
                 <h2 style={{margin: 0}}>👥 Buku Pelanggan & Titip Dana</h2>
                 <div style={{display: 'flex', gap: '12px'}}>
-                    <div className="search-bar" style={{width: '300px'}}>
-                        <input type="text" placeholder="Cari nama atau no HP..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                    </div>
+                    <input 
+                        type="text" 
+                        className="input-field" 
+                        placeholder="Cari nama atau no HP..." 
+                        value={search} 
+                        onChange={(e) => setSearch(e.target.value)} 
+                        style={{marginBottom: 0, minWidth: '300px'}} 
+                    />
                 </div>
             </div>
 
