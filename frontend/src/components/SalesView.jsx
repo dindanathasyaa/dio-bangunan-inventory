@@ -35,6 +35,9 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
     const [newCustomerName, setNewCustomerName] = useState('');
     const [newCustomerPhone, setNewCustomerPhone] = useState('');
     
+    // Payment Modal State
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    
     // Custom Toast Alert State
     const [toast, setToast] = useState({ show: false, message: '', type: 'info', onClose: null });
 
@@ -223,6 +226,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
             setPaymentMethod('Cash');
             setDeliveryStatus('Langsung');
             setTransactionDate('');
+            setShowPaymentModal(false);
             fetchProducts();
         } catch (error) {
             console.error(error);
@@ -362,133 +366,166 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 </div>
                 
                 <div style={{borderTop: '1px solid var(--border-color)', paddingTop: '16px'}}>
-                    <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '16px', fontWeight: 'bold', fontSize: '1.2rem'}}>
+                    <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '16px', fontWeight: 'bold', fontSize: '1.4rem'}}>
                         <span>Total:</span>
-                        <span>Rp {Number(totalAmount).toLocaleString('id-ID')}</span>
-                    </div>
-                    <div className="form-group">
-                        <label>Pilih Pelanggan</label>
-                        <select 
-                            className="input-field" 
-                            value={selectedCustomerId} 
-                            onChange={e => {
-                                const val = e.target.value;
-                                if (val === 'new') {
-                                    setShowAddCustomerModal(true);
-                                    setSelectedCustomerId('');
-                                } else {
-                                    setSelectedCustomerId(val);
-                                    if (val) {
-                                        const c = customers.find(x => x.id === parseInt(val));
-                                        if (c) setCustomerName(c.name);
-                                    } else {
-                                        setCustomerName('');
-                                    }
-                                }
-                            }}
-                        >
-                            <option value="">Umum (Tanpa Akun)</option>
-                            {customers.map(c => (
-                                <option key={c.id} value={c.id}>{c.name} - Saldo: Rp {Number(c.balance).toLocaleString('id-ID')}</option>
-                            ))}
-                            <option value="new">+ Tambah Pelanggan Baru...</option>
-                        </select>
-                    </div>
-                    <div className="form-group" style={{position: 'relative', marginTop: '16px'}}>
-                        <label>Metode Pembayaran</label>
-                        <div 
-                            className={`input-field custom-select-3d ${isPaymentDropdownOpen ? 'active' : ''}`}
-                            onClick={() => setIsPaymentDropdownOpen(!isPaymentDropdownOpen)}
-                            style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', background: 'var(--panel-bg)', color: 'var(--text-primary)'}}
-                        >
-                            <span>{paymentMethod === 'Cash' ? 'Cash (Lunas)' : paymentMethod === 'Kredit' ? 'Kredit (Hutang)' : 'Potong Saldo (Deposit)'}</span>
-                            <span style={{fontSize: '0.8rem'}}>▼</span>
-                        </div>
-                        {isPaymentDropdownOpen && (
-                            <div className="custom-dropdown-menu" style={{position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', background: '#ffffff', border: '1px solid var(--border-color)', borderRadius: '6px', zIndex: 1000, overflow: 'hidden'}}>
-                                <div 
-                                    className={`custom-dropdown-item ${paymentMethod === 'Cash' ? 'selected' : ''}`}
-                                    onClick={() => { setPaymentMethod('Cash'); setIsPaymentDropdownOpen(false); }}
-                                    style={{padding: '10px 12px', cursor: 'pointer'}}
-                                >
-                                    Cash (Lunas)
-                                </div>
-                                <div 
-                                    className={`custom-dropdown-item ${paymentMethod === 'Kredit' ? 'selected' : ''}`}
-                                    onClick={() => { setPaymentMethod('Kredit'); setIsPaymentDropdownOpen(false); }}
-                                    style={{padding: '10px 12px', cursor: 'pointer'}}
-                                >
-                                    Kredit (Hutang)
-                                </div>
-                                <div 
-                                    className={`custom-dropdown-item ${paymentMethod === 'Potong Saldo' ? 'selected' : ''}`}
-                                    onClick={() => { setPaymentMethod('Potong Saldo'); setIsPaymentDropdownOpen(false); }}
-                                    style={{padding: '10px 12px', cursor: 'pointer'}}
-                                >
-                                    Potong Saldo (Deposit)
-                                </div>
-                            </div>
-                        )}
+                        <span style={{color: 'var(--primary-color)'}}>Rp {Number(totalAmount).toLocaleString('id-ID')}</span>
                     </div>
                     
-                    {paymentMethod === 'Cash' && (
-                        <div className="form-group" style={{marginTop: '16px'}}>
-                            <label>Jumlah Uang Diterima (Rp)</label>
-                            <CurrencyInput value={amountPaid} onChange={setAmountPaid} className="input-field" placeholder="Ketik jumlah uang..." />
-                            {(() => {
-                                const paid = amountPaid ? parseFloat(amountPaid.replace(/[^0-9]/g, '')) : 0;
-                                const change = paid - totalAmount;
-                                if (change > 0) {
-                                    return (
-                                        <div style={{marginTop: '8px', padding: '12px', background: 'var(--panel-bg)', borderRadius: '8px', border: '1px solid var(--border-color)'}}>
-                                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: selectedCustomerId ? '8px' : '0', fontWeight: 'bold', color: 'var(--primary-color)'}}>
-                                                <span>Kembalian:</span>
-                                                <span>Rp {Number(change).toLocaleString('id-ID')}</span>
-                                            </div>
-                                            {selectedCustomerId ? (
-                                                <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem', color: 'var(--text-primary)'}}>
-                                                    <input type="checkbox" checked={saveAsDeposit} onChange={e => setSaveAsDeposit(e.target.checked)} />
-                                                    Simpan kembalian sebagai Saldo / Titip Dana
-                                                </label>
-                                            ) : (
-                                                <div style={{fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px'}}>*Pilih pelanggan di atas jika ingin menyimpan kembalian ke Saldo.</div>
-                                            )}
-                                        </div>
-                                    );
-                                }
-                                return null;
-                            })()}
-                        </div>
-                    )}
-                    {user.role === 'OWNER' && (
-                        <div className="form-group" style={{marginTop: '16px'}}>
-                            <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: 'var(--text-secondary)'}}>
-                                <input type="checkbox" checked={isIndirectSale} onChange={e => setIsIndirectSale(e.target.checked)} />
-                                Penjualan Terdahulu (Tanggal Lalu)
-                            </label>
-                            {isIndirectSale && (
-                                <input type="datetime-local" className="input-field" style={{marginTop: '8px'}} value={transactionDate} onChange={e => setTransactionDate(e.target.value)} required={isIndirectSale} />
-                            )}
-                        </div>
-                    )}
-                    <div className="form-group" style={{marginTop: '16px'}}>
-                        <label>Status Pengambilan</label>
-                        <div style={{display: 'flex', gap: '16px', marginTop: '8px'}}>
-                            <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '8px 12px', border: '1px solid var(--border-color)', borderRadius: '8px', background: deliveryStatus === 'Langsung' ? 'rgba(59,130,246,0.1)' : 'white', borderColor: deliveryStatus === 'Langsung' ? 'var(--primary-color)' : 'var(--border-color)'}}>
-                                <input type="radio" name="deliveryStatus" value="Langsung" checked={deliveryStatus === 'Langsung'} onChange={() => setDeliveryStatus('Langsung')} style={{margin: 0}} />
-                                <span style={{fontWeight: deliveryStatus === 'Langsung' ? 'bold' : 'normal', color: deliveryStatus === 'Langsung' ? 'var(--primary-color)' : 'var(--text-primary)'}}>Langsung</span>
-                            </label>
-                            <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '8px 12px', border: '1px solid var(--border-color)', borderRadius: '8px', background: deliveryStatus === 'DO' ? 'rgba(245,158,11,0.1)' : 'white', borderColor: deliveryStatus === 'DO' ? '#f59e0b' : 'var(--border-color)'}}>
-                                <input type="radio" name="deliveryStatus" value="DO" checked={deliveryStatus === 'DO'} onChange={() => setDeliveryStatus('DO')} style={{margin: 0}} />
-                                <span style={{fontWeight: deliveryStatus === 'DO' ? 'bold' : 'normal', color: deliveryStatus === 'DO' ? '#f59e0b' : 'var(--text-primary)'}}>DO (Titip)</span>
-                            </label>
-                        </div>
-                    </div>
-                    <button className="btn btn-primary" style={{width: '100%', padding: '16px', fontSize: '1.1rem', marginTop: '24px'}} onClick={checkout} disabled={loading || cart.length === 0}>
-                        {loading ? 'Memproses...' : 'Selesaikan Pembayaran'}
+                    <button 
+                        className="btn btn-primary" 
+                        style={{width: '100%', padding: '16px', fontSize: '1.2rem', marginTop: '16px', fontWeight: 'bold'}} 
+                        onClick={() => {
+                            if (cart.length === 0) return showToast('Keranjang kosong!', 'warning');
+                            setShowPaymentModal(true);
+                        }} 
+                        disabled={loading || cart.length === 0}
+                    >
+                        BAYAR SEKARANG
                     </button>
                 </div>
             </div>
+
+            {/* Modal Payment */}
+            {showPaymentModal && (
+                <div className="modal-overlay" onClick={() => setShowPaymentModal(false)}>
+                    <div className="modal-content glass-panel" style={{maxWidth: '500px', width: '90%', padding: '24px'}} onClick={e => e.stopPropagation()}>
+                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px'}}>
+                            <h3 style={{margin: 0, fontSize: '1.4rem'}}>Selesaikan Pembayaran</h3>
+                            <button onClick={() => setShowPaymentModal(false)} style={{background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-secondary)'}}>✕</button>
+                        </div>
+                        
+                        <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '24px', fontWeight: 'bold', fontSize: '1.5rem', padding: '16px', background: 'var(--panel-bg)', borderRadius: '8px', border: '1px solid var(--primary-color)'}}>
+                            <span>Total Tagihan:</span>
+                            <span style={{color: 'var(--primary-color)'}}>Rp {Number(totalAmount).toLocaleString('id-ID')}</span>
+                        </div>
+
+                        <div className="form-group">
+                            <label>Pilih Pelanggan</label>
+                            <select 
+                                className="input-field" 
+                                value={selectedCustomerId} 
+                                onChange={e => {
+                                    const val = e.target.value;
+                                    if (val === 'new') {
+                                        setShowAddCustomerModal(true);
+                                        setSelectedCustomerId('');
+                                    } else {
+                                        setSelectedCustomerId(val);
+                                        if (val) {
+                                            const c = customers.find(x => x.id === parseInt(val));
+                                            if (c) setCustomerName(c.name);
+                                        } else {
+                                            setCustomerName('');
+                                        }
+                                    }
+                                }}
+                            >
+                                <option value="">Umum (Tanpa Akun)</option>
+                                {customers.map(c => (
+                                    <option key={c.id} value={c.id}>{c.name} - Saldo: Rp {Number(c.balance).toLocaleString('id-ID')}</option>
+                                ))}
+                                <option value="new">+ Tambah Pelanggan Baru...</option>
+                            </select>
+                        </div>
+                        <div className="form-group" style={{position: 'relative', marginTop: '16px'}}>
+                            <label>Metode Pembayaran</label>
+                            <div 
+                                className={`input-field custom-select-3d ${isPaymentDropdownOpen ? 'active' : ''}`}
+                                onClick={() => setIsPaymentDropdownOpen(!isPaymentDropdownOpen)}
+                                style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', background: 'var(--panel-bg)', color: 'var(--text-primary)'}}
+                            >
+                                <span>{paymentMethod === 'Cash' ? 'Cash (Lunas)' : paymentMethod === 'Kredit' ? 'Kredit (Hutang)' : 'Potong Saldo (Deposit)'}</span>
+                                <span style={{fontSize: '0.8rem'}}>▼</span>
+                            </div>
+                            {isPaymentDropdownOpen && (
+                                <div className="custom-dropdown-menu" style={{position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', background: '#ffffff', border: '1px solid var(--border-color)', borderRadius: '6px', zIndex: 1000, overflow: 'hidden'}}>
+                                    <div 
+                                        className={`custom-dropdown-item ${paymentMethod === 'Cash' ? 'selected' : ''}`}
+                                        onClick={() => { setPaymentMethod('Cash'); setIsPaymentDropdownOpen(false); }}
+                                        style={{padding: '10px 12px', cursor: 'pointer'}}
+                                    >
+                                        Cash (Lunas)
+                                    </div>
+                                    <div 
+                                        className={`custom-dropdown-item ${paymentMethod === 'Kredit' ? 'selected' : ''}`}
+                                        onClick={() => { setPaymentMethod('Kredit'); setIsPaymentDropdownOpen(false); }}
+                                        style={{padding: '10px 12px', cursor: 'pointer'}}
+                                    >
+                                        Kredit (Hutang)
+                                    </div>
+                                    <div 
+                                        className={`custom-dropdown-item ${paymentMethod === 'Potong Saldo' ? 'selected' : ''}`}
+                                        onClick={() => { setPaymentMethod('Potong Saldo'); setIsPaymentDropdownOpen(false); }}
+                                        style={{padding: '10px 12px', cursor: 'pointer'}}
+                                    >
+                                        Potong Saldo (Deposit)
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        
+                        {paymentMethod === 'Cash' && (
+                            <div className="form-group" style={{marginTop: '16px'}}>
+                                <label>Jumlah Uang Diterima (Rp)</label>
+                                <CurrencyInput value={amountPaid} onChange={setAmountPaid} className="input-field" placeholder="Ketik jumlah uang..." />
+                                {(() => {
+                                    const paid = amountPaid ? parseFloat(amountPaid.replace(/[^0-9]/g, '')) : 0;
+                                    const change = paid - totalAmount;
+                                    if (change > 0) {
+                                        return (
+                                            <div style={{marginTop: '8px', padding: '12px', background: 'var(--panel-bg)', borderRadius: '8px', border: '1px solid var(--border-color)'}}>
+                                                <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: selectedCustomerId ? '8px' : '0', fontWeight: 'bold', color: 'var(--primary-color)'}}>
+                                                    <span>Kembalian:</span>
+                                                    <span>Rp {Number(change).toLocaleString('id-ID')}</span>
+                                                </div>
+                                                {selectedCustomerId ? (
+                                                    <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem', color: 'var(--text-primary)'}}>
+                                                        <input type="checkbox" checked={saveAsDeposit} onChange={e => setSaveAsDeposit(e.target.checked)} />
+                                                        Simpan kembalian sebagai Saldo / Titip Dana
+                                                    </label>
+                                                ) : (
+                                                    <div style={{fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px'}}>*Pilih pelanggan di atas jika ingin menyimpan kembalian ke Saldo.</div>
+                                                )}
+                                            </div>
+                                        );
+                                    }
+                                    return null;
+                                })()}
+                            </div>
+                        )}
+                        {user.role === 'OWNER' && (
+                            <div className="form-group" style={{marginTop: '16px'}}>
+                                <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: 'var(--text-secondary)'}}>
+                                    <input type="checkbox" checked={isIndirectSale} onChange={e => setIsIndirectSale(e.target.checked)} />
+                                    Penjualan Terdahulu (Tanggal Lalu)
+                                </label>
+                                {isIndirectSale && (
+                                    <input type="datetime-local" className="input-field" style={{marginTop: '8px'}} value={transactionDate} onChange={e => setTransactionDate(e.target.value)} required={isIndirectSale} />
+                                )}
+                            </div>
+                        )}
+                        <div className="form-group" style={{marginTop: '16px'}}>
+                            <label>Status Pengambilan</label>
+                            <div style={{display: 'flex', gap: '16px', marginTop: '8px'}}>
+                                <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '8px 12px', border: '1px solid var(--border-color)', borderRadius: '8px', background: deliveryStatus === 'Langsung' ? 'rgba(59,130,246,0.1)' : 'white', borderColor: deliveryStatus === 'Langsung' ? 'var(--primary-color)' : 'var(--border-color)'}}>
+                                    <input type="radio" name="deliveryStatus" value="Langsung" checked={deliveryStatus === 'Langsung'} onChange={() => setDeliveryStatus('Langsung')} style={{margin: 0}} />
+                                    <span style={{fontWeight: deliveryStatus === 'Langsung' ? 'bold' : 'normal', color: deliveryStatus === 'Langsung' ? 'var(--primary-color)' : 'var(--text-primary)'}}>Langsung</span>
+                                </label>
+                                <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '8px 12px', border: '1px solid var(--border-color)', borderRadius: '8px', background: deliveryStatus === 'DO' ? 'rgba(245,158,11,0.1)' : 'white', borderColor: deliveryStatus === 'DO' ? '#f59e0b' : 'var(--border-color)'}}>
+                                    <input type="radio" name="deliveryStatus" value="DO" checked={deliveryStatus === 'DO'} onChange={() => setDeliveryStatus('DO')} style={{margin: 0}} />
+                                    <span style={{fontWeight: deliveryStatus === 'DO' ? 'bold' : 'normal', color: deliveryStatus === 'DO' ? '#f59e0b' : 'var(--text-primary)'}}>DO (Titip)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div style={{marginTop: '32px'}}>
+                            <button className="btn btn-primary" style={{width: '100%', padding: '16px', fontSize: '1.2rem', fontWeight: 'bold'}} onClick={checkout} disabled={loading}>
+                                {loading ? 'Memproses...' : 'PROSES PEMBAYARAN'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Modal Add Customer */}
             {showAddCustomerModal && (
