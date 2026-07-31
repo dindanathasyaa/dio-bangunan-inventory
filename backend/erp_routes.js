@@ -1,8 +1,28 @@
 module.exports = function(app, pool) {
 
+    // --- CUSTOMERS ---
+    app.get('/api/customers', async (req, res) => {
+        try {
+            const [rows] = await pool.query('SELECT * FROM customers ORDER BY name ASC');
+            res.json(rows);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    });
+
+    app.post('/api/customers', async (req, res) => {
+        const { name, phone } = req.body;
+        try {
+            const [result] = await pool.query('INSERT INTO customers (name, phone) VALUES (?, ?)', [name, phone]);
+            res.json({ id: result.insertId, name, phone, balance: 0 });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    });
+
     // --- SALES ---
     app.post('/api/sales', async (req, res) => {
-        const { branch_id, customer_name, payment_method, items, transaction_date, delivery_status = 'Langsung' } = req.body;
+        const { branch_id, customer_name, customer_id, payment_method, items, transaction_date, delivery_status = 'Langsung', amount_paid, save_as_deposit } = req.body;
         // items: [{ product_id, qty, price, base_price }]
         const connection = await pool.getConnection();
         try {
@@ -16,16 +36,23 @@ module.exports = function(app, pool) {
                 total_profit += (item.qty * (item.price - item.base_price));
             }
 
+            if (payment_method === 'Potong Saldo') {
+                if (!customer_id) throw new Error('Pelanggan harus dipilih untuk memotong saldo');
+                const [custs] = await connection.query('SELECT balance FROM customers WHERE id = ? FOR UPDATE', [customer_id]);
+                if (custs.length === 0) throw new Error('Pelanggan tidak ditemukan');
+                if (custs[0].balance < total_amount) throw new Error(`Saldo tidak mencukupi. Saldo tersisa: Rp ${Number(custs[0].balance).toLocaleString('id-ID')}`);
+            }
+
             let saleRes;
             if (transaction_date) {
                 [saleRes] = await connection.query(
-                    `INSERT INTO sales (branch_id, customer_name, total_amount, profit, payment_method, created_at, delivery_status) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                    [branch_id, customer_name, total_amount, total_profit, payment_method, transaction_date, delivery_status]
+                    `INSERT INTO sales (branch_id, customer_name, customer_id, total_amount, profit, payment_method, created_at, delivery_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                    [branch_id, customer_name, customer_id || null, total_amount, total_profit, payment_method, transaction_date, delivery_status]
                 );
             } else {
                 [saleRes] = await connection.query(
-                    `INSERT INTO sales (branch_id, customer_name, total_amount, profit, payment_method, delivery_status) VALUES (?, ?, ?, ?, ?, ?)`,
-                    [branch_id, customer_name, total_amount, total_profit, payment_method, delivery_status]
+                    `INSERT INTO sales (branch_id, customer_name, customer_id, total_amount, profit, payment_method, delivery_status) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                    [branch_id, customer_name, customer_id || null, total_amount, total_profit, payment_method, delivery_status]
                 );
             }
             const sale_id = saleRes.insertId;

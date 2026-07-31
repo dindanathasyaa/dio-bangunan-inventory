@@ -14,6 +14,7 @@ import CashDebtView from './CashDebtView';
 import StockAlertView from './StockAlertView';
 import DailyRecapView from './DailyRecapView';
 import CurrencyInput from './CurrencyInput';
+import CustomersView from './CustomersView';
 
 const Dashboard = ({ user, setUser }) => {
     const navigate = useNavigate();
@@ -81,6 +82,7 @@ const Dashboard = ({ user, setUser }) => {
                     <Link to="/sales" className={`nav-link ${location.pathname === '/sales' ? 'active' : ''}`}>Penjualan (Kasir)</Link>
                     <Link to="/orders" className={`nav-link ${location.pathname === '/orders' ? 'active' : ''}`}>Order & Pengantaran</Link>
                     <Link to="/delivery-orders" className={`nav-link ${location.pathname === '/delivery-orders' ? 'active' : ''}`}>Daftar DO (Titipan)</Link>
+                    <Link to="/customers" className={`nav-link ${location.pathname === '/customers' ? 'active' : ''}`}>Data Pelanggan</Link>
                     
                     {user.role === 'OWNER' && (
                         <>
@@ -116,6 +118,7 @@ const Dashboard = ({ user, setUser }) => {
                         <Route path="/sales" element={<SalesView user={user} activeBranch={activeBranch} setActiveBranch={setActiveBranch} branches={branches} />} />
                         <Route path="/orders" element={<OrderDeliveryView user={user} activeBranch={activeBranch} />} />
                         <Route path="/delivery-orders" element={<DeliveryOrderView user={user} activeBranch={activeBranch} />} />
+                        <Route path="/customers" element={<CustomersView user={user} />} />
                         <Route path="/rekap" element={<DailyRecapView user={user} activeBranch={activeBranch} />} />
                         <Route path="/purchases" element={<PurchaseView user={user} activeBranch={activeBranch} branches={branches} refreshData={fetchData} />} />
                         <Route path="/cash" element={<CashDebtView user={user} activeBranch={activeBranch} setActiveBranch={setActiveBranch} branches={branches} inventory={inventory} />} />

@@ -2,13 +2,32 @@ const fs = require('fs');
 const mysql = require('mysql2/promise');
 
 const additions = `
+CREATE TABLE IF NOT EXISTS customers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    balance DECIMAL(15,2) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS customer_deposits_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    type ENUM('in', 'out') NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES customers(id)
+);
+
 CREATE TABLE IF NOT EXISTS sales (
     id INT AUTO_INCREMENT PRIMARY KEY,
     branch_id INT NOT NULL,
     customer_name VARCHAR(100),
     total_amount DECIMAL(15,2) NOT NULL,
     profit DECIMAL(15,2) NOT NULL,
-    payment_method ENUM('Cash', 'Kredit') DEFAULT 'Cash',
+    payment_method ENUM('Cash', 'Kredit', 'Potong Saldo') DEFAULT 'Cash',
+    customer_id INT DEFAULT NULL,
     delivery_status ENUM('Langsung', 'DO', 'Sudah Diambil') DEFAULT 'Langsung',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (branch_id) REFERENCES branches(id)

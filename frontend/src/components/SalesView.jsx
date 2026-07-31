@@ -8,6 +8,11 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
     const [qtys, setQtys] = useState({});
     const [customerName, setCustomerName] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('Cash');
+    const [customers, setCustomers] = useState([]);
+    const [selectedCustomerId, setSelectedCustomerId] = useState('');
+    const [amountPaid, setAmountPaid] = useState('');
+    const [saveAsDeposit, setSaveAsDeposit] = useState(false);
+    
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
     const [showZeroStockWarning, setShowZeroStockWarning] = useState(false);
@@ -25,6 +30,11 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
     const [isPaymentDropdownOpen, setIsPaymentDropdownOpen] = useState(false);
     const [deliveryStatus, setDeliveryStatus] = useState('Langsung'); // 'Langsung' or 'DO'
     
+    // Add customer state
+    const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
+    const [newCustomerName, setNewCustomerName] = useState('');
+    const [newCustomerPhone, setNewCustomerPhone] = useState('');
+    
     // Custom Toast Alert State
     const [toast, setToast] = useState({ show: false, message: '', type: 'info', onClose: null });
 
@@ -39,7 +49,17 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
 
     useEffect(() => {
         fetchProducts();
+        fetchCustomers();
     }, [activeBranch]);
+
+    const fetchCustomers = async () => {
+        try {
+            const res = await axios.get('http://localhost:5000/api/customers');
+            setCustomers(res.data);
+        } catch (error) {
+            console.error('Failed to fetch customers:', error);
+        }
+    };
 
     const fetchProducts = async () => {
         try {
@@ -129,6 +149,30 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
         setCart(cart.map(x => x.id === id ? { ...x, price: v } : x));
     };
 
+    const handleAddCustomer = async () => {
+        if (!newCustomerName) return showToast('Nama pelanggan wajib diisi', 'warning');
+        setLoading(true);
+        try {
+            const res = await axios.post('http://localhost:5000/api/customers', {
+                name: newCustomerName,
+                phone: newCustomerPhone
+            });
+            const newCust = res.data;
+            setCustomers([...customers, newCust]);
+            setSelectedCustomerId(newCust.id);
+            setCustomerName(newCust.name);
+            setShowAddCustomerModal(false);
+            setNewCustomerName('');
+            setNewCustomerPhone('');
+            showToast('Pelanggan berhasil ditambahkan', 'success');
+        } catch (error) {
+            console.error(error);
+            showToast('Gagal menambah pelanggan', 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const checkout = async () => {
         const totalAmount = cart.reduce((acc, c) => acc + (c.qty || 0) * (c.price || 0), 0);
         const validCart = cart.filter(item => item.qty !== '' && parseInt(item.qty) > 0);
@@ -145,10 +189,13 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
             const res = await axios.post('http://localhost:5000/api/sales', {
                 branch_id: user.role === 'ADMIN' ? user.branch_id : (activeBranch === 'all' ? 1 : activeBranch),
                 customer_name: customerName,
+                customer_id: selectedCustomerId || null,
                 payment_method: paymentMethod,
                 items,
                 transaction_date: isIndirectSale && transactionDate ? transactionDate : null,
-                delivery_status: deliveryStatus
+                delivery_status: deliveryStatus,
+                amount_paid: amountPaid ? parseFloat(amountPaid.replace(/[^0-9]/g, '')) : null,
+                save_as_deposit: saveAsDeposit
             });
 
             const successData = {
@@ -167,10 +214,14 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 showToast('Transaksi Berhasil!', 'success');
                 // Tidak mengatur setTransactionSuccessData / setPrintMode('menu') agar tidak muncul popup menu/struk
             }
-
             setCart([]);
+            setQtys({});
             setCustomerName('');
-            setIsIndirectSale(false);
+            setSelectedCustomerId('');
+            setAmountPaid('');
+            setSaveAsDeposit(false);
+            setPaymentMethod('Cash');
+            setDeliveryStatus('Langsung');
             setTransactionDate('');
             fetchProducts();
         } catch (error) {
@@ -316,17 +367,41 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                         <span>Rp {Number(totalAmount).toLocaleString('id-ID')}</span>
                     </div>
                     <div className="form-group">
-                        <label>Nama Pelanggan (Opsional)</label>
-                        <input type="text" className="input-field" value={customerName} onChange={e => setCustomerName(e.target.value)} placeholder="Umum" />
+                        <label>Pilih Pelanggan</label>
+                        <select 
+                            className="input-field" 
+                            value={selectedCustomerId} 
+                            onChange={e => {
+                                const val = e.target.value;
+                                if (val === 'new') {
+                                    setShowAddCustomerModal(true);
+                                    setSelectedCustomerId('');
+                                } else {
+                                    setSelectedCustomerId(val);
+                                    if (val) {
+                                        const c = customers.find(x => x.id === parseInt(val));
+                                        if (c) setCustomerName(c.name);
+                                    } else {
+                                        setCustomerName('');
+                                    }
+                                }
+                            }}
+                        >
+                            <option value="">Umum (Tanpa Akun)</option>
+                            {customers.map(c => (
+                                <option key={c.id} value={c.id}>{c.name} - Saldo: Rp {Number(c.balance).toLocaleString('id-ID')}</option>
+                            ))}
+                            <option value="new">+ Tambah Pelanggan Baru...</option>
+                        </select>
                     </div>
-                    <div className="form-group" style={{position: 'relative'}}>
+                    <div className="form-group" style={{position: 'relative', marginTop: '16px'}}>
                         <label>Metode Pembayaran</label>
                         <div 
                             className={`input-field custom-select-3d ${isPaymentDropdownOpen ? 'active' : ''}`}
                             onClick={() => setIsPaymentDropdownOpen(!isPaymentDropdownOpen)}
                             style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', background: 'var(--panel-bg)', color: 'var(--text-primary)'}}
                         >
-                            <span>{paymentMethod === 'Cash' ? 'Cash (Lunas)' : 'Kredit (Hutang)'}</span>
+                            <span>{paymentMethod === 'Cash' ? 'Cash (Lunas)' : paymentMethod === 'Kredit' ? 'Kredit (Hutang)' : 'Potong Saldo (Deposit)'}</span>
                             <span style={{fontSize: '0.8rem'}}>▼</span>
                         </div>
                         {isPaymentDropdownOpen && (
@@ -345,9 +420,46 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                                 >
                                     Kredit (Hutang)
                                 </div>
+                                <div 
+                                    className={`custom-dropdown-item ${paymentMethod === 'Potong Saldo' ? 'selected' : ''}`}
+                                    onClick={() => { setPaymentMethod('Potong Saldo'); setIsPaymentDropdownOpen(false); }}
+                                    style={{padding: '10px 12px', cursor: 'pointer'}}
+                                >
+                                    Potong Saldo (Deposit)
+                                </div>
                             </div>
                         )}
                     </div>
+                    
+                    {paymentMethod === 'Cash' && (
+                        <div className="form-group" style={{marginTop: '16px'}}>
+                            <label>Jumlah Uang Diterima (Rp)</label>
+                            <CurrencyInput value={amountPaid} onChange={setAmountPaid} className="input-field" placeholder="Ketik jumlah uang..." />
+                            {(() => {
+                                const paid = amountPaid ? parseFloat(amountPaid.replace(/[^0-9]/g, '')) : 0;
+                                const change = paid - totalAmount;
+                                if (change > 0) {
+                                    return (
+                                        <div style={{marginTop: '8px', padding: '12px', background: 'var(--panel-bg)', borderRadius: '8px', border: '1px solid var(--border-color)'}}>
+                                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: selectedCustomerId ? '8px' : '0', fontWeight: 'bold', color: 'var(--primary-color)'}}>
+                                                <span>Kembalian:</span>
+                                                <span>Rp {Number(change).toLocaleString('id-ID')}</span>
+                                            </div>
+                                            {selectedCustomerId ? (
+                                                <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem', color: 'var(--text-primary)'}}>
+                                                    <input type="checkbox" checked={saveAsDeposit} onChange={e => setSaveAsDeposit(e.target.checked)} />
+                                                    Simpan kembalian sebagai Saldo / Titip Dana
+                                                </label>
+                                            ) : (
+                                                <div style={{fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px'}}>*Pilih pelanggan di atas jika ingin menyimpan kembalian ke Saldo.</div>
+                                            )}
+                                        </div>
+                                    );
+                                }
+                                return null;
+                            })()}
+                        </div>
+                    )}
                     {user.role === 'OWNER' && (
                         <div className="form-group" style={{marginTop: '16px'}}>
                             <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: 'var(--text-secondary)'}}>
@@ -377,6 +489,27 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                     </button>
                 </div>
             </div>
+
+            {/* Modal Add Customer */}
+            {showAddCustomerModal && (
+                <div className="modal-overlay" onClick={() => setShowAddCustomerModal(false)}>
+                    <div className="modal-content glass-panel" style={{maxWidth: '400px', width: '90%'}} onClick={e => e.stopPropagation()}>
+                        <h3 style={{marginTop: 0, marginBottom: '24px', fontSize: '1.4rem'}}>+ Tambah Pelanggan Baru</h3>
+                        <div className="form-group">
+                            <label>Nama Pelanggan <span style={{color: 'red'}}>*</span></label>
+                            <input type="text" className="input-field" value={newCustomerName} onChange={e => setNewCustomerName(e.target.value)} placeholder="Contoh: Budi Santoso" autoFocus />
+                        </div>
+                        <div className="form-group" style={{marginTop: '16px'}}>
+                            <label>Nomor HP (Opsional)</label>
+                            <input type="text" className="input-field" value={newCustomerPhone} onChange={e => setNewCustomerPhone(e.target.value)} placeholder="08..." />
+                        </div>
+                        <div style={{display: 'flex', gap: '12px', marginTop: '32px', justifyContent: 'flex-end'}}>
+                            <button className="btn btn-outline" onClick={() => setShowAddCustomerModal(false)} disabled={loading}>Batal</button>
+                            <button className="btn btn-primary" onClick={handleAddCustomer} disabled={loading}>{loading ? 'Menyimpan...' : 'Simpan'}</button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Modal Peringatan Stok 0 */}
             {showZeroStockWarning && (
