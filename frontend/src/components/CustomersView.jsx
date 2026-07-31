@@ -35,7 +35,6 @@ const CustomersView = ({ user }) => {
                     <div className="search-bar" style={{width: '300px'}}>
                         <input type="text" placeholder="Cari nama atau no HP..." value={search} onChange={(e) => setSearch(e.target.value)} />
                     </div>
-                    <button className="btn btn-primary" onClick={fetchCustomers}>🔄 Segarkan</button>
                 </div>
             </div>
 
