@@ -72,15 +72,30 @@ module.exports = function(app, pool) {
             }
 
             if (payment_method === 'Cash') {
+                let flowAmount = total_amount;
+                let cashDesc = `Penjualan Tunai: ${customer_name || 'Umum'}`;
+                
+                if (amount_paid && amount_paid > total_amount && save_as_deposit && customer_id) {
+                    const depositAmount = amount_paid - total_amount;
+                    flowAmount = amount_paid;
+                    
+                    await connection.query('UPDATE customers SET balance = balance + ? WHERE id = ?', [depositAmount, customer_id]);
+                    await connection.query(
+                        'INSERT INTO customer_deposits_history (customer_id, amount, type, description) VALUES (?, ?, ?, ?)',
+                        [customer_id, depositAmount, 'in', `Kembalian dititipkan dari Penjualan ID: ${sale_id}`]
+                    );
+                    cashDesc = `Penjualan Tunai & Titip Saldo: ${customer_name || 'Umum'}`;
+                }
+
                 if (transaction_date) {
                     await connection.query(
                         `INSERT INTO cash_flow (branch_id, type, amount, description, reference_id, created_at) VALUES (?, 'Masuk', ?, ?, ?, ?)`,
-                        [branch_id, total_amount, `Penjualan Tunai: ${customer_name || 'Umum'}`, sale_id, transaction_date]
+                        [branch_id, flowAmount, cashDesc, sale_id, transaction_date]
                     );
                 } else {
                     await connection.query(
                         `INSERT INTO cash_flow (branch_id, type, amount, description, reference_id) VALUES (?, 'Masuk', ?, ?, ?)`,
-                        [branch_id, total_amount, `Penjualan Tunai: ${customer_name || 'Umum'}`, sale_id]
+                        [branch_id, flowAmount, cashDesc, sale_id]
                     );
                 }
             } else if (payment_method === 'Kredit') {
@@ -95,6 +110,12 @@ module.exports = function(app, pool) {
                         [sale_id, customer_name, total_amount]
                     );
                 }
+            } else if (payment_method === 'Potong Saldo') {
+                await connection.query('UPDATE customers SET balance = balance - ? WHERE id = ?', [total_amount, customer_id]);
+                await connection.query(
+                    'INSERT INTO customer_deposits_history (customer_id, amount, type, description) VALUES (?, ?, ?, ?)',
+                    [customer_id, total_amount, 'out', `Pembayaran Saldo Penjualan ID: ${sale_id}`]
+                );
             }
 
             await connection.commit();
