@@ -601,57 +601,59 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                 </div>
             </div>
             
-            <div className="glass-panel table-container">
-                <table className="data-table">
-                    <thead>
-                        <tr>
-                            <th>Kode</th>
-                            <th>Nama Barang</th>
-                            <th>Kategori</th>
-                            <th>Cabang</th>
-                            <th>Stok</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredInventory.map(item => {
-                            const isEmpty = Math.floor(item.stock) === 0;
-                            const isLow = Math.floor(item.stock) <= item.min_stock;
-                            
-                            let badgeClass = 'good';
-                            let badgeText = 'Aman';
-                            
-                            if (isEmpty) {
-                                badgeClass = 'danger';
-                                badgeText = 'Habis';
-                            } else if (isLow) {
-                                badgeClass = 'warning';
-                                badgeText = 'Kritis';
-                            }
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px', paddingBottom: '20px' }}>
+                {filteredInventory.map(item => {
+                    const isEmpty = Math.floor(item.stock) === 0;
+                    const isLow = Math.floor(item.stock) <= item.min_stock;
+                    
+                    let badgeClass = 'good';
+                    let badgeText = 'Aman';
+                    
+                    if (isEmpty) {
+                        badgeClass = 'danger';
+                        badgeText = 'Habis';
+                    } else if (isLow) {
+                        badgeClass = 'warning';
+                        badgeText = 'Kritis';
+                    }
 
-                            return (
-                                <tr key={item.id}>
-                                    <td style={{padding: '8px 16px'}}>
-                                        <button className="btn-navy" onClick={() => setActiveBarcode(item.sku)}>
-                                            Barcode
-                                        </button>
-                                    </td>
-                                    <td style={{color: 'var(--text-primary)', fontWeight: '500'}}>{item.name}</td>
-                                    <td><span style={{background: 'var(--border-color)', padding: '4px 10px', borderRadius: '4px', fontSize: '0.8rem'}}>{item.category}</span></td>
-                                    <td>{item.branch_name}</td>
-                                    <td style={{fontWeight: 'bold', fontSize: '1.1rem'}}>{Math.floor(item.stock)}</td>
-                                    <td><span className={`badge ${badgeClass}`}>{badgeText}</span></td>
-                                    <td>
-                                        <button className="btn-icon" style={{color: '#c2410c', fontWeight: '600', fontSize: '0.8rem', padding: '4px 12px', background: 'transparent', border: '1px solid #c2410c', borderRadius: '6px'}} onClick={() => setEditingData({...item})} title="Edit Data">
-                                            Edit
-                                        </button>
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
+                    return (
+                        <div key={item.id} className="glass-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px', borderRadius: '12px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
+                                <div style={{flex: 1}}>
+                                    <h3 style={{ margin: '0 0 8px 0', color: 'var(--text-primary)', fontSize: '1.25rem', lineHeight: '1.4' }}>{item.name}</h3>
+                                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                        <span style={{background: 'var(--border-color)', padding: '4px 10px', borderRadius: '6px', fontSize: '0.85rem', color: 'var(--text-secondary)'}}>🏷️ {item.category}</span>
+                                        <span style={{background: 'var(--border-color)', padding: '4px 10px', borderRadius: '6px', fontSize: '0.85rem', color: 'var(--text-secondary)'}}>🏢 {item.branch_name}</span>
+                                    </div>
+                                </div>
+                                <button className="btn-icon" style={{color: 'var(--primary-color)', fontWeight: '600', fontSize: '0.9rem', padding: '6px 14px', background: 'transparent', border: '1px solid var(--primary-color)', borderRadius: '6px', flexShrink: 0}} onClick={() => setActiveBarcode(item.sku)} title="Lihat Barcode">
+                                    🔍 Barcode
+                                </button>
+                            </div>
+                            
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', background: 'var(--panel-bg)', padding: '16px', borderRadius: '8px' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                    <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Sisa Stok</span>
+                                    <span style={{ fontWeight: 'bold', fontSize: '1.8rem', color: 'var(--text-primary)' }}>{Math.floor(item.stock)}</span>
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
+                                    <span className={`badge ${badgeClass}`} style={{fontSize: '1.1rem', padding: '8px 16px', fontWeight: 'bold'}}>{badgeText}</span>
+                                </div>
+                            </div>
+                            
+                            <button className="btn-navy" style={{ width: '100%', padding: '12px', fontSize: '1rem', borderRadius: '8px', background: '#c2410c', color: 'white', border: 'none' }} onClick={() => setEditingData({...item})}>
+                                ✏️ Edit Data
+                            </button>
+                        </div>
+                    );
+                })}
+                {filteredInventory.length === 0 && (
+                    <div style={{gridColumn: '1 / -1', textAlign: 'center', padding: '40px', color: 'var(--text-secondary)', background: 'var(--panel-bg)', borderRadius: '12px'}}>
+                        <div style={{fontSize: '3rem', marginBottom: '16px'}}>📦</div>
+                        Tidak ada barang yang ditemukan.
+                    </div>
+                )}
             </div>
 
             {/* Modal Barcode */}

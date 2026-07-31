@@ -7,6 +7,7 @@ const DeliveryOrderView = ({ user, activeBranch, branches }) => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [toast, setToast] = useState({ show: false, message: '', type: 'info' });
+    const [confirmModal, setConfirmModal] = useState({ show: false, orderId: null });
 
     const showToast = (message, type = 'info') => {
         setToast({ show: true, message, type });
@@ -30,8 +31,13 @@ const DeliveryOrderView = ({ user, activeBranch, branches }) => {
         }
     };
 
-    const handleMarkAsTaken = async (id) => {
-        if (!window.confirm('Tandai barang ini sebagai Sudah Diambil? Stok akan dipotong sekarang.')) return;
+    const handleMarkAsTaken = (id) => {
+        setConfirmModal({ show: true, orderId: id });
+    };
+
+    const confirmMarkAsTaken = async () => {
+        const id = confirmModal.orderId;
+        setConfirmModal({ show: false, orderId: null });
         try {
             await axios.put(`http://localhost:5000/api/sales/${id}/delivery-status`, {
                 delivery_status: 'Sudah Diambil'
@@ -58,6 +64,25 @@ const DeliveryOrderView = ({ user, activeBranch, branches }) => {
                 </div>
             )}
 
+            {confirmModal.show && (
+                <div className="modal-overlay" onClick={() => setConfirmModal({ show: false, orderId: null })} style={{backdropFilter: 'blur(8px)', alignItems: 'center', zIndex: 999999}}>
+                    <div className="modal-content glass-panel" onClick={e => e.stopPropagation()} style={{
+                        padding: '32px', borderRadius: '16px', textAlign: 'center', maxWidth: '400px'
+                    }}>
+                        <div style={{fontSize: '3rem', marginBottom: '16px'}}>📦</div>
+                        <h3 style={{margin: '0 0 12px 0'}}>Konfirmasi Pengambilan</h3>
+                        <p style={{color: 'var(--text-secondary)', marginBottom: '24px'}}>
+                            Tandai barang ini sebagai <strong>Sudah Diambil</strong>?<br/>
+                            Stok akan dipotong sekarang secara otomatis.
+                        </p>
+                        <div style={{display: 'flex', gap: '12px', justifyContent: 'center'}}>
+                            <button className="btn btn-outline" onClick={() => setConfirmModal({ show: false, orderId: null })}>Batal</button>
+                            <button className="btn btn-primary" onClick={confirmMarkAsTaken}>Ya, Sudah Diambil</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px' }}>
                 <h2 style={{margin: 0}}>📦 Daftar DO (Barang Titipan)</h2>
                 <div style={{display: 'flex', gap: '12px'}}>
@@ -75,49 +100,51 @@ const DeliveryOrderView = ({ user, activeBranch, branches }) => {
                         Belum ada pesanan DO (Titip Barang).
                     </div>
                 ) : (
-                    <table className="inventory-table">
-                        <thead>
-                            <tr>
-                                <th>Tanggal Transaksi</th>
-                                <th>No. Nota</th>
-                                <th>Pelanggan</th>
-                                <th>Barang</th>
-                                <th>Total Nilai</th>
-                                <th>Status Pembayaran</th>
-                                <th style={{textAlign: 'center'}}>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {orders.map(order => {
-                                const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
-                                return (
-                                    <tr key={order.id}>
-                                        <td>{new Date(order.created_at).toLocaleString('id-ID')}</td>
-                                        <td><strong>SR{order.id}</strong></td>
-                                        <td>{order.customer_name || 'Umum'}</td>
-                                        <td>
-                                            <ul style={{margin: 0, paddingLeft: '20px'}}>
-                                                {items?.map((item, idx) => (
-                                                    <li key={idx}>{item.name} - {item.qty} {item.unit}</li>
-                                                ))}
-                                            </ul>
-                                        </td>
-                                        <td>Rp {Number(order.total_amount).toLocaleString('id-ID')}</td>
-                                        <td>
-                                            <span className={`status-badge ${order.payment_method === 'Cash' ? 'success' : 'warning'}`}>
-                                                {order.payment_method === 'Cash' ? 'Lunas (Cash)' : 'Hutang'}
-                                            </span>
-                                        </td>
-                                        <td style={{textAlign: 'center'}}>
-                                            <button className="btn btn-primary" style={{padding: '8px 16px', fontSize: '0.9rem'}} onClick={() => handleMarkAsTaken(order.id)}>
-                                                Tandai Sudah Diambil
-                                            </button>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
+                    <div className="table-container">
+                        <table className="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Tanggal Transaksi</th>
+                                    <th>No. Nota</th>
+                                    <th>Pelanggan</th>
+                                    <th>Barang</th>
+                                    <th>Total Nilai</th>
+                                    <th>Status Pembayaran</th>
+                                    <th style={{textAlign: 'center'}}>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {orders.map(order => {
+                                    const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+                                    return (
+                                        <tr key={order.id}>
+                                            <td>{new Date(order.created_at).toLocaleString('id-ID')}</td>
+                                            <td><strong>SR{order.id}</strong></td>
+                                            <td>{order.customer_name || 'Umum'}</td>
+                                            <td>
+                                                <ul style={{margin: 0, paddingLeft: '20px'}}>
+                                                    {items?.map((item, idx) => (
+                                                        <li key={idx}>{item.name} - {item.qty} {item.unit}</li>
+                                                    ))}
+                                                </ul>
+                                            </td>
+                                            <td>Rp {Number(order.total_amount).toLocaleString('id-ID')}</td>
+                                            <td>
+                                                <span className={`status-badge ${order.payment_method === 'Cash' ? 'success' : 'warning'}`}>
+                                                    {order.payment_method === 'Cash' ? 'Lunas (Cash)' : 'Hutang'}
+                                                </span>
+                                            </td>
+                                            <td style={{textAlign: 'center'}}>
+                                                <button className="btn btn-primary" style={{padding: '8px 16px', fontSize: '0.9rem'}} onClick={() => handleMarkAsTaken(order.id)}>
+                                                    Tandai Sudah Diambil
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
             </div>
         </div>
