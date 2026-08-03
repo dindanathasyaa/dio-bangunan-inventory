@@ -999,13 +999,6 @@ p {
 }
 
 @media (max-width: 768px) {
-  .data-table {
-    display: block !important;
-    overflow-x: auto !important;
-  }
-}
-
-@media (max-width: 768px) {
   .desktop-toggle {
     display: none !important;
   }
