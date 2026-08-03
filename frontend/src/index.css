@@ -1294,4 +1294,7 @@ p {
     flex-direction: column;
     width: 100%;
   }
+  .mobile-card-table td[data-label="Aksi"] button {
+    text-align: center !important;
+  }
 }
