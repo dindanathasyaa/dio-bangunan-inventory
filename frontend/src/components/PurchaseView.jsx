@@ -23,7 +23,7 @@ const PurchaseView = ({ user, activeBranch, branches, refreshData }) => {
 
     // New detailed item form state
     const [newItem, setNewItem] = useState({ sku: '', name: '', category_id: '', unit: 'Lembar', price: '', buy_price: '', qty: 0 });
-    const [unitType, setUnitType] = useState('');
+
     const [majemukType, setMajemukType] = useState('');
     const [isMajemukDropdownOpen, setIsMajemukDropdownOpen] = useState(false);
     const [majemukMultiplier, setMajemukMultiplier] = useState('');
@@ -93,15 +93,11 @@ const PurchaseView = ({ user, activeBranch, branches, refreshData }) => {
     };
 
     const addItemToCart = () => {
-        if (!newItem.sku || !newItem.name || !newItem.category_id || !newItem.buy_price || !newItem.qty || (!unitType && !newItem.unit)) {
+        if (!newItem.sku || !newItem.name || !newItem.category_id || !newItem.buy_price || !newItem.qty || !newItem.unit) {
             return setMessageModal('Harap isi semua data barang dengan lengkap.');
         }
 
         let finalUnit = newItem.unit;
-        if (unitType === 'Konversi') {
-            if (!majemukType || !majemukMultiplier) return setMessageModal('Pilih Satuan Besar dan Pengali!');
-            finalUnit = `${majemukType} (${majemukMultiplier} ${newItem.unit})`;
-        }
 
         const existing = inventory.find(p => p.sku.toLowerCase() === newItem.sku.toLowerCase());
 
@@ -116,8 +112,7 @@ const PurchaseView = ({ user, activeBranch, branches, refreshData }) => {
             qty: parseFloat(newItem.qty)
         }]);
 
-        setNewItem({ sku: '', name: '', category_id: '', unit: 'Lembar', price: '', buy_price: '', qty: 0 });
-        setUnitType('');
+        setNewItem({ sku: '', name: '', category_id: '', unit: '', price: '', buy_price: '', qty: '' });
         setMajemukType('');
         setMajemukMultiplier('');
     };
@@ -288,84 +283,9 @@ const PurchaseView = ({ user, activeBranch, branches, refreshData }) => {
                 </div>
 
                 <div className="form-group" style={{marginBottom: '16px'}}>
-                    <label>Jenis Satuan</label>
-                    <div className="custom-dropdown-container" style={{position: 'relative', width: '100%', zIndex: isUnitDropdownOpen ? 10 : 1}}>
-                        <div 
-                            className={`custom-select-3d ${isUnitDropdownOpen ? 'active' : ''}`}
-                            onClick={() => setIsUnitDropdownOpen(!isUnitDropdownOpen)}
-                            style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box', border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer'}}
-                        >
-                            <span style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{unitType || 'Pilih Jenis Satuan'}</span>
-                            <span style={{fontSize: '0.8rem', marginLeft: '16px'}}>▼</span>
-                        </div>
-                        {isUnitDropdownOpen && (
-                            <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000, overflow: 'hidden', padding: 0}}>
-                                <div 
-                                    className={`custom-dropdown-item ${unitType === 'Konversi' ? 'selected' : ''}`}
-                                    onClick={() => { setUnitType('Konversi'); setIsUnitDropdownOpen(false); }}
-                                    style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
-                                >
-                                    Konversi
-                                </div>
-                                <div 
-                                    className={`custom-dropdown-item ${unitType === 'Tidak Dapat Dikonversi' ? 'selected' : ''}`}
-                                    onClick={() => { setUnitType('Tidak Dapat Dikonversi'); setIsUnitDropdownOpen(false); }}
-                                    style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
-                                >
-                                    Tidak Dapat Dikonversi
-                                </div>
-                            </div>
-                        )}
-                    </div>
+                    <label>Satuan (Terkecil)</label>
+                    <input type="text" className="input-field" value={newItem.unit} onChange={e => setNewItem({...newItem, unit: e.target.value})} placeholder="Contoh: Sak, Lembar, Kg, dll" />
                 </div>
-
-                {unitType === 'Konversi' ? (
-                    <div style={{background: 'var(--item-bg)', padding: '16px', borderRadius: '8px', marginBottom: '16px'}}>
-                        <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
-                            <div className="form-group" style={{flex: 1, marginBottom: 0}}>
-                                <label>Pilih Satuan Besar</label>
-                                <div className="custom-dropdown-container" style={{position: 'relative', width: '100%', zIndex: isMajemukDropdownOpen ? 10 : 1}}>
-                                    <div 
-                                        className={`custom-select-3d ${isMajemukDropdownOpen ? 'active' : ''}`}
-                                        onClick={() => setIsMajemukDropdownOpen(!isMajemukDropdownOpen)}
-                                        style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box', border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer'}}
-                                    >
-                                        <span style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{majemukType || 'Satuan Besar'}</span>
-                                        <span style={{fontSize: '0.8rem', marginLeft: '16px'}}>▼</span>
-                                    </div>
-                                    {isMajemukDropdownOpen && (
-                                        <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000, overflow: 'hidden', padding: 0}}>
-                                            {largeUnitsList.map(unit => (
-                                                <div 
-                                                    key={unit.name}
-                                                    className={`custom-dropdown-item ${majemukType === unit.name ? 'selected' : ''}`}
-                                                    onClick={() => { setMajemukType(unit.name); setIsMajemukDropdownOpen(false); setMajemukMultiplier(''); }}
-                                                    style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
-                                                >
-                                                    {unit.name}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                            <div className="form-group" style={{flex: 1, marginBottom: 0}}>
-                                <label>Isi Berapa {newItem.unit}?</label>
-                                <select className="input-field" value={majemukMultiplier} onChange={e => setMajemukMultiplier(e.target.value)} disabled={!majemukType} style={{height: '48px'}}>
-                                    <option value="">Pilih Pengali</option>
-                                    {majemukType && largeUnitsList.find(u => u.name === majemukType)?.options.map(opt => (
-                                        <option key={opt} value={opt}>{opt} {newItem.unit}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                ) : unitType === 'Tidak Dapat Dikonversi' ? (
-                    <div className="form-group" style={{marginBottom: '16px'}}>
-                        <label>Satuan</label>
-                        <input type="text" className="input-field" value={newItem.unit} onChange={e => setNewItem({...newItem, unit: e.target.value})} placeholder="Contoh: Sak, Lembar, Kg, dll" />
-                    </div>
-                ) : null}
 
                 <div style={{display: 'flex', justifyContent: 'flex-end', gap: '16px', marginTop: '24px', marginBottom: '24px'}}>
                     <div className="form-group" style={{marginBottom: 0, minWidth: '150px'}}>

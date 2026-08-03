@@ -437,7 +437,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
     const [editingData, setEditingData] = useState(null);
     const [messageModal, setMessageModal] = useState('');
     const [dbCategories, setDbCategories] = useState([]);
-    const [unitType, setUnitType] = useState('');
+
     const [kodi, setKodi] = useState(0);
     const [lembar, setLembar] = useState(0);
     const [isUnitDropdownOpen, setIsUnitDropdownOpen] = useState(false);
@@ -462,6 +462,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
         branch_id: user.role === 'ADMIN' ? user.branch_id : 1,
         hasVariants: false,
         variants: [{ name: '', stock: 0 }],
+        hasConversions: false,
         conversions: [{ name: '', multiplier: '', price: '' }]
     });
 
@@ -505,10 +506,9 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
         let finalUnit = newItem.unit;
 
         try {
-            await axios.post('http://localhost:5000/api/inventory', { ...newItem, unit: finalUnit, stock: lembar, variants: newItem.hasVariants ? newItem.variants : [], conversions: unitType === 'Konversi' ? newItem.conversions : [] });
+            await axios.post('http://localhost:5000/api/inventory', { ...newItem, unit: finalUnit, stock: lembar, variants: newItem.hasVariants ? newItem.variants : [], conversions: newItem.hasConversions ? newItem.conversions : [] });
             setShowModal(false);
-            setNewItem({ sku: '', name: '', category_id: '', unit: '', price: '', base_price: '', stock: 0, min_stock: 5, max_stock: 50, branch_id: user.role === 'ADMIN' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : 1), hasVariants: false, variants: [{ name: '', stock: 0 }], conversions: [{ name: '', multiplier: '', price: '' }] });
-            setUnitType('');
+            setNewItem({ sku: '', name: '', category_id: '', unit: '', price: '', base_price: '', stock: 0, min_stock: 5, max_stock: 50, branch_id: user.role === 'ADMIN' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : 1), hasVariants: false, variants: [{ name: '', stock: 0 }], hasConversions: false, conversions: [{ name: '', multiplier: '', price: '' }] });
             setMajemukType('');
             setMajemukMultiplier(20);
             setKodi(0); setLembar(0);
@@ -763,119 +763,88 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                 </div>
                             </div>
 
-                            <div className="form-group" style={{marginBottom: '16px'}}>
-                                <label>Jenis Satuan</label>
-                                <div className="custom-dropdown-container" style={{position: 'relative', width: '100%', zIndex: isUnitDropdownOpen ? 10 : 1}}>
-                                    <div 
-                                        className={`custom-select-3d ${isUnitDropdownOpen ? 'active' : ''}`}
-                                        onClick={() => setIsUnitDropdownOpen(!isUnitDropdownOpen)}
-                                        style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box', border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer'}}
-                                    >
-                                        <span style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{unitType || 'Pilih Jenis Satuan'}</span>
-                                        <span style={{fontSize: '0.8rem', marginLeft: '16px'}}>▼</span>
-                                    </div>
-                                    {isUnitDropdownOpen && (
-                                        <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000, overflow: 'hidden', padding: 0}}>
-                                            <div 
-                                                className={`custom-dropdown-item ${unitType === 'Konversi' ? 'selected' : ''}`}
-                                                onClick={() => { setUnitType('Konversi'); setIsUnitDropdownOpen(false); }}
-                                                style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
-                                            >
-                                                Konversi
-                                            </div>
-                                            <div 
-                                                className={`custom-dropdown-item ${unitType === 'Tidak Dapat Dikonversi' ? 'selected' : ''}`}
-                                                onClick={() => { setUnitType('Tidak Dapat Dikonversi'); setIsUnitDropdownOpen(false); }}
-                                                style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
-                                            >
-                                                Tidak Dapat Dikonversi
-                                            </div>
+                            <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
+                                <div className="form-group" style={{flex: 1}}>
+                                    <label>Satuan (Terkecil)</label>
+                                    <div className="custom-dropdown-container" style={{position: 'relative', width: '100%', zIndex: isSmallUnitDropdownOpen ? 10 : 1}}>
+                                        <div 
+                                            className={`custom-select-3d ${isSmallUnitDropdownOpen ? 'active' : ''}`}
+                                            onClick={() => setIsSmallUnitDropdownOpen(!isSmallUnitDropdownOpen)}
+                                            style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box', border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer'}}
+                                        >
+                                            <span style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{newItem.unit || 'Pilih Satuan'}</span>
+                                            <span style={{fontSize: '0.8rem', marginLeft: '16px'}}>▼</span>
                                         </div>
-                                    )}
+                                        {isSmallUnitDropdownOpen && (
+                                            <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000, overflow: 'hidden', padding: 0}}>
+                                                {smallUnitsList.map(unit => (
+                                                    <div 
+                                                        key={unit.name}
+                                                        className={`custom-dropdown-item ${newItem.unit === unit.name ? 'selected' : ''}`}
+                                                        onClick={() => {
+                                                            setNewItem({...newItem, unit: unit.name});
+                                                            setIsSmallUnitDropdownOpen(false);
+                                                        }}
+                                                        style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
+                                                    >
+                                                        {unit.name}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
+                                <div className="form-group" style={{flex: 1}}><label>Stok Barang Masuk</label><input type="number" className="input-field" value={lembar} onChange={e => {setLembar(e.target.value);}} required /></div>
                             </div>
                             
-                            {unitType === 'Konversi' ? (
-                                <div style={{background: 'var(--item-bg)', padding: '16px', borderRadius: '8px', marginBottom: '16px'}}>
-                                    <div style={{fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '12px'}}>Tambahkan opsi pecahan/satuan jual yang akan memotong dari satu stok induk yang sama. (Contoh: 1/4 Meter, 1 Dus, dll)</div>
-                                    {newItem.conversions.map((conv, index) => (
-                                        <div key={index} style={{display: 'flex', gap: '12px', marginBottom: '12px', alignItems: 'flex-end', background: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #e5e7eb'}}>
-                                            <div className="form-group" style={{flex: 2, marginBottom: 0}}>
-                                                <label>Nama Satuan</label>
-                                                <input type="text" className="input-field" value={conv.name} onChange={e => {
-                                                    const newConvs = [...newItem.conversions];
-                                                    newConvs[index].name = e.target.value;
-                                                    setNewItem({...newItem, conversions: newConvs});
-                                                }} placeholder="Cth: 1/4 Meter" required />
-                                            </div>
-                                            <div className="form-group" style={{flex: 1, marginBottom: 0}}>
-                                                <label>Pengali Stok</label>
-                                                <input type="number" step="0.01" className="input-field" value={conv.multiplier} onChange={e => {
-                                                    const newConvs = [...newItem.conversions];
-                                                    newConvs[index].multiplier = e.target.value;
-                                                    setNewItem({...newItem, conversions: newConvs});
-                                                }} placeholder="Cth: 0.25" required />
-                                            </div>
-                                            <div className="form-group" style={{flex: 1, marginBottom: 0}}>
-                                                <label>Harga Jual (Rp)</label>
-                                                <input type="number" className="input-field" value={conv.price} onChange={e => {
-                                                    const newConvs = [...newItem.conversions];
-                                                    newConvs[index].price = e.target.value;
-                                                    setNewItem({...newItem, conversions: newConvs});
-                                                }} placeholder="Cth: 5000" required />
-                                            </div>
-                                            {index > 0 && (
-                                                <button type="button" className="btn btn-danger" style={{padding: '12px 16px', marginBottom: '0'}} onClick={() => {
-                                                    const newConvs = newItem.conversions.filter((_, i) => i !== index);
-                                                    setNewItem({...newItem, conversions: newConvs});
-                                                }}>X</button>
-                                            )}
-                                        </div>
-                                    ))}
-                                    <button type="button" className="btn btn-outline" style={{width: '100%', marginTop: '8px', borderStyle: 'dashed'}} onClick={() => {
-                                        setNewItem({...newItem, conversions: [...newItem.conversions, {name: '', multiplier: '', price: ''}]});
-                                    }}>+ Tambah Satuan Konversi Lain</button>
-
-                                    <div className="form-group" style={{marginTop: '16px', marginBottom: 0}}>
-                                        <label>Stok Total (Induk)</label>
-                                        <input type="number" step="0.01" className="input-field" value={lembar} onChange={e => setLembar(e.target.value)} placeholder="Stok master saat ini" required />
-                                    </div>
-                                </div>
-                            ) : (
-                                <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
-                                    <div className="form-group" style={{flex: 1}}>
-                                        <label>Satuan</label>
-                                        <div className="custom-dropdown-container" style={{position: 'relative', width: '100%', zIndex: isSmallUnitDropdownOpen ? 10 : 1}}>
-                                            <div 
-                                                className={`custom-select-3d ${isSmallUnitDropdownOpen ? 'active' : ''}`}
-                                                onClick={() => setIsSmallUnitDropdownOpen(!isSmallUnitDropdownOpen)}
-                                                style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box', border: '2px solid var(--primary-color)', color: 'var(--primary-color)', fontWeight: 'bold', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer'}}
-                                            >
-                                                <span style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{newItem.unit || 'Pilih Satuan'}</span>
-                                                <span style={{fontSize: '0.8rem', marginLeft: '16px'}}>▼</span>
-                                            </div>
-                                            {isSmallUnitDropdownOpen && (
-                                                <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--primary-color)', zIndex: 1000, overflow: 'hidden', padding: 0}}>
-                                                    {smallUnitsList.map(unit => (
-                                                        <div 
-                                                            key={unit.name}
-                                                            className={`custom-dropdown-item ${newItem.unit === unit.name ? 'selected' : ''}`}
-                                                            onClick={() => {
-                                                                setNewItem({...newItem, unit: unit.name});
-                                                                setIsSmallUnitDropdownOpen(false);
-                                                            }}
-                                                            style={{padding: '12px 16px', cursor: 'pointer', fontWeight: '500', color: 'var(--text-primary)'}}
-                                                        >
-                                                            {unit.name}
-                                                        </div>
-                                                    ))}
+                            <div style={{marginBottom: '16px', background: 'var(--panel-bg)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-color)'}}>
+                                <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 'bold', color: 'var(--primary-color)'}}>
+                                    <input type="checkbox" checked={newItem.hasConversions} onChange={e => setNewItem({...newItem, hasConversions: e.target.checked})} style={{transform: 'scale(1.2)'}} />
+                                    Apakah barang ini bisa dijual dalam pecahan atau satuan ganda? (Opsional)
+                                </label>
+                                {newItem.hasConversions && (
+                                    <div style={{marginTop: '16px'}}>
+                                        <div style={{fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '12px'}}>Tambahkan opsi pecahan/satuan jual yang akan memotong dari stok induk di atas. (Contoh: 1/4 Meter dengan pengali 0.25, atau 1 Dus dengan pengali 12)</div>
+                                        {newItem.conversions.map((conv, index) => (
+                                            <div key={index} style={{display: 'flex', gap: '12px', marginBottom: '12px', alignItems: 'flex-end', background: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #e5e7eb'}}>
+                                                <div className="form-group" style={{flex: 2, marginBottom: 0}}>
+                                                    <label>Nama Satuan Jual</label>
+                                                    <input type="text" className="input-field" value={conv.name} onChange={e => {
+                                                        const newConvs = [...newItem.conversions];
+                                                        newConvs[index].name = e.target.value;
+                                                        setNewItem({...newItem, conversions: newConvs});
+                                                    }} placeholder="Cth: 1/4 Meter atau 1 Dus" required />
                                                 </div>
-                                            )}
-                                        </div>
+                                                <div className="form-group" style={{flex: 1, marginBottom: 0}}>
+                                                    <label>Pengali Stok</label>
+                                                    <input type="number" step="0.01" className="input-field" value={conv.multiplier} onChange={e => {
+                                                        const newConvs = [...newItem.conversions];
+                                                        newConvs[index].multiplier = e.target.value;
+                                                        setNewItem({...newItem, conversions: newConvs});
+                                                    }} placeholder="Cth: 0.25 atau 12" required />
+                                                </div>
+                                                <div className="form-group" style={{flex: 1, marginBottom: 0}}>
+                                                    <label>Harga Jual (Rp)</label>
+                                                    <input type="number" className="input-field" value={conv.price} onChange={e => {
+                                                        const newConvs = [...newItem.conversions];
+                                                        newConvs[index].price = e.target.value;
+                                                        setNewItem({...newItem, conversions: newConvs});
+                                                    }} placeholder="Cth: 5000" required />
+                                                </div>
+                                                {index > 0 && (
+                                                    <button type="button" className="btn btn-danger" style={{padding: '12px 16px', marginBottom: '0'}} onClick={() => {
+                                                        const newConvs = newItem.conversions.filter((_, i) => i !== index);
+                                                        setNewItem({...newItem, conversions: newConvs});
+                                                    }}>X</button>
+                                                )}
+                                            </div>
+                                        ))}
+                                        <button type="button" className="btn btn-outline" style={{width: '100%', marginTop: '8px', borderStyle: 'dashed'}} onClick={() => {
+                                            setNewItem({...newItem, conversions: [...newItem.conversions, {name: '', multiplier: '', price: ''}]});
+                                        }}>+ Tambah Satuan Jual Lain</button>
                                     </div>
-                                    <div className="form-group" style={{flex: 1}}><label>Stok</label><input type="number" className="input-field" value={lembar} onChange={e => {setLembar(e.target.value);}} required /></div>
-                                </div>
-                            )}
+                                )}
+                            </div>
 
                             <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
                                 <div className="form-group" style={{flex: 1}}><label>Batas Maksimal Stok</label><input type="number" className="input-field" value={newItem.max_stock} onChange={e => setNewItem({...newItem, max_stock: e.target.value})} required /></div>
