@@ -969,7 +969,203 @@ p {
   }
   
   .data-table {
-    min-width: 600px;
+    min-width: 100% !important;
+    word-break: break-word !important;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .cart-container {
+    flex-direction: column !important;
+  }
+  
+  .cart-left, .cart-right {
+    width: 100% !important;
+    min-width: 100% !important;
+    flex: none !important;
+  }
+  
+  .form-group {
+    min-width: 100% !important;
+  }
+
+  h1 {
+    font-size: 1.5rem !important;
+  }
+  h2 {
+    font-size: 1.2rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .desktop-toggle {
+    display: none !important;
+  }
+  .mobile-header {
+    display: flex !important;
+  }
+  .content-wrapper {
+    padding: 0 16px !important;
+    padding-top: 16px !important;
+  }
+}
+
+/* Responsive Utility Classes & Layout Normalization for Mobile */
+.flex-responsive { display: flex; gap: 16px; align-items: flex-start; }
+.flex-responsive-center { display: flex; gap: 16px; align-items: center; }
+.grid-responsive { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+@media (max-width: 768px) {
+  /* Layout Utilities */
+  .flex-responsive, .flex-responsive-center { flex-direction: column; align-items: stretch; gap: 12px !important; }
+  .header-mobile-reverse { flex-direction: column-reverse !important; align-items: flex-start !important; }
+  .grid-responsive { grid-template-columns: 1fr !important; }
+  .w-full-mobile { width: 100% !important; min-width: 0 !important; max-width: 100% !important; flex: 1 1 auto !important; }
+}
+.custom-select-3d:hover {
+  box-shadow: 0 6px 15px rgba(237, 85, 9, 0.25), inset 0 2px 4px rgba(255,255,255,0.1);
+  transform: translateY(-1px);
+}
+.custom-select-3d:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(237, 85, 9, 0.4), inset 0 2px 4px rgba(0,0,0,0.1);
+  background-color: var(--card-bg);
+}
+
+.custom-dropdown-container {
+  position: relative;
+  z-index: 50;
+}
+.custom-select-3d.active {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(237, 85, 9, 0.2), inset 0 2px 4px rgba(0,0,0,0.1);
+  background-color: var(--card-bg);
+}
+.custom-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  overflow: hidden;
+  animation: slideDown 0.2s ease-out;
+}
+.custom-dropdown-item {
+  padding: 12px 20px;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  background: transparent;
+}
+.custom-dropdown-item:hover, .custom-dropdown-item.selected {
+  background: var(--primary-color);
+  color: white;
+}
+.branch-dropdown-item:hover, .branch-dropdown-item.selected {
+  background: var(--primary-color) !important;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .modal-overlay, .modal-overlay * {
+    visibility: visible;
+  }
+  .modal-overlay {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    margin: 0 !important;
+    background: white !important;
+    padding: 0 !important;
+    display: flex !important;
+    width: 100vw !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+  }
+  .print-thermal, .print-thermal .modal-content {
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    margin: 0 auto !important;
+    padding: 24px !important;
+    box-sizing: border-box !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  .print-a4 {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+    width: 210mm !important;
+  }
+  .invoice-container {
+    color: black !important;
+  }
+  .no-print, .no-print * {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  @page {
+    margin: 0;
+  }
+}
+
+
+
+
+
+/* Responsive / Mobile Queries */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    transform: translateX(0);
+    box-shadow: 2px 0 20px rgba(0,0,0,0.2);
+  }
+  
+  .sidebar.collapsed {
+    transform: translateX(-100%);
+    width: 260px !important;
+  }
+
+  .main-content {
+    padding: 16px !important;
+  }
+
+  .sidebar-toggle {
+    display: flex !important;
+  }
+
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    width: 100%;
+  }
+  
+  .data-table {
+    min-width: 100% !important;
+    word-break: break-word !important;
   }
   
   .dashboard-grid {
@@ -1027,11 +1223,15 @@ p {
   .mt-mobile { margin-top: 12px !important; }
   
   /* Sizing Normalization for Mobile Precision */
-  .glass-panel { padding: 16px !important; }
+  .main-content {
+    padding: 16px 0 !important; /* Remove horizontal padding to maximize screen space */
+  }
+  .glass-panel { padding: 12px 4px !important; }
   .btn { padding: 10px 16px !important; font-size: 0.9rem !important; }
   .input-field { padding: 10px 14px !important; font-size: 0.9rem !important; }
   .custom-select-3d { padding: 10px 30px 10px 14px !important; font-size: 0.9rem !important; }
-  .data-table th, .data-table td { padding: 10px 12px !important; font-size: 0.85rem !important; }
+  .data-table { min-width: 100% !important; width: 100% !important; table-layout: fixed; }
+  .data-table th, .data-table td { padding: 6px 2px !important; font-size: 0.55rem !important; word-wrap: break-word; overflow-wrap: break-word; }
   .stat-number { font-size: 1.5rem !important; }
   .form-group { width: 100% !important; min-width: 0 !important; margin-bottom: 12px !important; }
   .form-group label { font-size: 0.85rem !important; }

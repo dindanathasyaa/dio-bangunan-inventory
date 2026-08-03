@@ -43,19 +43,19 @@ const StockAlertView = ({ type, activeBranch }) => {
                     <table className="data-table">
                         <thead>
                             <tr>
-                                <th style={{ whiteSpace: 'nowrap', width: '15%' }}>Kode Barang</th>
+                                <th style={{ width: '15%' }}>Kode Barang</th>
                                 <th style={{ width: '25%' }}>Nama Barang</th>
-                                <th style={{ whiteSpace: 'nowrap', width: '15%' }}>Cabang</th>
-                                <th style={{ whiteSpace: 'nowrap', textAlign: 'center', width: '15%' }}>{type === 'min' ? 'Stok (Batas Min)' : 'Stok (Batas Max)'}</th>
+                                <th style={{ width: '15%' }}>Cabang</th>
+                                <th style={{ textAlign: 'center', width: '15%' }}>{type === 'min' ? 'Stok (Batas Min)' : 'Stok (Batas Max)'}</th>
                                 <th style={{ width: '30%' }}>Saran / Keterangan</th>
                             </tr>
                         </thead>
                         <tbody>
                             {alerts.map((item, idx) => (
                                 <tr key={idx}>
-                                    <td style={{ whiteSpace: 'nowrap' }}>{item.sku}</td>
+                                    <td>{item.sku}</td>
                                     <td>{item.product_name}</td>
-                                    <td style={{ whiteSpace: 'nowrap' }}>{item.branch_name || item.from_branch_name}</td>
+                                    <td>{item.branch_name || item.from_branch_name}</td>
                                     <td style={{ textAlign: 'center' }}>
                                         <span style={{fontWeight: 'bold'}}>{type === 'min' ? Math.max(0, Math.floor(Number(item.current_stock))) : Math.floor(Number(item.current_stock) || item.suggested_qty)}</span>
                                     </td>
