@@ -1023,6 +1023,8 @@ p {
   /* Layout Utilities */
   .flex-responsive, .flex-responsive-center { flex-direction: column; align-items: stretch; gap: 12px !important; }
   .grid-responsive { grid-template-columns: 1fr !important; }
+  .grid-responsive-2 { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+  .grid-responsive-3 { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; gap: 8px !important; }
   .w-full-mobile { width: 100% !important; min-width: 0 !important; max-width: 100% !important; flex: 1 1 auto !important; }
   .stack-mobile { display: flex; flex-direction: column; gap: 12px; }
   .hide-on-mobile { display: none !important; }
@@ -1030,13 +1032,13 @@ p {
   .mt-mobile { margin-top: 12px !important; }
   
   /* Sizing Normalization for Mobile Precision */
-  .glass-panel { padding: 16px !important; }
-  .btn { padding: 10px 16px !important; font-size: 0.9rem !important; }
-  .input-field { padding: 10px 14px !important; font-size: 0.9rem !important; }
-  .custom-select-3d { padding: 10px 30px 10px 14px !important; font-size: 0.9rem !important; }
-  .data-table th, .data-table td { padding: 10px 12px !important; font-size: 0.85rem !important; }
-  .stat-number { font-size: 1.5rem !important; }
+  .glass-panel { padding: 12px !important; }
+  .btn { padding: 8px 12px !important; font-size: 0.85rem !important; }
+  .input-field { padding: 8px 12px !important; font-size: 0.85rem !important; }
+  .custom-select-3d { padding: 8px 24px 8px 12px !important; font-size: 0.85rem !important; }
+  .data-table th, .data-table td { padding: 8px 10px !important; font-size: 0.8rem !important; }
+  .stat-number { font-size: 1.2rem !important; }
   .form-group { width: 100% !important; min-width: 0 !important; margin-bottom: 12px !important; }
-  .form-group label { font-size: 0.85rem !important; }
+  .form-group label { font-size: 0.8rem !important; }
   .modal-content { padding: 16px !important; }
 }

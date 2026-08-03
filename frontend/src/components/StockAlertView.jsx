@@ -28,10 +28,10 @@ const StockAlertView = ({ type, activeBranch }) => {
     };
 
     return (
-        <div style={{animation: 'fadeIn 0.5s ease-out', padding: '0 24px'}}>
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
-                <h1 style={{margin: 0}}>{type === 'min' ? 'Peringatan Stok Minimum (Habis)' : 'Peringatan Stok Maksimum (Overstock)'}</h1>
-                <button className="btn btn-outline" onClick={() => navigate('/')}>Kembali ke Dashboard</button>
+        <div className="content-wrapper" style={{animation: 'fadeIn 0.5s ease-out'}}>
+            <div className="flex-responsive" style={{justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
+                <h1 style={{margin: 0, lineHeight: '1.2'}}>{type === 'min' ? 'Peringatan Stok Minimum (Habis)' : 'Peringatan Stok Maksimum (Overstock)'}</h1>
+                <button className="btn btn-outline" style={{padding: '6px 12px', fontSize: '0.8rem', whiteSpace: 'nowrap'}} onClick={() => navigate('/')}>Kembali ke Dashboard</button>
             </div>
 
             <div className="glass-panel table-container">

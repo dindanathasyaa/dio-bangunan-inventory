@@ -281,9 +281,9 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
             <div className="flex-responsive" style={{justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
                 <h1 style={{margin: 0}}>Control Center</h1>
                 
-                <div style={{display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', width: '100%', justifyContent: 'flex-start'}}>
+                <div style={{display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'flex-start'}}>
                     {user.role === 'OWNER' && user.branch_id === null && (
-                        <div style={{display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: '250px'}}>
+                        <div style={{display: 'flex', alignItems: 'center', gap: '8px', flex: 1}}>
                             <span style={{fontWeight: 'bold', color: 'white', background: 'var(--secondary-color)', padding: '10px 12px', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box', fontSize: '0.85rem', whiteSpace: 'nowrap'}}>Pilih Toko:</span>
                             <div className="custom-dropdown-container" style={{position: 'relative', flex: 1}}>
                                 <div 
@@ -331,8 +331,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                     </div>
                 </div>
             </div>
-            <p style={{color: 'var(--text-secondary)', marginBottom: '32px'}}>Ringkasan Cepat & Pintasan Navigasi</p>
-            <div className="grid-responsive" style={{marginBottom: '24px'}}>
+            <div className="grid-responsive-2" style={{marginBottom: '24px'}}>
                 {/* Row 1: Stock Alerts */}
                 <div className="glass-panel" style={{borderTop: '4px solid var(--danger-color)', cursor: 'pointer', transition: 'transform 0.2s', height: 'fit-content'}} onClick={() => navigate('/alert-min')} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -389,7 +388,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                 </div>
             </div>
 
-            <div className="grid-responsive" style={{marginBottom: '24px'}}>
+            <div className="grid-responsive-3" style={{marginBottom: '24px'}}>
                 {user.role === 'OWNER' && (
                     <>
                         <div className="glass-panel" style={{borderTop: '4px solid #10b981', cursor: 'pointer', transition: 'transform 0.2s', height: 'fit-content'}} onClick={() => navigate('/cash', { state: { view: 'Receivables' } })} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
