@@ -615,7 +615,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                 </div>
             </div>
             
-            <div className="grid-responsive" style={{ paddingBottom: '20px' }}>
+            <div className="grid-responsive inv-grid" style={{ paddingBottom: '20px' }}>
                 {filteredInventory.map(item => {
                     const isEmpty = Math.floor(item.stock) === 0;
                     const isLow = Math.floor(item.stock) <= item.min_stock;
@@ -632,26 +632,26 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                     }
 
                     return (
-                        <div key={item.id} className="glass-panel" style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px', borderRadius: '8px', borderLeft: `4px solid ${badgeClass === 'danger' ? 'var(--danger-color)' : badgeClass === 'warning' ? '#f59e0b' : '#10b981'}` }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                        <div key={item.id} className="glass-panel inv-card" style={{ borderLeft: `4px solid ${badgeClass === 'danger' ? 'var(--danger-color)' : badgeClass === 'warning' ? '#f59e0b' : '#10b981'}` }}>
+                            <div className="inv-card-header">
                                 <div style={{flex: 1}}>
-                                    <h3 style={{ margin: '0 0 4px 0', color: 'var(--text-primary)', fontSize: '1rem', lineHeight: '1.2' }}>{item.name} {item.variant_name ? `- ${item.variant_name}` : ''}</h3>
-                                    <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                                        <span style={{background: 'var(--border-color)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.75rem', color: 'var(--text-secondary)'}}>🏷️ {item.category}</span>
-                                        <span style={{background: 'var(--border-color)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.75rem', color: 'var(--text-secondary)'}}>🏢 {item.branch_name}</span>
+                                    <h3 className="inv-card-title" style={{ color: 'var(--text-primary)' }}>{item.name} {item.variant_name ? `- ${item.variant_name}` : ''}</h3>
+                                    <div className="inv-card-tags">
+                                        <span className="inv-card-tag" style={{background: 'var(--border-color)', color: 'var(--text-secondary)'}}>🏷️ {item.category}</span>
+                                        <span className="inv-card-tag" style={{background: 'var(--border-color)', color: 'var(--text-secondary)'}}>🏢 {item.branch_name}</span>
                                     </div>
                                 </div>
-                                <div style={{textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px'}}>
-                                    <div style={{ fontWeight: 'bold', fontSize: '1.2rem', color: 'var(--text-primary)' }}>{Math.floor(item.stock)}</div>
-                                    <span className={`badge ${badgeClass}`} style={{fontSize: '0.7rem', padding: '2px 6px'}}>{badgeText}</span>
+                                <div className="inv-card-stock-container">
+                                    <div className="inv-card-stock-value" style={{ color: 'var(--text-primary)' }}>{Math.floor(item.stock)}</div>
+                                    <span className={`badge ${badgeClass} inv-card-badge`}>{badgeText}</span>
                                 </div>
                             </div>
                             
-                            <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
-                                <button className="btn-icon" style={{flex: 1, color: 'var(--primary-color)', fontSize: '0.8rem', padding: '6px', background: 'transparent', border: '1px solid var(--primary-color)', borderRadius: '6px'}} onClick={() => setActiveBarcode(item.sku)} title="Lihat Barcode">
+                            <div className="inv-card-actions">
+                                <button className="btn-icon inv-card-btn" style={{color: 'var(--primary-color)', background: 'transparent', border: '1px solid var(--primary-color)'}} onClick={() => setActiveBarcode(item.sku)} title="Lihat Barcode">
                                     🔍 Barcode
                                 </button>
-                                <button className="btn-navy" style={{ flex: 1, padding: '6px', fontSize: '0.8rem', borderRadius: '6px', background: '#c2410c', color: 'white', border: 'none' }} onClick={() => setEditingData({...item})}>
+                                <button className="btn-navy inv-card-btn" style={{ background: '#c2410c', color: 'white', border: 'none' }} onClick={() => setEditingData({...item})}>
                                     ✏️ Edit
                                 </button>
                             </div>
