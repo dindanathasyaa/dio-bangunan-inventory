@@ -208,8 +208,11 @@ p {
   flex: 1;
   padding: 80px 40px 40px 40px; /* Top padding to account for toggle buttons */
   overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 0;
   position: relative;
   height: 100vh;
+  z-index: 1;
 }
 
 /* Theme Toggle Button */
