@@ -1272,10 +1272,26 @@ p {
     font-weight: 700; 
     color: var(--text-secondary); 
     text-align: left; 
-    flex: 1; 
+    flex: 0 0 40%; /* Prevents vertical squeezing */
     padding-right: 12px;
+  }
+  /* Specific override for Aksi column to stack buttons vertically */
+  .mobile-card-table td[data-label="Aksi"] {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px;
+  }
+  .mobile-card-table td[data-label="Aksi"]::before {
+    flex: none;
+    width: 100%;
+    margin-bottom: 4px;
   }
   .mobile-card-table td > div, .mobile-card-table td > button {
     text-align: right;
+  }
+  .mobile-card-table td[data-label="Aksi"] > div {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
   }
 }
