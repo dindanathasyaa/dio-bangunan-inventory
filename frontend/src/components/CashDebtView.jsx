@@ -659,7 +659,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                     <div className="flex-responsive" style={{justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
                         <h2>Daftar Piutang Pembeli</h2>
                     </div>
-                    <table className="data-table wide-table">
+                    <table className="data-table mobile-card-table">
                         <thead>
                             <tr>
                                 <th>Nama Pelanggan</th>
@@ -676,14 +676,14 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                 const sisa = parseFloat(r.total_debt || 0) - parseFloat(r.amount_paid || 0);
                                 return (
                                 <tr key={r.id}>
-                                    <td style={{fontWeight: 'bold'}}>{r.customer_name}</td>
-                                    <td>Rp {parseFloat(r.total_debt).toLocaleString('id-ID')}</td>
-                                    <td>Rp {parseFloat(r.amount_paid).toLocaleString('id-ID')}</td>
-                                    <td style={{color: 'var(--danger-color)', fontWeight: 'bold'}}>Rp {sisa.toLocaleString('id-ID')}</td>
-                                    <td>
+                                    <td data-label="Nama Pelanggan" style={{fontWeight: 'bold'}}>{r.customer_name}</td>
+                                    <td data-label="Total Hutang">Rp {parseFloat(r.total_debt).toLocaleString('id-ID')}</td>
+                                    <td data-label="Sudah Dibayar">Rp {parseFloat(r.amount_paid).toLocaleString('id-ID')}</td>
+                                    <td data-label="Sisa Tagihan" style={{color: 'var(--danger-color)', fontWeight: 'bold'}}>Rp {sisa.toLocaleString('id-ID')}</td>
+                                    <td data-label="Status">
                                         <span className={`badge ${r.status === 'Lunas' ? 'good' : 'low'}`}>{r.status}</span>
                                     </td>
-                                    <td>
+                                    <td data-label="Aksi">
                                         {r.status !== 'Lunas' && (
                                             <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
                                                 <button className="btn btn-secondary" onClick={() => {
@@ -703,7 +703,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                             handleShowHistory(r.id, 'Receivable');
                                         }}>Riwayat Cicilan</button>
                                     </td>
-                                    <td>
+                                    <td data-label="Cetak Struk">
                                         <button className="btn btn-outline" style={{padding: '6px 12px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px'}} onClick={() => handlePrintDebt(r)}>
                                             Cetak
                                         </button>
@@ -718,7 +718,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
             {view === 'Payables' && (
                 <div className="glass-panel table-container">
                     <h2>Daftar Hutang Toko (Ke Supplier)</h2>
-                    <table className="data-table wide-table">
+                    <table className="data-table mobile-card-table">
                         <thead>
                             <tr>
                                 <th>Nama Supplier / Pabrik</th>
@@ -734,14 +734,14 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                 const sisa = parseFloat(p.total_debt || 0) - parseFloat(p.amount_paid || 0);
                                 return (
                                 <tr key={p.id}>
-                                    <td style={{fontWeight: 'bold'}}>{p.supplier_name}</td>
-                                    <td>Rp {parseFloat(p.total_debt).toLocaleString('id-ID')}</td>
-                                    <td>Rp {parseFloat(p.amount_paid).toLocaleString('id-ID')}</td>
-                                    <td style={{color: 'var(--danger-color)', fontWeight: 'bold'}}>Rp {sisa.toLocaleString('id-ID')}</td>
-                                    <td>
+                                    <td data-label="Nama Supplier" style={{fontWeight: 'bold'}}>{p.supplier_name}</td>
+                                    <td data-label="Total Hutang">Rp {parseFloat(p.total_debt).toLocaleString('id-ID')}</td>
+                                    <td data-label="Sudah Dibayar">Rp {parseFloat(p.amount_paid).toLocaleString('id-ID')}</td>
+                                    <td data-label="Sisa Tagihan" style={{color: 'var(--danger-color)', fontWeight: 'bold'}}>Rp {sisa.toLocaleString('id-ID')}</td>
+                                    <td data-label="Status">
                                         <span className={`badge ${p.status === 'Lunas' ? 'good' : 'low'}`}>{p.status}</span>
                                     </td>
-                                    <td style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+                                    <td data-label="Aksi" style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
                                         {p.status !== 'Lunas' && (
                                             <div style={{display: 'flex', gap: '8px', alignItems: 'center'}}>
                                                 <button className="btn btn-primary" onClick={() => {

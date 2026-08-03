@@ -1242,4 +1242,40 @@ p {
   .form-group { width: 100% !important; min-width: 0 !important; margin-bottom: 12px !important; }
   .form-group label { font-size: 0.85rem !important; }
   .modal-content { padding: 16px !important; }
+
+  /* Smart Mobile Card Table Layout */
+  .mobile-card-table { min-width: 0 !important; width: 100% !important; display: block !important; }
+  .mobile-card-table thead { display: none !important; }
+  .mobile-card-table tbody, .mobile-card-table tr, .mobile-card-table td { display: block !important; width: 100% !important; }
+  .mobile-card-table tr { 
+    margin-bottom: 16px !important; 
+    border: 1px solid var(--border-color) !important; 
+    border-radius: 12px !important; 
+    background: var(--card-bg) !important; 
+    padding: 12px !important; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important; 
+  }
+  .mobile-card-table td { 
+    padding: 10px 0 !important; 
+    border: none !important; 
+    border-bottom: 1px dashed var(--border-color) !important; 
+    text-align: right !important; 
+    display: flex !important; 
+    flex-direction: row !important;
+    justify-content: space-between !important; 
+    align-items: center !important; 
+    font-size: 0.85rem !important;
+  }
+  .mobile-card-table td:last-child { border-bottom: none !important; }
+  .mobile-card-table td::before { 
+    content: attr(data-label); 
+    font-weight: 700; 
+    color: var(--text-secondary); 
+    text-align: left; 
+    flex: 1; 
+    padding-right: 12px;
+  }
+  .mobile-card-table td > div, .mobile-card-table td > button {
+    text-align: right;
+  }
 }
