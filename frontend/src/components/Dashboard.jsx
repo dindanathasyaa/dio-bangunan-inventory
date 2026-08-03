@@ -283,9 +283,9 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                 
                 <div style={{display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'flex-start'}}>
                     {user.role === 'OWNER' && user.branch_id === null && (
-                        <div style={{display: 'flex', alignItems: 'center', gap: '8px', flex: 1}}>
+                        <div style={{display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0}}>
                             <span style={{fontWeight: 'bold', color: 'white', background: 'var(--secondary-color)', padding: '10px 12px', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box', fontSize: '0.85rem', whiteSpace: 'nowrap'}}>Pilih Toko:</span>
-                            <div className="custom-dropdown-container" style={{position: 'relative', flex: 1}}>
+                            <div className="custom-dropdown-container" style={{position: 'relative', flex: 1, minWidth: 0}}>
                                 <div 
                                     className={`custom-select-3d ${isBranchDropdownOpen ? 'active' : ''}`}
                                     onClick={() => setIsBranchDropdownOpen(!isBranchDropdownOpen)}

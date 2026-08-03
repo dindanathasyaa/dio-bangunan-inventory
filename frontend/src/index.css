@@ -1023,8 +1023,17 @@ p {
   /* Layout Utilities */
   .flex-responsive, .flex-responsive-center { flex-direction: column; align-items: stretch; gap: 12px !important; }
   .grid-responsive { grid-template-columns: 1fr !important; }
-  .grid-responsive-2 { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
-  .grid-responsive-3 { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; gap: 8px !important; }
+  .grid-responsive-2 { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+  .grid-responsive-3 { 
+    display: grid !important; 
+    grid-auto-columns: minmax(130px, 1fr) !important; 
+    grid-auto-flow: column !important; 
+    gap: 8px !important; 
+    overflow-x: auto !important; 
+    padding-bottom: 8px !important;
+    scroll-snap-type: x mandatory;
+  }
+  .grid-responsive-3 > * { scroll-snap-align: start; }
   .w-full-mobile { width: 100% !important; min-width: 0 !important; max-width: 100% !important; flex: 1 1 auto !important; }
   .stack-mobile { display: flex; flex-direction: column; gap: 12px; }
   .hide-on-mobile { display: none !important; }
