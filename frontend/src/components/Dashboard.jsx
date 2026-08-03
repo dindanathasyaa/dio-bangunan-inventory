@@ -279,7 +279,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
     return (
         <div style={{animation: 'fadeIn 0.5s ease-out', paddingBottom: '40px'}}>
             <div style={{display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px'}}>
-                <h1 style={{margin: 0, alignSelf: 'flex-start', background: 'var(--secondary-color)', color: 'white', padding: '8px 16px', borderRadius: '8px', fontSize: '1.4rem', boxShadow: '0 4px 6px rgba(234, 88, 12, 0.2)'}}>Control Center</h1>
+                <h1 style={{margin: 0, alignSelf: 'flex-start', background: 'var(--primary-color)', color: 'white', padding: '8px 16px', borderRadius: '8px', fontSize: '1.4rem', boxShadow: '0 4px 6px rgba(237, 85, 9, 0.2)'}}>Control Center</h1>
                 <div style={{display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'space-between'}}>
                     {user.role === 'OWNER' && user.branch_id === null && (
                         <div style={{display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0}}>
