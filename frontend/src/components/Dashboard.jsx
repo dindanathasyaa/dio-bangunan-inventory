@@ -278,9 +278,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
 
     return (
         <div style={{animation: 'fadeIn 0.5s ease-out', paddingBottom: '40px'}}>
-            <div className="flex-responsive header-mobile-reverse" style={{justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
-                <h1 style={{margin: 0}}>Control Center</h1>
-                
+            <div style={{display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px'}}>
                 <div style={{display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'space-between'}}>
                     {user.role === 'OWNER' && user.branch_id === null && (
                         <div style={{display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0}}>
@@ -330,8 +328,9 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                         <div className="icon">🌙</div>
                     </div>
                 </div>
+                
+                <h1 style={{margin: 0, alignSelf: 'flex-start'}}>Control Center</h1>
             </div>
-            <p style={{color: 'var(--text-secondary)', marginBottom: '32px'}}>Ringkasan Cepat & Pintasan Navigasi</p>
             <div className="grid-responsive" style={{marginBottom: '24px'}}>
                 {/* Row 1: Stock Alerts */}
                 <div className="glass-panel" style={{borderTop: '4px solid var(--danger-color)', cursor: 'pointer', transition: 'transform 0.2s', height: 'fit-content'}} onClick={() => navigate('/alert-min')} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
