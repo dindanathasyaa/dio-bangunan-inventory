@@ -1665,3 +1665,23 @@ p {
     grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)) !important;
   }
 }
+
+/* Dashboard Summary Cards */
+.summary-grid {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.summary-grid > div {
+  flex: 1 1 250px;
+}
+
+@media (max-width: 768px) {
+  .summary-grid {
+    flex-direction: column;
+  }
+  .summary-grid > div {
+    flex: none;
+    width: 100%;
+  }
+}

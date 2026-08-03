@@ -387,7 +387,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                 </div>
             </div>
 
-            <div className="grid-responsive" style={{marginBottom: '24px'}}>
+            <div className="summary-grid" style={{marginBottom: '24px'}}>
                 {user.role === 'OWNER' && (
                     <>
                         <div className="glass-panel" style={{borderTop: '4px solid #10b981', cursor: 'pointer', transition: 'transform 0.2s', height: 'fit-content'}} onClick={() => navigate('/cash', { state: { view: 'Receivables' } })} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
@@ -426,7 +426,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                 </div>
 
                 {user.role === 'OWNER' && (
-                    <div className="glass-panel" style={{borderTop: '4px solid var(--primary-color)', cursor: 'pointer', transition: 'transform 0.2s', gridColumn: '1 / -1', background: 'linear-gradient(to right, rgba(234, 88, 12, 0.1), transparent)'}} onClick={() => navigate('/cash', { state: { view: 'CashFlow' } })}>
+                    <div className="glass-panel" style={{borderTop: '4px solid var(--primary-color)', cursor: 'pointer', transition: 'transform 0.2s', width: '100%', flex: '1 1 100%', background: 'linear-gradient(to right, rgba(234, 88, 12, 0.1), transparent)'}} onClick={() => navigate('/cash', { state: { view: 'CashFlow' } })}>
                         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                             <div>
                                 <div style={{color: 'var(--text-secondary)', fontSize: '1rem', marginBottom: '8px'}}>Saldo Kas Tunai Saat Ini</div>
