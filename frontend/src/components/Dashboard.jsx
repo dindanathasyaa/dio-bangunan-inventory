@@ -21,7 +21,7 @@ const Dashboard = ({ user, setUser }) => {
     const location = useLocation();
     const [inventory, setInventory] = useState([]);
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 768);
     const [showSettingsModal, setShowSettingsModal] = useState(false);
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -49,6 +49,18 @@ const Dashboard = ({ user, setUser }) => {
     useEffect(() => {
         fetchData();
     }, [user, activeBranch]);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth <= 768) {
+                setIsSidebarOpen(false);
+            } else {
+                setIsSidebarOpen(true);
+            }
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const fetchData = async () => {
         try {
