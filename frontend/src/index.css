@@ -1202,7 +1202,7 @@ p {
     display: flex !important;
   }
   .content-wrapper {
-    padding: 0 16px !important;
+    padding: 0 !important;
     padding-top: 16px !important;
   }
 }
@@ -1226,12 +1226,18 @@ p {
   .main-content {
     padding: 16px 0 !important; /* Remove horizontal padding to maximize screen space */
   }
-  .glass-panel { padding: 12px 4px !important; }
+  .glass-panel { 
+    padding: 12px 0 !important; 
+    border: none !important; 
+    border-radius: 0 !important; 
+    box-shadow: none !important; 
+  }
   .btn { padding: 10px 16px !important; font-size: 0.9rem !important; }
   .input-field { padding: 10px 14px !important; font-size: 0.9rem !important; }
   .custom-select-3d { padding: 10px 30px 10px 14px !important; font-size: 0.9rem !important; }
   .data-table { min-width: 100% !important; width: 100% !important; table-layout: fixed; }
   .data-table th, .data-table td { padding: 6px 2px !important; font-size: 0.55rem !important; word-wrap: break-word; overflow-wrap: break-word; }
+  .data-table th:first-child, .data-table td:first-child, .data-table th:last-child, .data-table td:last-child, .data-table thead tr { border-radius: 0 !important; }
   .stat-number { font-size: 1.5rem !important; }
   .form-group { width: 100% !important; min-width: 0 !important; margin-bottom: 12px !important; }
   .form-group label { font-size: 0.85rem !important; }
