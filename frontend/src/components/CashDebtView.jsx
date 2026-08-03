@@ -408,7 +408,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                         <button className="btn-icon" onClick={() => { setEditNotaData(null); setCart([]); setSearchQuery(''); }}>✕</button>
                     </div>
                     
-                    <div style={{display: 'flex', gap: '24px', flexWrap: 'wrap'}}>
+                    <div className="flex-responsive" style={{gap: '24px', flexWrap: 'wrap'}}>
                         {/* Kiri: Pencarian Barang */}
                         <div style={{flex: '1 1 300px'}}>
                             <h3 style={{marginBottom: '16px', color: 'var(--text-primary)'}}>Pilih Barang</h3>
@@ -593,7 +593,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                             </div>
                         </div>
 
-                        <div style={{display: 'flex', gap: '24px', flexWrap: 'wrap'}}>
+                        <div className="flex-responsive" style={{gap: '24px', flexWrap: 'wrap'}}>
                             {/* Kas Masuk Table */}
                             <div className="table-container" style={{flex: '1 1 45%'}}>
                                 <h3 style={{color: '#10b981', borderBottom: '2px solid #10b981', paddingBottom: '8px'}}>KAS MASUK</h3>
