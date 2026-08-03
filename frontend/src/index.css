@@ -104,6 +104,8 @@ h1 {
   -webkit-text-fill-color: transparent;
 }
 
+.stat-number { font-size: 2.5rem; }
+
 p {
   color: var(--text-secondary);
   line-height: 1.6;
@@ -986,10 +988,10 @@ p {
   }
 
   h1 {
-    font-size: 1.8rem !important;
+    font-size: 1.5rem !important;
   }
   h2 {
-    font-size: 1.4rem !important;
+    font-size: 1.2rem !important;
   }
 }
 
@@ -1021,6 +1023,7 @@ p {
   .flex-responsive, .flex-responsive-center { flex-direction: column; align-items: stretch; gap: 12px !important; }
   .grid-responsive { grid-template-columns: 1fr !important; }
   .w-full-mobile { width: 100% !important; min-width: 0 !important; max-width: 100% !important; flex: 1 1 auto !important; }
+  .stat-number { font-size: 2rem !important; }
   .stack-mobile { display: flex; flex-direction: column; gap: 12px; }
   .hide-on-mobile { display: none !important; }
   .mb-mobile { margin-bottom: 12px !important; }

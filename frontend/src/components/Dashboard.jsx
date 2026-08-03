@@ -278,13 +278,13 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
 
     return (
         <div style={{animation: 'fadeIn 0.5s ease-out', paddingBottom: '40px'}}>
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
+            <div className="flex-responsive" style={{justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
                 <h1 style={{margin: 0}}>Control Center</h1>
                 
-                <div style={{display: 'flex', gap: '16px', alignItems: 'center'}}>
+                <div className="flex-responsive w-full-mobile" style={{alignItems: 'center'}}>
                     {user.role === 'OWNER' && user.branch_id === null && (
-                        <div style={{display: 'flex', alignItems: 'center'}}>
-                            <span style={{fontWeight: 'bold', color: 'white', marginRight: '12px', background: 'var(--secondary-color)', padding: '12px 16px', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: '100%', boxSizing: 'border-box'}}>Pilih Toko:</span>
+                        <div className="flex-responsive w-full-mobile" style={{alignItems: 'center'}}>
+                            <span style={{fontWeight: 'bold', color: 'white', background: 'var(--secondary-color)', padding: '12px 16px', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: '100%', boxSizing: 'border-box'}}>Pilih Toko:</span>
                             <div className="custom-dropdown-container" style={{position: 'relative'}}>
                                 <div 
                                     className={`custom-select-3d ${isBranchDropdownOpen ? 'active' : ''}`}
@@ -338,7 +338,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                         <div>
                             <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Stok Akan Habis</div>
-                            <div style={{fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--danger-color)'}}>{Math.floor(summary.lowStockCount)}</div>
+                            <div className="stat-number" style={{fontWeight: 'bold', color: 'var(--danger-color)'}}>{Math.floor(summary.lowStockCount)}</div>
                         </div>
                         <div style={{fontSize: '2rem'}}>📦</div>
                     </div>
@@ -365,7 +365,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                         <div>
                             <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Stok Terlalu Banyak</div>
-                            <div style={{fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--secondary-color)'}}>{Math.floor(summary.overStockCount)}</div>
+                            <div className="stat-number" style={{fontWeight: 'bold', color: 'var(--secondary-color)'}}>{Math.floor(summary.overStockCount)}</div>
                         </div>
                         <div style={{fontSize: '2rem'}}>⚠️</div>
                     </div>
@@ -396,7 +396,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                                 <div>
                                     <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Piutang (Pembeli Ngutang)</div>
-                                    <div style={{fontSize: '1.8rem', fontWeight: 'bold', color: '#10b981'}}>Rp {Number(summary.totalReceivables || 0).toLocaleString('id-ID')}</div>
+                                    <div className="stat-number" style={{fontWeight: 'bold', color: '#10b981'}}>Rp {Number(summary.totalReceivables || 0).toLocaleString('id-ID')}</div>
                                 </div>
                                 <div style={{fontSize: '2rem'}}>📒</div>
                             </div>
@@ -407,7 +407,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                                 <div>
                                     <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Hutang Toko (Ke Supplier)</div>
-                                    <div style={{fontSize: '1.8rem', fontWeight: 'bold', color: '#ef4444'}}>Rp {Number(summary.totalPayables || 0).toLocaleString('id-ID')}</div>
+                                    <div className="stat-number" style={{fontWeight: 'bold', color: '#ef4444'}}>Rp {Number(summary.totalPayables || 0).toLocaleString('id-ID')}</div>
                                 </div>
                                 <div style={{fontSize: '2rem'}}>🏢</div>
                             </div>
@@ -420,7 +420,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                         <div>
                             <div style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Jadwal Pengantaran</div>
-                            <div style={{fontSize: '2.5rem', fontWeight: 'bold', color: '#f59e0b'}}>{summary.pendingDeliveries?.toLocaleString()}</div>
+                            <div className="stat-number" style={{fontWeight: 'bold', color: '#f59e0b'}}>{summary.pendingDeliveries?.toLocaleString()}</div>
                         </div>
                         <div style={{fontSize: '2rem'}}>🚚</div>
                     </div>
@@ -432,7 +432,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                             <div>
                                 <div style={{color: 'var(--text-secondary)', fontSize: '1rem', marginBottom: '8px'}}>Saldo Kas Tunai Saat Ini</div>
-                                <div style={{fontSize: '3rem', fontWeight: 'bold', color: 'var(--primary-color)'}}>Rp {Math.floor(Number(summary.totalCash || 0)).toLocaleString('id-ID')}</div>
+                                <div className="stat-number" style={{fontWeight: 'bold', color: 'var(--primary-color)'}}>Rp {Math.floor(Number(summary.totalCash || 0)).toLocaleString('id-ID')}</div>
                                 <div style={{color: 'var(--text-primary)', fontSize: '1rem', marginTop: '8px'}}>Total Profit Kotor: <span style={{fontWeight: 'bold'}}>Rp {Math.floor(Number(summary.totalProfit || 0)).toLocaleString('id-ID')}</span></div>
                             </div>
                             <div style={{fontSize: '4rem', opacity: 0.8}}>💰</div>
