@@ -279,6 +279,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
     return (
         <div style={{animation: 'fadeIn 0.5s ease-out', paddingBottom: '40px'}}>
             <div style={{display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px'}}>
+                <h1 style={{margin: 0, alignSelf: 'flex-start'}}>Control Center</h1>
                 <div style={{display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'space-between'}}>
                     {user.role === 'OWNER' && user.branch_id === null && (
                         <div style={{display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0}}>
@@ -328,8 +329,6 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                         <div className="icon">🌙</div>
                     </div>
                 </div>
-                
-                <h1 style={{margin: 0, alignSelf: 'flex-start'}}>Control Center</h1>
             </div>
             <div className="grid-responsive" style={{marginBottom: '24px'}}>
                 {/* Row 1: Stock Alerts */}
