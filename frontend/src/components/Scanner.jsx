@@ -33,7 +33,7 @@ const Scanner = ({ user }) => {
             }
             try {
                 // Fetch product details by SKU
-                const res = await axios.get(`http://localhost:5000/api/inventory`);
+                const res = await axios.get(`/api/inventory`);
                 const product = res.data.find(p => p.sku === result);
                 if (product) {
                     setScannedProduct(product);

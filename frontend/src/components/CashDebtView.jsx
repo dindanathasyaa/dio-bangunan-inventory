@@ -44,15 +44,15 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
     }, [activeBranch]);
 
     const fetchData = () => {
-        axios.get(`http://localhost:5000/api/cash?branch_id=${activeBranch}`).then(res => setTransactions(res.data.transactions || [])).catch(console.error);
-        axios.get(`http://localhost:5000/api/receivables?branch_id=${activeBranch}`).then(res => setReceivables(res.data)).catch(console.error);
-        axios.get(`http://localhost:5000/api/payables?branch_id=${activeBranch}`).then(res => setPayables(res.data)).catch(console.error);
-        axios.get(`http://localhost:5000/api/dashboard/summary?branch_id=${activeBranch}`).then(res => setSummary(res.data)).catch(console.error);
+        axios.get(`/api/cash?branch_id=${activeBranch}`).then(res => setTransactions(res.data.transactions || [])).catch(console.error);
+        axios.get(`/api/receivables?branch_id=${activeBranch}`).then(res => setReceivables(res.data)).catch(console.error);
+        axios.get(`/api/payables?branch_id=${activeBranch}`).then(res => setPayables(res.data)).catch(console.error);
+        axios.get(`/api/dashboard/summary?branch_id=${activeBranch}`).then(res => setSummary(res.data)).catch(console.error);
     };
 
     const handlePayReceivable = async (id, amount) => {
         try {
-            await axios.post('http://localhost:5000/api/receivables/pay', {
+            await axios.post('/api/receivables/pay', {
                 receivable_id: id,
                 amount,
                 branch_id: user.role === 'ADMIN' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : 1)
@@ -66,7 +66,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
 
     const handlePayPayable = async (id, amount) => {
         try {
-            await axios.post('http://localhost:5000/api/payables/pay', {
+            await axios.post('/api/payables/pay', {
                 payable_id: id,
                 amount,
                 branch_id: user.role === 'ADMIN' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : 1)
@@ -106,7 +106,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
     const handleSaveEditNota = async () => {
         if (!editNotaData || cart.length === 0) return;
         try {
-            await axios.post(`http://localhost:5000/api/receivables/${editNotaData.id}/add-items`, { items: cart });
+            await axios.post(`/api/receivables/${editNotaData.id}/add-items`, { items: cart });
             showToast("Berhasil menambahkan barang ke nota hutang!", "success");
             setEditNotaData(null);
             setCart([]);
@@ -119,7 +119,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
 
     const showTransactionDetail = async (cfId) => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/cash_flow/detail/${cfId}`);
+            const res = await axios.get(`/api/cash_flow/detail/${cfId}`);
             setDetailData(res.data);
             setShowDetailModal(true);
         } catch (error) {
@@ -131,7 +131,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
     const handleShowHistory = async (id, type) => {
         try {
             const endpoint = type === 'Receivable' ? `/api/receivables/${id}/history` : `/api/payables/${id}/history`;
-            const res = await axios.get(`http://localhost:5000${endpoint}`);
+            const res = await axios.get(`${endpoint}`);
             setHistoryData(res.data);
             setHistoryModalData({ id, type });
         } catch (error) {
@@ -143,7 +143,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
     const handlePrintDebt = async (r) => {
         if (r.sale_id > 0) {
             try {
-                const res = await axios.get(`http://localhost:5000/api/sales/${r.sale_id}/items`);
+                const res = await axios.get(`/api/sales/${r.sale_id}/items`);
                 setPrintDebtData({ ...r, items: res.data });
             } catch (error) {
                 console.error("Gagal memuat detail barang:", error);

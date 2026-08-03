@@ -32,7 +32,7 @@ const CategorySettings = () => {
 
     const fetchCategories = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/categories');
+            const res = await axios.get('/api/categories');
             setCategories(res.data);
         } catch (error) {
             console.error(error);
@@ -41,7 +41,7 @@ const CategorySettings = () => {
 
     const fetchLargeUnits = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/large_units');
+            const res = await axios.get('/api/large_units');
             setLargeUnits(res.data);
         } catch (error) {
             console.error(error);
@@ -50,7 +50,7 @@ const CategorySettings = () => {
 
     const fetchSmallUnits = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/small_units');
+            const res = await axios.get('/api/small_units');
             setSmallUnits(res.data);
         } catch (error) {
             console.error(error);
@@ -68,7 +68,7 @@ const CategorySettings = () => {
         setLoading(true);
         setMessage('');
         try {
-            await axios.post('http://localhost:5000/api/categories', {
+            await axios.post('/api/categories', {
                 name,
                 min_stock: minStock,
                 max_stock: maxStock
@@ -89,7 +89,7 @@ const CategorySettings = () => {
     const handleUpdate = async (id, newMin, newMax) => {
         try {
             const cat = categories.find(c => c.id === id);
-            await axios.put(`http://localhost:5000/api/categories/${id}`, {
+            await axios.put(`/api/categories/${id}`, {
                 name: cat.name,
                 min_stock: newMin,
                 max_stock: newMax
@@ -109,7 +109,7 @@ const CategorySettings = () => {
             onConfirm: async () => {
                 setConfirmModal({ isOpen: false, message: '', onConfirm: null });
                 try {
-                    await axios.delete(`http://localhost:5000/api/categories/${id}`);
+                    await axios.delete(`/api/categories/${id}`);
                     fetchCategories();
                     showAlert('Kategori berhasil dihapus');
                 } catch (error) {
@@ -126,7 +126,7 @@ const CategorySettings = () => {
         setUnitLoading(true);
         setUnitMessage('');
         try {
-            await axios.post('http://localhost:5000/api/large_units', {
+            await axios.post('/api/large_units', {
                 name: unitName,
                 default_multiplier: unitMultiplier
             });
@@ -144,7 +144,7 @@ const CategorySettings = () => {
 
     const handleUnitUpdate = async (id, newMultiplier) => {
         try {
-            await axios.put(`http://localhost:5000/api/large_units/${id}`, {
+            await axios.put(`/api/large_units/${id}`, {
                 default_multiplier: newMultiplier
             });
             fetchLargeUnits();
@@ -160,7 +160,7 @@ const CategorySettings = () => {
         setSmallUnitLoading(true);
         setSmallUnitMessage('');
         try {
-            await axios.post('http://localhost:5000/api/small_units', {
+            await axios.post('/api/small_units', {
                 name: smallUnitName
             });
             setSmallUnitMessage('Satuan tunggal berhasil ditambahkan!');
@@ -176,7 +176,7 @@ const CategorySettings = () => {
 
     const handleSmallUnitUpdate = async (id, newName) => {
         try {
-            await axios.put(`http://localhost:5000/api/small_units/${id}`, {
+            await axios.put(`/api/small_units/${id}`, {
                 name: newName
             });
             fetchSmallUnits();
@@ -194,7 +194,7 @@ const CategorySettings = () => {
             onConfirm: async () => {
                 setConfirmModal({ isOpen: false, message: '', onConfirm: null });
                 try {
-                    await axios.delete(`http://localhost:5000/api/large_units/${id}`);
+                    await axios.delete(`/api/large_units/${id}`);
                     fetchLargeUnits();
                     showAlert('Satuan besar berhasil dihapus');
                 } catch (error) {
@@ -213,7 +213,7 @@ const CategorySettings = () => {
             onConfirm: async () => {
                 setConfirmModal({ isOpen: false, message: '', onConfirm: null });
                 try {
-                    await axios.delete(`http://localhost:5000/api/small_units/${id}`);
+                    await axios.delete(`/api/small_units/${id}`);
                     fetchSmallUnits();
                     showAlert('Satuan tunggal berhasil dihapus');
                 } catch (error) {

@@ -41,8 +41,8 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
     const fetchData = async () => {
         try {
             const [delRes, invRes] = await Promise.all([
-                axios.get(`http://localhost:5000/api/deliveries?branch_id=${activeBranch}`),
-                axios.get(`http://localhost:5000/api/inventory?branch_id=${activeBranch === 'all' ? 1 : activeBranch}`)
+                axios.get(`/api/deliveries?branch_id=${activeBranch}`),
+                axios.get(`/api/inventory?branch_id=${activeBranch === 'all' ? 1 : activeBranch}`)
             ]);
             setDeliveries(delRes.data);
             setInventory(invRes.data);
@@ -103,7 +103,7 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
         
         setLoading(true);
         try {
-            await axios.post('http://localhost:5000/api/orders', {
+            await axios.post('/api/orders', {
                 branch_id: user.role === 'ADMIN' ? user.branch_id : (activeBranch === 'all' ? 1 : activeBranch),
                 customer_name: customerName,
                 phone,
@@ -138,7 +138,7 @@ const OrderDeliveryView = ({ user, activeBranch }) => {
             return;
         }
         try {
-            await axios.put(`http://localhost:5000/api/deliveries/${driverPrompt.deliveryId}`, { 
+            await axios.put(`/api/deliveries/${driverPrompt.deliveryId}`, { 
                 driver_name: driverPrompt.currentDriver, 
                 status: driverPrompt.newStatus 
             });

@@ -53,7 +53,7 @@ const PurchaseView = ({ user, activeBranch, branches, refreshData }) => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/categories');
+                const res = await axios.get('/api/categories');
                 setDbCategories(res.data);
             } catch(e) { console.error(e); }
         };
@@ -68,7 +68,7 @@ const PurchaseView = ({ user, activeBranch, branches, refreshData }) => {
     const fetchInventory = async () => {
         const branchToFetch = user.role === 'ADMIN' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : selectedBranch);
         try {
-            const res = await axios.get(`http://localhost:5000/api/inventory?branch_id=${branchToFetch}`);
+            const res = await axios.get(`/api/inventory?branch_id=${branchToFetch}`);
             setInventory(res.data);
         } catch (error) {
             console.error("Gagal mengambil inventory:", error);
@@ -130,7 +130,7 @@ const PurchaseView = ({ user, activeBranch, branches, refreshData }) => {
         setLoading(true);
         try {
             const branchId = user.role === 'ADMIN' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : selectedBranch);
-            await axios.post('http://localhost:5000/api/purchases', {
+            await axios.post('/api/purchases', {
                 branch_id: branchId,
                 supplier_name: supplierName,
                 payment_method: paymentMethod, // 'Kredit' or 'Cash'

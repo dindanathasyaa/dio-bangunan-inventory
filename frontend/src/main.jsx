@@ -2,6 +2,11 @@ import React, { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
+import axios from 'axios';
+
+// Konfigurasi dinamis agar Axios memanggil API ke IP yang sama dengan alamat frontend
+// Namun berjalan di port 5000
+axios.defaults.baseURL = `http://${window.location.hostname}:5000`;
 
 class ErrorBoundary extends React.Component {
   constructor(props) {

@@ -19,7 +19,7 @@ const DailyRecapView = ({ user, activeBranch }) => {
 
     const fetchRecap = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/sales/recap?branch_id=${activeBranch}`);
+            const res = await axios.get(`/api/sales/recap?branch_id=${activeBranch}`);
             setRecapData(res.data);
         } catch (error) {
             console.error(error);
@@ -32,7 +32,7 @@ const DailyRecapView = ({ user, activeBranch }) => {
             const d = new Date(date);
             const pad = n => n.toString().padStart(2, '0');
             const dateStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-            const res = await axios.get(`http://localhost:5000/api/sales?branch_id=${activeBranch}&date=${dateStr}`);
+            const res = await axios.get(`/api/sales?branch_id=${activeBranch}&date=${dateStr}`);
             setDetailData(res.data);
             setDetailDate(date);
             setShowDetailModal(true);

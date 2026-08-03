@@ -13,7 +13,7 @@ const CustomersView = ({ user }) => {
     const fetchCustomers = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('http://localhost:5000/api/customers');
+            const res = await axios.get('/api/customers');
             setCustomers(res.data);
         } catch (error) {
             console.error(error);

@@ -21,7 +21,7 @@ const DeliveryOrderView = ({ user, activeBranch, branches }) => {
     const fetchDO = async () => {
         setLoading(true);
         try {
-            const res = await axios.get(`http://localhost:5000/api/sales/delivery-orders?branch_id=${activeBranch}`);
+            const res = await axios.get(`/api/sales/delivery-orders?branch_id=${activeBranch}`);
             setOrders(res.data);
         } catch (error) {
             console.error('Failed to fetch DO:', error);
@@ -39,7 +39,7 @@ const DeliveryOrderView = ({ user, activeBranch, branches }) => {
         const id = confirmModal.orderId;
         setConfirmModal({ show: false, orderId: null });
         try {
-            await axios.put(`http://localhost:5000/api/sales/${id}/delivery-status`, {
+            await axios.put(`/api/sales/${id}/delivery-status`, {
                 delivery_status: 'Sudah Diambil'
             });
             showToast('Barang berhasil diambil. Stok telah terpotong.', 'success');

@@ -57,7 +57,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
 
     const fetchCustomers = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/customers');
+            const res = await axios.get('/api/customers');
             setCustomers(res.data);
         } catch (error) {
             console.error('Failed to fetch customers:', error);
@@ -66,7 +66,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
 
     const fetchProducts = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/inventory?branch_id=${activeBranch}`);
+            const res = await axios.get(`/api/inventory?branch_id=${activeBranch}`);
             setProducts(res.data);
         } catch (error) {
             console.error(error);
@@ -75,7 +75,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
 
     const fetchRecap = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/sales/recap?branch_id=${activeBranch}`);
+            const res = await axios.get(`/api/sales/recap?branch_id=${activeBranch}`);
             setRecapData(res.data);
             setShowRecapModal(true);
         } catch (error) {
@@ -89,7 +89,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
             const d = new Date(date);
             const pad = n => n.toString().padStart(2, '0');
             const dateStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-            const res = await axios.get(`http://localhost:5000/api/sales?branch_id=${activeBranch}&date=${dateStr}`);
+            const res = await axios.get(`/api/sales?branch_id=${activeBranch}&date=${dateStr}`);
             setDetailData(res.data);
             setDetailDate(date);
             setShowDetailModal(true);
@@ -177,7 +177,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
         if (!newCustomerName) return showToast('Nama pelanggan wajib diisi', 'warning');
         setLoading(true);
         try {
-            const res = await axios.post('http://localhost:5000/api/customers', {
+            const res = await axios.post('/api/customers', {
                 name: newCustomerName,
                 phone: newCustomerPhone
             });
@@ -213,7 +213,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                 unit_name: item.unit_name || null
             }));
 
-            const res = await axios.post('http://localhost:5000/api/sales', {
+            const res = await axios.post('/api/sales', {
                 branch_id: user.role === 'ADMIN' ? user.branch_id : (activeBranch === 'all' ? 1 : activeBranch),
                 customer_name: customerName,
                 customer_id: selectedCustomerId || null,

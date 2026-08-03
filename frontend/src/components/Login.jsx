@@ -10,7 +10,7 @@ const Login = ({ setUser }) => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:5000/api/login', { username, password });
+            const response = await axios.post('/api/login', { username, password });
             localStorage.setItem('user', JSON.stringify(response.data));
             setUser(response.data);
         } catch (err) {

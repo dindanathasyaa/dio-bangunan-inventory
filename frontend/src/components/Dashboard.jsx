@@ -38,7 +38,7 @@ const Dashboard = ({ user, setUser }) => {
     }, [theme]);
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/branches')
+        axios.get('/api/branches')
             .then(res => setBranches(res.data))
             .catch(console.error);
     }, []);
@@ -52,7 +52,7 @@ const Dashboard = ({ user, setUser }) => {
 
     const fetchData = async () => {
         try {
-            const invRes = await axios.get(`http://localhost:5000/api/inventory?branch_id=${activeBranch}`);
+            const invRes = await axios.get(`/api/inventory?branch_id=${activeBranch}`);
             setInventory(invRes.data);
         } catch (error) {
             console.error(error);
@@ -220,7 +220,7 @@ const Dashboard = ({ user, setUser }) => {
                                         return;
                                     }
                                     try {
-                                        await axios.post('http://localhost:5000/api/change-password', {
+                                        await axios.post('/api/change-password', {
                                             user_id: user.id,
                                             old_password: oldPassword,
                                             new_password: newPassword
@@ -252,7 +252,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
     const [isBranchDropdownOpen, setIsBranchDropdownOpen] = useState(false);
 
     useEffect(() => {
-        axios.get(`http://localhost:5000/api/dashboard/summary?branch_id=${activeBranch}`)
+        axios.get(`/api/dashboard/summary?branch_id=${activeBranch}`)
             .then(res => setSummary(res.data))
             .catch(console.error);
     }, [activeBranch]);
@@ -474,16 +474,16 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
     }, [messageModal]);
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/categories').then(res => setDbCategories(res.data)).catch(err => console.error(err));
-        axios.get('http://localhost:5000/api/large_units').then(res => setLargeUnitsList(res.data)).catch(err => console.error(err));
-        axios.get('http://localhost:5000/api/small_units').then(res => {
+        axios.get('/api/categories').then(res => setDbCategories(res.data)).catch(err => console.error(err));
+        axios.get('/api/large_units').then(res => setLargeUnitsList(res.data)).catch(err => console.error(err));
+        axios.get('/api/small_units').then(res => {
             setSmallUnitsList(res.data);
         }).catch(err => console.error(err));
     }, []);
 
     useEffect(() => {
         if (showModal && !newItem.sku) {
-            axios.get('http://localhost:5000/api/next-sku')
+            axios.get('/api/next-sku')
                 .then(res => setNewItem(prev => ({...prev, sku: res.data.sku})))
                 .catch(console.error);
         }
@@ -506,7 +506,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
         let finalUnit = newItem.unit;
 
         try {
-            await axios.post('http://localhost:5000/api/inventory', { ...newItem, unit: finalUnit, stock: lembar, variants: newItem.hasVariants ? newItem.variants : [], conversions: newItem.hasConversions ? newItem.conversions : [] });
+            await axios.post('/api/inventory', { ...newItem, unit: finalUnit, stock: lembar, variants: newItem.hasVariants ? newItem.variants : [], conversions: newItem.hasConversions ? newItem.conversions : [] });
             setShowModal(false);
             setNewItem({ sku: '', name: '', category_id: '', unit: '', price: '', base_price: '', stock: 0, min_stock: 5, max_stock: 50, branch_id: user.role === 'ADMIN' ? user.branch_id : (activeBranch !== 'all' ? activeBranch : 1), hasVariants: false, variants: [{ name: '', stock: 0 }], hasConversions: false, conversions: [{ name: '', multiplier: '', price: '' }] });
             setMajemukType('');
@@ -924,7 +924,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                         </div>
                         <form onSubmit={(e) => {
                             e.preventDefault();
-                            axios.put(`http://localhost:5000/api/inventory/${editingData.id}`, {
+                            axios.put(`/api/inventory/${editingData.id}`, {
                                 name: editingData.name,
                                 stock: editingData.stock,
                                 min_stock: editingData.min_stock,

@@ -14,7 +14,7 @@ const StockAlertView = ({ type, activeBranch }) => {
     const fetchAlerts = async () => {
         setLoading(true);
         try {
-            const dssRes = await axios.get(`http://localhost:5000/api/dss/recommendations?branch_id=${activeBranch}`);
+            const dssRes = await axios.get(`/api/dss/recommendations?branch_id=${activeBranch}`);
             if (type === 'min') {
                 setAlerts(dssRes.data.ropAlerts.sort((a, b) => a.current_stock - b.current_stock));
             } else if (type === 'max') {
