@@ -84,10 +84,10 @@ const Dashboard = ({ user, setUser }) => {
                     <button className="sidebar-toggle" onClick={toggleSidebar} style={{ position: 'absolute', top: '16px', right: '16px', width: '36px', height: '36px', borderRadius: '8px', zIndex: 10 }}>❮</button>
                 )}
                 <div className="logo-container" style={{paddingBottom: '0', display: 'flex', justifyContent: 'center', marginTop: '40px', marginBottom: '0'}}>
-                    <img src="/logo-transparent.png" alt="Dio Bangunan Logo" className="logo-img" style={{width: '80%', mixBlendMode: 'multiply', display: 'block'}} />
+                    <img src="/logo-transparent.png" alt="Dio Bangunan Logo" className="logo-img" style={{width: '80%', display: 'block'}} />
                 </div>
                 
-                <nav style={{display: 'flex', flexDirection: 'column', marginTop: '4px', flex: 1, overflowY: 'auto', overflowX: 'hidden'}}>
+                <nav onClick={(e) => { if (window.innerWidth <= 768 && e.target.closest('a')) setIsSidebarOpen(false); }} style={{display: 'flex', flexDirection: 'column', marginTop: '4px', flex: 1, overflowY: 'auto', overflowX: 'hidden'}}>
                     <div style={{fontSize: '0.8rem', color: 'var(--text-secondary)', padding: '12px 20px', fontWeight: 'bold', letterSpacing: '1px'}}>MAIN MENU</div>
                     {user.role !== 'ADMIN' && <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>Control Center</Link>}
                     {user.role !== 'ADMIN' && <Link to="/inventory" className={`nav-link ${location.pathname === '/inventory' ? 'active' : ''}`}>Data Inventory</Link>}
