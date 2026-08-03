@@ -610,6 +610,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                 ))}
                             </div>
                         )}
+                    </div>
                     <button className="btn btn-primary" onClick={() => setShowModal(true)} style={{whiteSpace: 'nowrap'}}>+ Tambah Barang</button>
                 </div>
             </div>
