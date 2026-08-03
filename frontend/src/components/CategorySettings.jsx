@@ -284,57 +284,7 @@ const CategorySettings = () => {
                 </tbody>
             </table>
 
-            <hr style={{margin: '40px 0', borderColor: 'var(--border-color)'}} />
 
-            <h2 style={{marginBottom: '20px', color: 'var(--text-primary)'}}>Pengaturan Satuan Besar</h2>
-            
-            <form onSubmit={handleUnitSubmit} style={{display: 'flex', gap: '16px', marginBottom: '32px', alignItems: 'flex-end', flexWrap: 'wrap'}}>
-                <div>
-                    <label style={{display: 'block', color: 'var(--text-secondary)', marginBottom: '8px'}}>Nama Satuan</label>
-                    <input type="text" className="input-field" value={unitName} onChange={e => setUnitName(e.target.value)} required placeholder="Misal: Gross, Bal" />
-                </div>
-                <div>
-                    <label style={{display: 'block', color: 'var(--text-secondary)', marginBottom: '8px'}}>Nilai Pengali (Isi)</label>
-                    <input type="number" className="input-field" value={unitMultiplier} onChange={e => setUnitMultiplier(e.target.value)} required min="1" />
-                </div>
-                <button type="submit" className="btn btn-primary" disabled={unitLoading}>
-                    {unitLoading ? 'Menyimpan...' : 'Tambah Satuan'}
-                </button>
-            </form>
-            
-            {unitMessage && <div style={{marginBottom: '16px', color: 'var(--success-color)'}}>{unitMessage}</div>}
-
-            <table className="data-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nama Satuan</th>
-                        <th>Nilai Pengali Default</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {largeUnits.map(unit => (
-                        <tr key={unit.id}>
-                            <td>{unit.id}</td>
-                            <td>{unit.name}</td>
-                            <td>
-                                <input type="number" className="input-field" defaultValue={unit.default_multiplier} id={`multiplier-${unit.id}`} style={{width: '100px', padding: '4px 8px'}} />
-                            </td>
-                            <td style={{display: 'flex', gap: '8px'}}>
-                                <button className="btn btn-secondary" onClick={() => handleUnitUpdate(unit.id, document.getElementById(`multiplier-${unit.id}`).value)}>
-                                    Simpan
-                                </button>
-                                <button className="btn btn-danger" onClick={() => handleDeleteLargeUnit(unit.id)} style={{background: 'var(--danger-color, #ef4444)', color: 'white'}}>
-                                    Hapus
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-
-            <hr style={{margin: '40px 0', borderColor: 'var(--border-color)'}} />
 
             <h2 style={{marginBottom: '20px', color: 'var(--text-primary)'}}>Pengaturan Satuan Tunggal</h2>
             
