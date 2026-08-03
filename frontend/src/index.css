@@ -1236,6 +1236,7 @@ p {
   .input-field { padding: 10px 14px !important; font-size: 0.9rem !important; }
   .custom-select-3d { padding: 10px 30px 10px 14px !important; font-size: 0.9rem !important; }
   .data-table { min-width: 100% !important; width: 100% !important; table-layout: fixed; }
+  .data-table.wide-table { min-width: 800px !important; table-layout: auto; }
   .data-table th, .data-table td { padding: 6px 2px !important; font-size: 0.55rem !important; word-wrap: break-word; overflow-wrap: break-word; }
   .stat-number { font-size: 1.5rem !important; }
   .form-group { width: 100% !important; min-width: 0 !important; margin-bottom: 12px !important; }

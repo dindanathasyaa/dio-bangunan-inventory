@@ -659,7 +659,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                     <div className="flex-responsive" style={{justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
                         <h2>Daftar Piutang Pembeli</h2>
                     </div>
-                    <table className="data-table">
+                    <table className="data-table wide-table">
                         <thead>
                             <tr>
                                 <th>Nama Pelanggan</th>
@@ -718,7 +718,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
             {view === 'Payables' && (
                 <div className="glass-panel table-container">
                     <h2>Daftar Hutang Toko (Ke Supplier)</h2>
-                    <table className="data-table">
+                    <table className="data-table wide-table">
                         <thead>
                             <tr>
                                 <th>Nama Supplier / Pabrik</th>
