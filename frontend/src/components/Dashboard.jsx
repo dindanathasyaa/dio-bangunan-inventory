@@ -278,7 +278,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
 
     return (
         <div style={{animation: 'fadeIn 0.5s ease-out', paddingBottom: '40px'}}>
-            <div className="flex-responsive" style={{justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
+            <div className="flex-responsive header-mobile-reverse" style={{justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
                 <h1 style={{margin: 0}}>Control Center</h1>
                 
                 <div style={{display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'space-between'}}>
