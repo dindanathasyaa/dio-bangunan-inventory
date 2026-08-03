@@ -1289,20 +1289,12 @@ p {
   .mobile-card-table td > div, .mobile-card-table td > button {
     text-align: right;
   }
-  .mobile-card-table td[data-label="Aksi"] > div {
+  .mobile-card-table td > div {
     display: flex;
     flex-direction: column;
     width: 100%;
   }
-  .mobile-card-table td[data-label="Aksi"] button,
-  .mobile-card-table td[data-label="Cetak"] button {
+  .mobile-card-table td[data-label="Aksi"] button {
     text-align: center !important;
-  }
-  .mobile-card-table td[data-label="Cetak"] {
-    flex-direction: column !important;
-    align-items: stretch !important;
-  }
-  .mobile-card-table td[data-label="Cetak"]::before {
-    display: none !important;
   }
 }

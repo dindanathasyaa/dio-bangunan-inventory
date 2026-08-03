@@ -668,7 +668,6 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                 <th>Sisa Tagihan</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
-                                <th>Cetak Struk</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -702,9 +701,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                         <button className="btn btn-outline" style={{borderColor: '#3b82f6', color: '#3b82f6', marginTop: r.status !== 'Lunas' ? '8px' : '0', width: '100%'}} onClick={() => {
                                             handleShowHistory(r.id, 'Receivable');
                                         }}>Riwayat Cicilan</button>
-                                    </td>
-                                    <td data-label="Cetak">
-                                        <button className="btn btn-outline" style={{borderColor: '#3b82f6', color: '#3b82f6', width: '100%', marginTop: '8px'}} onClick={() => handlePrintDebt(r)}>
+                                        <button className="btn btn-outline" style={{borderColor: 'black', color: 'black', width: '100%', marginTop: '8px'}} onClick={() => handlePrintDebt(r)}>
                                             Cetak
                                         </button>
                                     </td>
