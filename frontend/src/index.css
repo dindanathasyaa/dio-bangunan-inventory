@@ -998,3 +998,16 @@ p {
     overflow-x: auto !important;
   }
 }
+
+@media (max-width: 768px) {
+  .desktop-toggle {
+    display: none !important;
+  }
+  .mobile-header {
+    display: flex !important;
+  }
+  .content-wrapper {
+    padding: 0 16px !important;
+    padding-top: 16px !important;
+  }
+}

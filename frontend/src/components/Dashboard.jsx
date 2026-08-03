@@ -118,12 +118,17 @@ const Dashboard = ({ user, setUser }) => {
                 </div>
             </aside>
             
-            <main className="main-content">
+            <main className="main-content" style={{ display: 'flex', flexDirection: 'column' }}>
                 {!isSidebarOpen && (
-                    <button className="sidebar-toggle" onClick={toggleSidebar} style={{ position: 'absolute', top: '24px', left: '24px', width: '40px', height: '40px', borderRadius: '8px', zIndex: 100 }}>☰</button>
+                    <button className="sidebar-toggle desktop-toggle" onClick={toggleSidebar} style={{ position: 'absolute', top: '24px', left: '24px', width: '40px', height: '40px', borderRadius: '8px', zIndex: 100 }}>☰</button>
                 )}
                 
-                <div style={{height: '100%', padding: '0 24px', paddingTop: '16px'}}>
+                <div className="mobile-header" style={{ display: 'none', alignItems: 'center', padding: '16px 16px 0', gap: '16px', flexShrink: 0 }}>
+                    <button onClick={toggleSidebar} style={{ width: '40px', height: '40px', borderRadius: '8px', background: 'var(--primary-color)', color: 'white', border: 'none', fontSize: '1.2rem', cursor: 'pointer' }}>☰</button>
+                    <h2 style={{margin: 0, fontSize: '1.2rem', color: 'var(--primary-color)'}}>Dio Bangunan</h2>
+                </div>
+                
+                <div className="content-wrapper" style={{flex: 1, padding: '0 24px', paddingTop: '16px', overflowY: 'auto'}}>
                     <Routes>
                         <Route path="/" element={user.role === 'ADMIN' ? <Navigate to="/sales" replace /> : <ControlCenter user={user} activeBranch={activeBranch} setActiveBranch={setActiveBranch} branches={branches} />} />
                         <Route path="/inventory" element={user.role === 'ADMIN' ? <Navigate to="/sales" replace /> : <InventoryView inventory={inventory} refreshData={fetchData} user={user} activeBranch={activeBranch} branches={branches} />} />
