@@ -119,6 +119,7 @@ p {
 }
 
 .sidebar {
+  position: relative;
   width: 260px;
   background: var(--sidebar-bg);
   backdrop-filter: blur(16px);

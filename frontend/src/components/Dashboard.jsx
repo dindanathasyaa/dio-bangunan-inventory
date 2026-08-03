@@ -79,7 +79,7 @@ const Dashboard = ({ user, setUser }) => {
 
     return (
         <div className="app-container">
-            <aside className={`sidebar ${!isSidebarOpen ? 'collapsed' : ''}`} style={{position: 'relative'}}>
+            <aside className={`sidebar ${!isSidebarOpen ? 'collapsed' : ''}`}>
                 {isSidebarOpen && (
                     <button className="sidebar-toggle" onClick={toggleSidebar} style={{ position: 'absolute', top: '16px', right: '16px', width: '36px', height: '36px', borderRadius: '8px', zIndex: 10 }}>❮</button>
                 )}
