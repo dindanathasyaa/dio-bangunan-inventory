@@ -1011,3 +1011,18 @@ p {
     padding-top: 16px !important;
   }
 }
+
+/* Responsive Utility Classes */
+.flex-responsive { display: flex; gap: 16px; align-items: flex-start; }
+.flex-responsive-center { display: flex; gap: 16px; align-items: center; }
+.grid-responsive { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+@media (max-width: 768px) {
+  .flex-responsive, .flex-responsive-center { flex-direction: column; align-items: stretch; gap: 12px !important; }
+  .grid-responsive { grid-template-columns: 1fr !important; }
+  .w-full-mobile { width: 100% !important; min-width: 0 !important; max-width: 100% !important; flex: 1 1 auto !important; }
+  .stack-mobile { display: flex; flex-direction: column; gap: 12px; }
+  .hide-on-mobile { display: none !important; }
+  .mb-mobile { margin-bottom: 12px !important; }
+  .mt-mobile { margin-top: 12px !important; }
+  .form-group { width: 100% !important; min-width: 0 !important; margin-bottom: 12px !important; }
+}

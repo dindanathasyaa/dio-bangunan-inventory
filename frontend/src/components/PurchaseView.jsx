@@ -168,7 +168,7 @@ const PurchaseView = ({ user, activeBranch, branches, refreshData }) => {
                     <span>{messageModal}</span>
                 </div>
             )}
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
+            <div className="flex-responsive" style={{justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
                 <h1 style={{margin: 0}}>Pencatatan Pembelian</h1>
                 <button className="btn btn-outline" onClick={() => navigate('/')}>Kembali ke Dashboard</button>
             </div>
@@ -287,7 +287,7 @@ const PurchaseView = ({ user, activeBranch, branches, refreshData }) => {
                     <input type="text" className="input-field" value={newItem.unit} onChange={e => setNewItem({...newItem, unit: e.target.value})} placeholder="Contoh: Sak, Lembar, Kg, dll" />
                 </div>
 
-                <div style={{display: 'flex', justifyContent: 'flex-end', gap: '16px', marginTop: '24px', marginBottom: '24px'}}>
+                <div className="flex-responsive" style={{justifyContent: 'flex-end', marginTop: '24px', marginBottom: '24px'}}>
                     <div className="form-group" style={{marginBottom: 0, minWidth: '150px'}}>
                         <label>Jumlah Beli</label>
                         <input type="number" className="input-field" value={newItem.qty} onChange={e => setNewItem({...newItem, qty: e.target.value})} placeholder="0" />
@@ -337,7 +337,7 @@ const PurchaseView = ({ user, activeBranch, branches, refreshData }) => {
                 </div>
             </div>
 
-            <div style={{display: 'flex', gap: '16px', justifyContent: 'flex-end'}}>
+            <div className="flex-responsive" style={{justifyContent: 'flex-end'}}>
                 <button className="btn btn-outline" style={{padding: '16px 24px', fontSize: '1.1rem'}} onClick={() => submitPurchase('Kredit')} disabled={loading}>
                     {loading ? 'Memproses...' : 'Simpan Catatan Hutang'}
                 </button>

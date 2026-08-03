@@ -253,7 +253,7 @@ const Dashboard = ({ user, setUser }) => {
                             </button>
                         </div>
 
-                        <div style={{display: 'flex', gap: '12px', justifyContent: 'flex-end'}}>
+                        <div className="flex-responsive" style={{justifyContent: 'flex-end'}}>
                             <button className="btn btn-outline" onClick={() => { setShowSettingsModal(false); setPasswordMsg(null); setOldPassword(''); setNewPassword(''); setConfirmPassword(''); }}>Tutup</button>
                         </div>
                     </div>
@@ -332,7 +332,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                 </div>
             </div>
             <p style={{color: 'var(--text-secondary)', marginBottom: '32px'}}>Ringkasan Cepat & Pintasan Navigasi</p>
-            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px'}}>
+            <div className="grid-responsive" style={{marginBottom: '24px'}}>
                 {/* Row 1: Stock Alerts */}
                 <div className="glass-panel" style={{borderTop: '4px solid var(--danger-color)', cursor: 'pointer', transition: 'transform 0.2s', height: 'fit-content'}} onClick={() => navigate('/alert-min')} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -389,7 +389,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                 </div>
             </div>
 
-            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px', marginBottom: '24px'}}>
+            <div className="grid-responsive" style={{marginBottom: '24px'}}>
                 {user.role === 'OWNER' && (
                     <>
                         <div className="glass-panel" style={{borderTop: '4px solid #10b981', cursor: 'pointer', transition: 'transform 0.2s', height: 'fit-content'}} onClick={() => navigate('/cash', { state: { view: 'Receivables' } })} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
@@ -577,18 +577,18 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                     <span>{messageModal}</span>
                 </div>
             )}
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
+            <div className="flex-responsive" style={{justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
                 <h1 style={{margin: 0}}>Data Inventory</h1>
-                <div style={{display: 'flex', gap: '16px', alignItems: 'center'}}>
+                <div className="flex-responsive w-full-mobile" style={{alignItems: 'center'}}>
                     <input 
                         type="text" 
-                        className="input-field" 
+                        className="input-field w-full-mobile" 
                         placeholder="Cari barang atau kode..." 
                         value={search}
                         onChange={e => setSearch(e.target.value)}
                         style={{marginBottom: 0, minWidth: '250px'}}
                     />
-                    <div className="custom-dropdown-container">
+                    <div className="custom-dropdown-container w-full-mobile">
                         <div 
                             className={`custom-select-3d ${isDropdownOpen ? 'active' : ''}`}
                             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -597,7 +597,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                             <span>{selectedCategory}</span>
                         </div>
                         {isDropdownOpen && (
-                            <div className="custom-dropdown-menu">
+                            <div className="custom-dropdown-menu w-full-mobile">
                                 {categories.map(cat => (
                                     <div 
                                         key={cat} 
@@ -617,7 +617,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                 </div>
             </div>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px', paddingBottom: '20px' }}>
+            <div className="grid-responsive" style={{ paddingBottom: '20px' }}>
                 {filteredInventory.map(item => {
                     const isEmpty = Math.floor(item.stock) === 0;
                     const isLow = Math.floor(item.stock) <= item.min_stock;
@@ -780,7 +780,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                 </div>
                             </div>
 
-                            <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
+                            <div className="flex-responsive" style={{marginBottom: '16px'}}>
                                 <div className="form-group" style={{flex: 1}}>
                                     <label>Satuan (Terkecil)</label>
                                     <div className="custom-dropdown-container" style={{position: 'relative', width: '100%', zIndex: isSmallUnitDropdownOpen ? 10 : 1}}>
@@ -823,7 +823,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                     <div style={{marginTop: '16px'}}>
                                         <div style={{fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '12px'}}>Tambahkan opsi pecahan/satuan jual yang akan memotong dari stok induk di atas. (Contoh: 1/4 Meter dengan pengali 0.25, atau 1 Dus dengan pengali 12)</div>
                                         {newItem.conversions.map((conv, index) => (
-                                            <div key={index} style={{display: 'flex', gap: '12px', marginBottom: '12px', alignItems: 'flex-end', background: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #e5e7eb'}}>
+                                            <div key={index} className="flex-responsive" style={{marginBottom: '12px', alignItems: 'flex-end', background: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #e5e7eb'}}>
                                                 <div className="form-group" style={{flex: 2, marginBottom: 0}}>
                                                     <label>Nama Satuan Jual</label>
                                                     <input type="text" className="input-field" value={conv.name} onChange={e => {
@@ -863,12 +863,12 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                 )}
                             </div>
 
-                            <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
+                            <div className="flex-responsive" style={{marginBottom: '16px'}}>
                                 <div className="form-group" style={{flex: 1}}><label>Batas Maksimal Stok</label><input type="number" className="input-field" value={newItem.max_stock} onChange={e => setNewItem({...newItem, max_stock: e.target.value})} required /></div>
                                 <div className="form-group" style={{flex: 1}}><label>Batas Minimum Stok</label><input type="number" className="input-field" value={newItem.min_stock} onChange={e => setNewItem({...newItem, min_stock: e.target.value})} required /></div>
                             </div>
 
-                            <div style={{display: 'flex', gap: '16px', marginBottom: '16px'}}>
+                            <div className="flex-responsive" style={{marginBottom: '16px'}}>
                                 <div className="form-group" style={{flex: 1}}><label>Harga Jual (Rp)</label><CurrencyInput className="input-field" value={newItem.price} onChange={e => setNewItem({...newItem, price: e.target.value})} required /></div>
                                 <div className="form-group" style={{flex: 1}}><label>Modal Barang (Rp)</label><CurrencyInput className="input-field" value={newItem.base_price} onChange={e => setNewItem({...newItem, base_price: e.target.value})} required /></div>
                             </div>
@@ -882,7 +882,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                     <div style={{marginTop: '16px'}}>
                                         <div style={{fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '12px'}}>Jika punya varian, stok akan dihitung per varian. Kolom "Stok" utama di atas akan diabaikan.</div>
                                         {newItem.variants.map((variant, index) => (
-                                            <div key={index} style={{display: 'flex', gap: '12px', marginBottom: '12px', alignItems: 'flex-end', background: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #e5e7eb'}}>
+                                            <div key={index} className="flex-responsive" style={{marginBottom: '12px', alignItems: 'flex-end', background: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #e5e7eb'}}>
                                                 <div className="form-group" style={{flex: 2, marginBottom: 0}}>
                                                     <label>Nama Varian</label>
                                                     <input type="text" className="input-field" value={variant.name} onChange={e => {
@@ -922,9 +922,9 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                 )}
                             </div>
                             
-                            <div style={{display: 'flex', gap: '12px', marginTop: '24px'}}>
-                                <button type="button" className="btn btn-outline" style={{flex: 1}} onClick={() => setShowModal(false)}>Batal</button>
-                                <button type="submit" className="btn" style={{flex: 1}}>Simpan Barang</button>
+                            <div className="flex-responsive" style={{marginTop: '24px'}}>
+                                <button type="button" className="btn btn-outline" style={{flex: 1, width: '100%'}} onClick={() => setShowModal(false)}>Batal</button>
+                                <button type="submit" className="btn" style={{flex: 1, width: '100%'}}>Simpan Barang</button>
                             </div>
                         </form>
                     </div>
@@ -961,7 +961,7 @@ const InventoryView = ({ inventory, refreshData, user, activeBranch, branches })
                                 <label>Nama Barang</label>
                                 <input type="text" className="input-field" value={editingData.name} onChange={e => setEditingData({...editingData, name: e.target.value})} required />
                             </div>
-                            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginBottom: '24px'}}>
+                            <div className="grid-responsive" style={{marginBottom: '24px'}}>
                                 <div className="form-group">
                                     <label>Stok Saat Ini</label>
                                     <input type="number" className="input-field" value={editingData.stock === '' ? '' : Number(editingData.stock)} onChange={e => setEditingData({...editingData, stock: e.target.value === '' ? '' : parseInt(e.target.value)})} required />

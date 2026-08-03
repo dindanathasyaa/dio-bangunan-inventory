@@ -29,9 +29,9 @@ const CustomersView = ({ user }) => {
 
     return (
         <div style={{ animation: 'fadeIn 0.5s ease-out', display: 'flex', flexDirection: 'column', height: '100%', gap: '24px', padding: '0 24px', paddingBottom: '40px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px' }}>
+            <div className="flex-responsive" style={{ justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px' }}>
                 <h2 style={{margin: 0}}>👥 Buku Pelanggan & Titip Dana</h2>
-                <div style={{display: 'flex', gap: '12px'}}>
+                <div className="flex-responsive w-full-mobile">
                     <input 
                         type="text" 
                         className="input-field" 

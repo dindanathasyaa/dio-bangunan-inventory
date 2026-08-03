@@ -562,7 +562,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                     )}
                 </div>
 
-                <div style={{display: 'flex', gap: '16px', marginBottom: '24px', borderBottom: '2px solid rgba(255,255,255,0.1)', paddingBottom: '16px'}}>
+                <div className="flex-responsive" style={{marginBottom: '24px', borderBottom: '2px solid rgba(255,255,255,0.1)', paddingBottom: '16px'}}>
                     <button className={`btn ${view === 'CashFlow' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setView('CashFlow')}>Riwayat Transaksi Kas</button>
                     <button className={`btn ${view === 'Receivables' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setView('Receivables')}>Daftar Piutang Pembeli</button>
                     {user?.role === 'OWNER' && (
@@ -572,7 +572,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
 
             {view === 'CashFlow' && (
                 <div>
-                    <div style={{display: 'flex', gap: '24px', marginBottom: '24px'}}>
+                    <div className="flex-responsive" style={{marginBottom: '24px'}}>
                         <div className="glass-panel" style={{flex: 1, padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderTop: '4px solid var(--primary-color)'}}>
                             <span className="metric-label">Total Saldo Kas Saat Ini</span>
                             <span className="metric-value" style={{color: 'var(--primary-color)'}}>Rp {Number(summary?.totalCash || 0).toLocaleString('id-ID')}</span>
@@ -584,9 +584,9 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                     </div>
 
                     <div className="glass-panel" style={{marginBottom: '24px'}}>
-                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
+                        <div className="flex-responsive" style={{justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
                             <h2>Riwayat Transaksi Kas</h2>
-                            <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                            <div className="flex-responsive w-full-mobile" style={{alignItems: 'center'}}>
                                 <label style={{fontWeight: 'bold', color: 'var(--text-secondary)'}}>Pilih Tanggal:</label>
                                 <input type="date" className="input-field" style={{marginBottom: 0}} value={cashFlowDate} onChange={e => setCashFlowDate(e.target.value)} />
                                 {cashFlowDate && <button className="btn btn-secondary" onClick={() => setCashFlowDate('')}>Tampilkan Semua</button>}
@@ -656,7 +656,7 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
 
             {view === 'Receivables' && (
                 <div className="glass-panel table-container">
-                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
+                    <div className="flex-responsive" style={{justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
                         <h2>Daftar Piutang Pembeli</h2>
                     </div>
                     <table className="data-table">

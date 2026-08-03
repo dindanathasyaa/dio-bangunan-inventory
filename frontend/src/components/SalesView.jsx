@@ -7,6 +7,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
     const [cart, setCart] = useState([]);
     const [qtys, setQtys] = useState({});
     const [customerName, setCustomerName] = useState('');
+    const [customerPhone, setCustomerPhone] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('Cash');
     const [customers, setCustomers] = useState([]);
     const [selectedCustomerId, setSelectedCustomerId] = useState('');
@@ -215,7 +216,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
 
             const res = await axios.post('/api/sales', {
                 branch_id: user.role === 'ADMIN' ? user.branch_id : (activeBranch === 'all' ? 1 : activeBranch),
-                customer_name: customerName,
+                customer_name: customerName + (customerPhone ? ` (${customerPhone})` : ''),
                 customer_id: selectedCustomerId || null,
                 payment_method: paymentMethod,
                 items,
@@ -227,7 +228,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
 
             const successData = {
                 sale_id: res.data.sale_id,
-                customer_name: customerName,
+                customer_name: customerName + (customerPhone ? ` (${customerPhone})` : ''),
                 payment_method: paymentMethod,
                 items: [...validCart],
                 total_amount: totalAmount,
@@ -244,6 +245,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
             setCart([]);
             setQtys({});
             setCustomerName('');
+            setCustomerPhone('');
             setSelectedCustomerId('');
             setAmountPaid('');
             setSaveAsDeposit(false);
@@ -272,13 +274,13 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
 
 
     return (
-        <div style={{animation: 'fadeIn 0.5s ease-out', display: 'flex', gap: '24px', height: '100%', overflowX: 'hidden'}}>
+        <div className="flex-responsive" style={{animation: 'fadeIn 0.5s ease-out', height: '100%', overflowX: 'hidden', overflowY: 'auto'}}>
             {/* Kiri: Daftar Produk */}
-            <div className="glass-panel" style={{flex: 2, display: 'flex', flexDirection: 'column', overflow: 'hidden'}}>
-                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
+            <div className="glass-panel w-full-mobile" style={{flex: 2, display: 'flex', flexDirection: 'column', overflow: 'hidden'}}>
+                <div className="flex-responsive" style={{justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
                     <h2 style={{margin: 0}}>Katalog Penjualan</h2>
                     
-                    <div style={{display: 'flex', gap: '12px', alignItems: 'center'}}>
+                    <div className="flex-responsive w-full-mobile" style={{alignItems: 'center'}}>
                         {user.role === 'OWNER' && (
                             <div style={{display: 'flex', alignItems: 'center'}}>
                                 <span style={{fontWeight: 'bold', color: 'white', marginRight: '8px', background: 'var(--secondary-color)', padding: '8px 12px', borderRadius: '6px', fontSize: '0.9rem'}}>Pilih Toko:</span>
@@ -325,7 +327,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                     onChange={e => setSearch(e.target.value)}
                     style={{marginBottom: '16px'}}
                 />
-                <div style={{overflowY: 'auto', overflowX: 'hidden', flex: 1, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px'}}>
+                <div className="grid-responsive" style={{overflowY: 'auto', overflowX: 'hidden', flex: 1}}>
                     {filtered.map(p => (
                         <div key={p.id} style={{background: 'var(--item-bg)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column'}}>
                             <div style={{fontWeight: 'bold', marginBottom: '4px'}}>{p.name} {p.variant_name ? `- ${p.variant_name}` : ''}</div>
@@ -357,7 +359,7 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
             </div>
 
             {/* Kanan: Keranjang */}
-            <div className="glass-panel" style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
+            <div className="glass-panel w-full-mobile" style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
                 <h2>Keranjang</h2>
                 <div style={{flex: 1, overflowY: 'auto', marginBottom: '16px'}}>
                     {cart.map(c => (
@@ -471,15 +473,27 @@ const SalesView = ({ user, activeBranch, setActiveBranch, branches }) => {
                             </select>
                         </div>
                         {!selectedCustomerId && (
-                            <div className="form-group" style={{marginTop: '12px'}}>
-                                <label>Nama / Keterangan Pembeli</label>
-                                <input 
-                                    type="text" 
-                                    className="input-field" 
-                                    value={customerName} 
-                                    onChange={e => setCustomerName(e.target.value)} 
-                                    placeholder="Ketik nama pembeli..." 
-                                />
+                            <div className="flex-responsive" style={{marginTop: '12px', marginBottom: '12px'}}>
+                                <div className="form-group" style={{flex: 1}}>
+                                    <label>Nama Pembeli (Umum)</label>
+                                    <input 
+                                        type="text" 
+                                        className="input-field" 
+                                        value={customerName} 
+                                        onChange={e => setCustomerName(e.target.value)} 
+                                        placeholder="Ketik nama pembeli..." 
+                                    />
+                                </div>
+                                <div className="form-group" style={{flex: 1}}>
+                                    <label>No. HP (Opsional)</label>
+                                    <input 
+                                        type="text" 
+                                        className="input-field" 
+                                        value={customerPhone} 
+                                        onChange={e => setCustomerPhone(e.target.value)} 
+                                        placeholder="08..." 
+                                    />
+                                </div>
                             </div>
                         )}
                         <div className="form-group" style={{marginTop: '16px'}}>
