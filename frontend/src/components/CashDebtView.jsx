@@ -703,8 +703,8 @@ const CashDebtView = ({ user, activeBranch, setActiveBranch, branches, inventory
                                             handleShowHistory(r.id, 'Receivable');
                                         }}>Riwayat Cicilan</button>
                                     </td>
-                                    <td data-label="Cetak Struk">
-                                        <button className="btn btn-outline" style={{padding: '6px 12px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px'}} onClick={() => handlePrintDebt(r)}>
+                                    <td data-label="Cetak">
+                                        <button className="btn btn-outline" style={{borderColor: '#3b82f6', color: '#3b82f6', width: '100%', marginTop: '8px'}} onClick={() => handlePrintDebt(r)}>
                                             Cetak
                                         </button>
                                     </td>

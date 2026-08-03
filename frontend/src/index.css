@@ -1294,7 +1294,15 @@ p {
     flex-direction: column;
     width: 100%;
   }
-  .mobile-card-table td[data-label="Aksi"] button {
+  .mobile-card-table td[data-label="Aksi"] button,
+  .mobile-card-table td[data-label="Cetak"] button {
     text-align: center !important;
+  }
+  .mobile-card-table td[data-label="Cetak"] {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .mobile-card-table td[data-label="Cetak"]::before {
+    display: none !important;
   }
 }
