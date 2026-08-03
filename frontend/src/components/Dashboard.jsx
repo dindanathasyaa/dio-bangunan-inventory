@@ -281,25 +281,25 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
             <div className="flex-responsive" style={{justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
                 <h1 style={{margin: 0}}>Control Center</h1>
                 
-                <div style={{display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'flex-start'}}>
+                <div className="flex-responsive w-full-mobile" style={{alignItems: 'center'}}>
                     {user.role === 'OWNER' && user.branch_id === null && (
-                        <div style={{display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0}}>
-                            <span style={{fontWeight: 'bold', color: 'white', background: 'var(--secondary-color)', padding: '10px 12px', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box', fontSize: '0.85rem', whiteSpace: 'nowrap'}}>Pilih Toko:</span>
-                            <div className="custom-dropdown-container" style={{position: 'relative', flex: 1, minWidth: 0}}>
+                        <div className="flex-responsive w-full-mobile" style={{alignItems: 'center'}}>
+                            <span style={{fontWeight: 'bold', color: 'white', background: 'var(--secondary-color)', padding: '12px 16px', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: '100%', boxSizing: 'border-box'}}>Pilih Toko:</span>
+                            <div className="custom-dropdown-container" style={{position: 'relative'}}>
                                 <div 
                                     className={`custom-select-3d ${isBranchDropdownOpen ? 'active' : ''}`}
                                     onClick={() => setIsBranchDropdownOpen(!isBranchDropdownOpen)}
-                                    style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'transparent', color: 'var(--secondary-color)', border: '2px solid var(--secondary-color)', borderRadius: '8px', boxSizing: 'border-box', padding: '10px 12px'}}
+                                    style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'transparent', color: 'var(--secondary-color)', border: '2px solid var(--secondary-color)', borderRadius: '8px', boxSizing: 'border-box', padding: '12px 16px'}}
                                 >
-                                    <span style={{fontWeight: 'bold', fontSize: '0.85rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{activeBranch === 'all' ? 'Semua Toko' : branches.find(b => b.id.toString() === activeBranch.toString())?.name}</span>
-                                    <span style={{fontSize: '0.8rem', marginLeft: '8px'}}>▼</span>
+                                    <span style={{fontWeight: 'bold'}}>{activeBranch === 'all' ? 'Semua Toko (Gabungan)' : branches.find(b => b.id.toString() === activeBranch.toString())?.name}</span>
+                                    <span style={{fontSize: '0.8rem', marginLeft: '16px'}}>▼</span>
                                 </div>
                                 {isBranchDropdownOpen && (
                                     <div className="custom-dropdown-menu" style={{right: 0, left: 0, top: '100%', marginTop: '4px', border: '2px solid var(--secondary-color)', zIndex: 1000}}>
                                     <div 
                                         className={`custom-dropdown-item branch-dropdown-item ${activeBranch === 'all' ? 'selected' : ''}`}
                                         onClick={() => { setActiveBranch('all'); setIsBranchDropdownOpen(false); }}
-                                        style={{fontWeight: '500', fontSize: '0.85rem'}}
+                                        style={{fontWeight: '500'}}
                                     >
                                         Semua Toko (Gabungan)
                                     </div>
@@ -308,7 +308,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                                             key={b.id} 
                                             className={`custom-dropdown-item branch-dropdown-item ${activeBranch.toString() === b.id.toString() ? 'selected' : ''}`}
                                             onClick={() => { setActiveBranch(b.id); setIsBranchDropdownOpen(false); }}
-                                            style={{fontWeight: '500', fontSize: '0.85rem'}}
+                                            style={{fontWeight: '500'}}
                                         >
                                             {b.name}
                                         </div>
@@ -331,7 +331,8 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                     </div>
                 </div>
             </div>
-            <div className="grid-responsive-2" style={{marginBottom: '24px'}}>
+            <p style={{color: 'var(--text-secondary)', marginBottom: '32px'}}>Ringkasan Cepat & Pintasan Navigasi</p>
+            <div className="grid-responsive" style={{marginBottom: '24px'}}>
                 {/* Row 1: Stock Alerts */}
                 <div className="glass-panel" style={{borderTop: '4px solid var(--danger-color)', cursor: 'pointer', transition: 'transform 0.2s', height: 'fit-content'}} onClick={() => navigate('/alert-min')} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -388,7 +389,7 @@ const ControlCenter = ({ user, activeBranch, setActiveBranch, branches }) => {
                 </div>
             </div>
 
-            <div className="grid-responsive-3" style={{marginBottom: '24px'}}>
+            <div className="grid-responsive" style={{marginBottom: '24px'}}>
                 {user.role === 'OWNER' && (
                     <>
                         <div className="glass-panel" style={{borderTop: '4px solid #10b981', cursor: 'pointer', transition: 'transform 0.2s', height: 'fit-content'}} onClick={() => navigate('/cash', { state: { view: 'Receivables' } })} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-5px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
